@@ -1,0 +1,230 @@
+[
+  {
+    "name": "enum.Action",
+    "type": "enum",
+    "symbols": [
+      "heartbeat",
+
+      "request_sales_advisor_signin",
+      "request_sales_advisor_receiving_customers",
+      "request_sales_advisor_leave_customers",
+      "request_sales_advisor_build_contract",
+      "request_sales_advisor_confirm_paid",
+
+      "message_room_info",
+      "message_room_waiting_customers",
+      "message_customers_info",
+      "message_customers_auction_info",
+      "message_cars_model",
+      "message_contract",
+
+      "error_message"
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageCustomersInfo",
+    "type": "record",
+    "fields":[
+      {
+        "name": "mobile",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "idcard",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "username",
+        "type": ["null", "string"]
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageRoomWaitingCustomers",
+    "type": "record",
+    "fields": [
+      {
+        "name": "waiting_list",
+        "type": {
+          "type": "array",
+          "items": "MessageCustomersInfo"
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageCustomersAuctionInfo",
+    "type": "record",
+    "fields":[
+      {
+        "name": "auction_list",
+        "type": {
+          "type": "map",
+          "values": "double"
+        }
+      },
+      {
+        "name": "discount_list",
+        "type": {
+          "type": "map",
+          "values": "double"
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageCarsModel",
+    "type": "record",
+    "fields":[
+      {
+        "name": "brand",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "color",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "series",
+        "type": ["null", "string"]
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageRoomInfo",
+    "type": "record",
+    "fields":[
+      {
+        "name": "room_id",
+        "type": "int"
+      },
+      {
+        "name": "order_count",
+        "type": "int"
+      },
+      {
+        "name": "customer_info",
+        "type": "MessageCustomersInfo"
+      },
+      {
+        "name": "waiting_list",
+        "type": {
+          "type": "array",
+          "items": "MessageCustomersInfo"
+        }
+      },
+      {
+        "name": "customer_auction_info",
+        "type": "MessageCustomersAuctionInfo"
+      },
+      {
+        "name": "car_model",
+        "type": "MessageCarsModel"
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageContract",
+    "type": "record",
+    "fields":[
+      {
+        "name": "contract_id",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "type": "record",
+    "name": "Message",
+    "fields": [
+      {
+        "name": "action",
+        "type": "enum.Action"
+      },
+      {
+        "name": "sales_advisor_signin",
+        "type": ["null", {
+          "name": "RequestSalesAdvisorSignin",
+          "type": "record",
+          "fields": [
+            {
+              "name": "sales_advisor_id",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "sales_advisor_alias",
+              "type": ["null", "string"]
+            }
+          ]
+        }]
+      },
+      {
+        "name": "sales_advisor_receiving_customers",
+        "type": ["null", {
+          "name": "RequestSalesAdvisorReceivingCustomers",
+          "type": "record",
+          "fields": [
+            {
+              "name": "customers_info",
+              "type": "MessageCustomersInfo"
+            }
+          ]
+        }]
+      },
+      {
+        "name": "sales_advisor_leave_customers",
+        "type": ["null", {
+          "name": "RequestSalesAdvisorLeaveCustomers",
+          "type": "record",
+          "fields": [
+            {
+              "name": "customers_info",
+              "type": "MessageCustomersInfo"
+            }
+          ]
+        }]
+      },
+      {
+        "name": "sales_advisor_build_contract",
+        "type": ["null", {
+          "name": "RequestSalesAdvisorBuildContract",
+          "type": "record",
+          "fields": [
+            {
+              "name": "contract_content",
+              "type": ["null", "string"]
+            }
+          ]
+        }]
+      },
+      {
+        "name": "sales_advisor_confirm_paid",
+        "type": ["null", {
+          "name": "RequestSalesAdvisorConfirmPaid",
+          "type": "record",
+          "fields": [
+          ]
+        }]
+      },
+      {
+        "name": "message_room_info",
+        "type": ["null", "MessageRoomInfo"]
+      },
+      {
+        "name": "message_room_waiting_customers",
+        "type": ["null", "MessageRoomWaitingCustomers"]
+      },
+      {
+        "name": "error_message",
+        "type": ["null", "string"]
+      }
+    ]
+  }
+]
