@@ -1,15 +1,18 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
 	"strconv"
 
+	jsoniter "github.com/json-iterator/go"
+
 	avro "com.lueey.shop/protocol"
 	guuid "github.com/google/uuid"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var AdvisorID = []string{"00012a1e", "c00000e880"}
 var RoomContainer = map[string]*Room{}
