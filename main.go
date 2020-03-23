@@ -30,8 +30,8 @@ func main() {
 }
 
 const (
-	HEAD_SIZE = 8
-	BUF_SIZE  = 1048576
+	buffSize int    = 1048576
+	pORT     string = "1234"
 )
 
 func handleConnection(conn net.Conn) {
@@ -42,7 +42,7 @@ func handleConnection(conn net.Conn) {
 	}()
 
 	rr := bufio.NewReader(conn)
-	var buf [BUF_SIZE]byte
+	var buf [buffSize]byte
 	n, err := rr.Read(buf[:]) // 读取数据
 	if err != nil {
 		fmt.Println("read from client failed, err:", err)
@@ -76,13 +76,20 @@ func handleConnection(conn net.Conn) {
 }
 
 func startTCPServer() {
-	listener, err := net.Listen("tcp", ":1234")
+	var port string = ""
+	args := os.Args[1:]
+	if len(args) == 0 {
+		port = pORT
+	} else {
+		port = args[0]
+	}
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	// if err != nil {
 	// 	log.Fatal(err)
 	// 	return
 	// }
 	checkError(err)
-	log.Println("start listening on 1234")
+	log.Printf("start listening on %s", port)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
