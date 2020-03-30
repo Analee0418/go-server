@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
@@ -17,17 +17,17 @@ type MessageCarsModel struct {
 
 	
 	
-		Brand *UnionNullString
+		Brand *BrandUnion
 	
 
 	
 	
-		Color *UnionNullString
+		Color *ColorUnion
 	
 
 	
 	
-		Series *UnionNullString
+		Series *SeriesUnion
 	
 
 }
@@ -68,17 +68,17 @@ func DeserializeMessageCarsModelFromSchema(r io.Reader, schema string) (*Message
 func writeMessageCarsModel(r *MessageCarsModel, w io.Writer) error {
 	var err error
 	
-	err = writeUnionNullString( r.Brand, w)
+	err = writeBrandUnion( r.Brand, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = writeUnionNullString( r.Color, w)
+	err = writeColorUnion( r.Color, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = writeUnionNullString( r.Series, w)
+	err = writeSeriesUnion( r.Series, w)
 	if err != nil {
 		return err			
 	}
@@ -112,7 +112,7 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Brand = NewUnionNullString()
+			r.Brand = NewBrandUnion()
 	
 		
 		
@@ -121,7 +121,7 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 	
 	case 1:
 		
-			r.Color = NewUnionNullString()
+			r.Color = NewColorUnion()
 	
 		
 		
@@ -130,7 +130,7 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 	
 	case 2:
 		
-			r.Series = NewUnionNullString()
+			r.Series = NewSeriesUnion()
 	
 		
 		

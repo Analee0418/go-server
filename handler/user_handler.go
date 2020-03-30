@@ -22,7 +22,10 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 
 	if s, exists := model.GetSessionByName(advisorID); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
-		msg.Error_message.String = "请勿重复登录"
+		msg.Error_message = &avro.Error_messageUnion{
+			String:    "Do not log in repeatedly",
+			UnionType: avro.Error_messageUnionTypeEnumString,
+		}
 		s.SendMessage(msg)
 		return
 	}
@@ -41,10 +44,25 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 			log.Printf("Sales advisor room: %v", r)
 			h.session = new(model.Session)
 			h.session.InitAdvisor(*h.conn, advisorID)
+
+			smsg := model.GenerateMessage(avro.ActionMessage_session)
+			smsg.Message_session = &avro.Message_sessionUnion{
+				MessageSession: &avro.MessageSession{
+					Sid: &avro.SidUnion{
+						String:    h.session.UUID(),
+						UnionType: avro.SidUnionTypeEnumString,
+					},
+				},
+				UnionType: avro.Message_sessionUnionTypeEnumMessageSession,
+			}
+			log.Println("-----------------------", smsg.Message_session.MessageSession.Sid.String)
+			h.session.SendMessage(*smsg)
+
 			roominfo := r.GetRoomInfo()
 			msg := *model.GenerateMessage(avro.ActionMessage_room_info)
-			msg.Message_room_info = &avro.UnionNullMessageRoomInfo{
+			msg.Message_room_info = &avro.Message_room_infoUnion{
 				MessageRoomInfo: &roominfo,
+				UnionType:       avro.Message_room_infoUnionTypeEnumMessageRoomInfo,
 			}
 
 			h.session.SendMessage(msg)

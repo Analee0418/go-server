@@ -8,9 +8,13 @@ import (
 	"log"
 	"net"
 	"os"
+	"runtime"
+	"time"
 
 	"com.lueey.shop/handler"
+	"com.lueey.shop/model"
 	avro "com.lueey.shop/protocol"
+	"com.lueey.shop/utils"
 	"github.com/actgardner/gogen-avro/compiler"
 	"github.com/actgardner/gogen-avro/vm"
 )
@@ -26,11 +30,18 @@ func main() {
 		}
 	}()
 
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	startTimer(func(now int64) {
+		// log.Printf("Time. time %s", (time.Now().Nanosecond() / 1e6))
+		// sessionca
+		model.ReleaseSessionCache(now)
+	})
 	startTCPServer()
 }
 
 const (
-	buffSize int    = 1048576
+	buffSize int    = 1024 * 10
 	pORT     string = "1234"
 )
 
@@ -39,6 +50,7 @@ func handleConnection(conn net.Conn) {
 		if x := recover(); x != nil {
 			log.Println("caught panic in handleConnection", x)
 		}
+		time.Sleep(10 * time.Microsecond)
 	}()
 
 	rr := bufio.NewReader(conn)
@@ -105,4 +117,17 @@ func checkError(err error) {
 		log.Println("Fatal error:", err)
 		os.Exit(-1)
 	}
+}
+
+func startTimer(f func(int64)) {
+	go func() {
+		for {
+			now := time.Now()
+			f(utils.NowMillisecondsByTime(now))
+			next := now.Add(time.Second * 10)
+			next = time.Date(next.Year(), next.Month(), next.Day(), next.Hour(), next.Minute(), next.Second(), next.Nanosecond(), next.Location())
+			t := time.NewTimer(next.Sub(now))
+			<-t.C
+		}
+	}()
 }

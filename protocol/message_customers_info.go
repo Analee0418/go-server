@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
@@ -17,17 +17,17 @@ type MessageCustomersInfo struct {
 
 	
 	
-		Mobile *UnionNullString
+		Mobile *MobileUnion
 	
 
 	
 	
-		Idcard *UnionNullString
+		Idcard *IdcardUnion
 	
 
 	
 	
-		Username *UnionNullString
+		Username *UsernameUnion
 	
 
 }
@@ -68,17 +68,17 @@ func DeserializeMessageCustomersInfoFromSchema(r io.Reader, schema string) (*Mes
 func writeMessageCustomersInfo(r *MessageCustomersInfo, w io.Writer) error {
 	var err error
 	
-	err = writeUnionNullString( r.Mobile, w)
+	err = writeMobileUnion( r.Mobile, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = writeUnionNullString( r.Idcard, w)
+	err = writeIdcardUnion( r.Idcard, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = writeUnionNullString( r.Username, w)
+	err = writeUsernameUnion( r.Username, w)
 	if err != nil {
 		return err			
 	}
@@ -112,7 +112,7 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Mobile = NewUnionNullString()
+			r.Mobile = NewMobileUnion()
 	
 		
 		
@@ -121,7 +121,7 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 	
 	case 1:
 		
-			r.Idcard = NewUnionNullString()
+			r.Idcard = NewIdcardUnion()
 	
 		
 		
@@ -130,7 +130,7 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 	
 	case 2:
 		
-			r.Username = NewUnionNullString()
+			r.Username = NewUsernameUnion()
 	
 		
 		

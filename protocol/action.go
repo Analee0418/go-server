@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"fmt"
@@ -29,19 +29,35 @@ const (
 
 	ActionRequest_sales_advisor_confirm_paid Action = 5
 
-	ActionMessage_room_info Action = 6
+	ActionRequest_customer_signin Action = 6
 
-	ActionMessage_room_waiting_customers Action = 7
+	ActionRequest_customer_auction_bid Action = 7
 
-	ActionMessage_customers_info Action = 8
+	ActionRequest_customer_join_queue Action = 8
 
-	ActionMessage_customers_auction_info Action = 9
+	ActionRequest_host_switch_state Action = 9
 
-	ActionMessage_cars_model Action = 10
+	ActionMessage_session Action = 10
 
-	ActionMessage_contract Action = 11
+	ActionMessage_room_info Action = 11
 
-	ActionError_message Action = 12
+	ActionMessage_room_waiting_customers Action = 12
+
+	ActionMessage_customers_info Action = 13
+
+	ActionMessage_customers_auction_info Action = 14
+
+	ActionMessage_cars_model Action = 15
+
+	ActionMessage_contract Action = 16
+
+	ActionMessage_global_info Action = 17
+
+	ActionMessage_auction_info Action = 18
+
+	ActionTips Action = 19
+
+	ActionError_message Action = 20
 
 )
 
@@ -66,6 +82,21 @@ func (e Action) String() string {
 	case ActionRequest_sales_advisor_confirm_paid:
 		return "request_sales_advisor_confirm_paid"
 
+	case ActionRequest_customer_signin:
+		return "request_customer_signin"
+
+	case ActionRequest_customer_auction_bid:
+		return "request_customer_auction_bid"
+
+	case ActionRequest_customer_join_queue:
+		return "request_customer_join_queue"
+
+	case ActionRequest_host_switch_state:
+		return "request_host_switch_state"
+
+	case ActionMessage_session:
+		return "message_session"
+
 	case ActionMessage_room_info:
 		return "message_room_info"
 
@@ -83,6 +114,15 @@ func (e Action) String() string {
 
 	case ActionMessage_contract:
 		return "message_contract"
+
+	case ActionMessage_global_info:
+		return "message_global_info"
+
+	case ActionMessage_auction_info:
+		return "message_auction_info"
+
+	case ActionTips:
+		return "tips"
 
 	case ActionError_message:
 		return "error_message"
@@ -116,6 +156,21 @@ func NewActionValue(raw string) (r Action, err error) {
 	case "request_sales_advisor_confirm_paid":
 		return ActionRequest_sales_advisor_confirm_paid, nil
 
+	case "request_customer_signin":
+		return ActionRequest_customer_signin, nil
+
+	case "request_customer_auction_bid":
+		return ActionRequest_customer_auction_bid, nil
+
+	case "request_customer_join_queue":
+		return ActionRequest_customer_join_queue, nil
+
+	case "request_host_switch_state":
+		return ActionRequest_host_switch_state, nil
+
+	case "message_session":
+		return ActionMessage_session, nil
+
 	case "message_room_info":
 		return ActionMessage_room_info, nil
 
@@ -133,6 +188,15 @@ func NewActionValue(raw string) (r Action, err error) {
 
 	case "message_contract":
 		return ActionMessage_contract, nil
+
+	case "message_global_info":
+		return ActionMessage_global_info, nil
+
+	case "message_auction_info":
+		return ActionMessage_auction_info, nil
+
+	case "tips":
+		return ActionTips, nil
 
 	case "error_message":
 		return ActionError_message, nil

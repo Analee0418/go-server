@@ -1,5 +1,17 @@
 [
   {
+    "name": "enum.GlobalState",
+    "type": "enum",
+    "symbols": [
+      "starting_animations",
+      "speeching",
+      "aution",
+      "products",
+      "discount_strategy",
+      "chat_with_advisor"
+    ]
+  },
+  {
     "name": "enum.Action",
     "type": "enum",
     "symbols": [
@@ -11,14 +23,35 @@
       "request_sales_advisor_build_contract",
       "request_sales_advisor_confirm_paid",
 
+      "request_customer_signin",
+      "request_customer_auction_bid",
+      "request_customer_join_queue",
+
+      "request_host_switch_state",
+
+      "message_session",
       "message_room_info",
       "message_room_waiting_customers",
       "message_customers_info",
       "message_customers_auction_info",
       "message_cars_model",
       "message_contract",
+      "message_global_info",
+      "message_auction_info",
 
+      "tips",
       "error_message"
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageSession",
+    "type": "record",
+    "fields":[
+      {
+        "name": "sid",
+        "type": ["null", "string"]
+      }
     ]
   },
   {
@@ -141,12 +174,135 @@
   },
   {
     "namespace": "proto",
+    "name": "MessageAuctionRecord",
+    "type": "record",
+    "fields":[
+      {
+        "name": "goods_id",
+        "type": "int"
+      },
+      {
+        "name": "customer_mobile",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "customer_mobile_region",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "customer_idcard",
+         "type": ["null", "string"]
+      },
+      {
+        "name": "customer_username",
+         "type": ["null", "string"]
+      },
+      {
+        "name": "bid_price",
+        "type": "float"
+      },
+      {
+        "name": "timestamp",
+        "type": "long"
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageAuctionGoods",
+    "type": "record",
+    "fields":[
+      {
+        "name": "goods_id",
+        "type": "int"
+      },
+      {
+        "name": "goods_name",
+        "type": "int"
+      },
+      {
+        "name": "original_price",
+        "type": "float"
+      },
+      {
+        "name": "final_price",
+        "type": "float"
+      },
+      {
+        "name": "users_num",
+        "type": "int"
+      },
+      {
+        "name": "final_record",
+        "type": ["null", "MessageAuctionRecord"]
+      },
+      {
+        "name": "auction_records",
+        "type": {
+          "type": "array",
+          "items": "MessageAuctionRecord"
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageAuctionInfo",
+    "type": "record",
+    "fields":[
+      {
+        "name": "remain_seconds",
+        "type": "int"
+      },
+      {
+        "name": "goods",
+        "type": ["null", "MessageAuctionGoods"]
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageGlobalInfo",
+    "type": "record",
+    "fields":[
+      {
+        "name": "total_online_users",
+        "type": "int"
+      },
+      {
+        "name": "chating_users",
+        "type": "int"
+      },
+      {
+        "name": "paid_users",
+        "type": "int"
+      },
+      {
+        "name": "broilers",
+        "type": "int"
+      },
+      {
+        "name": "playing",
+        "type": "int"
+      },
+      {
+        "name": "visitor",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
     "type": "record",
     "name": "Message",
     "fields": [
       {
         "name": "action",
         "type": "enum.Action"
+      },
+      {
+        "name": "sessionId",
+        "type": ["null", "string"]
       },
       {
         "name": "sales_advisor_signin",
@@ -214,12 +370,99 @@
         }]
       },
       {
+        "name": "customer_signin",
+        "type": ["null", {
+          "name": "RequestCustomerSignin",
+          "type": "record",
+          "fields": [
+            {
+              "name": "mobile",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "idcard",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "username",
+              "type": ["null", "string"]
+            }
+          ]
+        }]
+      },
+      {
+        "name": "customer_auction_bid",
+        "type": ["null", {
+          "name": "RequestCustomerAuctionBid",
+          "type": "record",
+          "fields": [
+            {
+              "name": "bid_price",
+              "type": "float"
+            }
+          ]
+        }]
+      },
+      {
+        "name": "customer_join_queue",
+        "type": ["null", {
+          "name": "RequestCustomerJoinQueue",
+          "type": "record",
+          "fields": [
+            {
+              "name": "mobile",
+              "type": {
+                "type": "map",
+                "values": "string"
+              }
+            }
+          ]
+        }]
+      },
+      {
+        "name": "host_switch_state",
+        "type": ["null", {
+          "name": "RequestHostSwitchState",
+          "type": "record",
+          "fields": [
+            {
+              "name": "globalState",
+              "type": "enum.GlobalState"
+            },
+            {
+              "name": "countDownSeconds",
+              "type": "int"
+            },
+            {
+              "name": "body",
+              "type": "string"
+            }
+          ]
+        }]
+      },
+      {
+        "name": "message_session",
+        "type": ["null", "MessageSession"]
+      },
+      {
         "name": "message_room_info",
         "type": ["null", "MessageRoomInfo"]
       },
       {
         "name": "message_room_waiting_customers",
         "type": ["null", "MessageRoomWaitingCustomers"]
+      },
+      {
+        "name": "message_cars_model",
+        "type": ["null", "MessageCarsModel"]
+      },
+      {
+        "name": "message_auction_info",
+        "type": ["null", "MessageAuctionInfo"]
+      },
+      {
+        "name": "tips",
+        "type": ["null", "string"]
       },
       {
         "name": "error_message",

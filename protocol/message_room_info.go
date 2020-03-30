@@ -3,31 +3,51 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
-
-	"github.com/actgardner/gogen-avro/compiler"
-	"github.com/actgardner/gogen-avro/vm"
 	"github.com/actgardner/gogen-avro/vm/types"
+	"github.com/actgardner/gogen-avro/vm"
+	"github.com/actgardner/gogen-avro/compiler"
 )
 
+  
 type MessageRoomInfo struct {
-	Room_id int32
 
-	Order_count int32
+	
+	
+		Room_id int32
+	
 
-	Customer_info *MessageCustomersInfo
+	
+	
+		Order_count int32
+	
 
-	Waiting_list []*MessageCustomersInfo
+	
+	
+		Customer_info *MessageCustomersInfo
+	
 
-	Customer_auction_info *MessageCustomersAuctionInfo
+	
+	
+		Waiting_list []*MessageCustomersInfo
+	
 
-	Car_model *MessageCarsModel
+	
+	
+		Customer_auction_info *MessageCustomersAuctionInfo
+	
+
+	
+	
+		Car_model *MessageCarsModel
+	
+
 }
 
-func NewMessageRoomInfo() *MessageRoomInfo {
+func NewMessageRoomInfo() (*MessageRoomInfo) {
 	return &MessageRoomInfo{}
 }
 
@@ -40,7 +60,7 @@ func DeserializeMessageRoomInfo(r io.Reader) (*MessageRoomInfo, error) {
 
 	err = vm.Eval(r, deser, t)
 	if err != nil {
-		return nil, err
+		return nil, err	
 	}
 	return t, err
 }
@@ -55,44 +75,44 @@ func DeserializeMessageRoomInfoFromSchema(r io.Reader, schema string) (*MessageR
 
 	err = vm.Eval(r, deser, t)
 	if err != nil {
-		return nil, err
+		return nil, err	
 	}
 	return t, err
 }
 
 func writeMessageRoomInfo(r *MessageRoomInfo, w io.Writer) error {
 	var err error
-
-	err = vm.WriteInt(r.Room_id, w)
+	
+	err = vm.WriteInt( r.Room_id, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = vm.WriteInt(r.Order_count, w)
+	
+	err = vm.WriteInt( r.Order_count, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeMessageCustomersInfo(r.Customer_info, w)
+	
+	err = writeMessageCustomersInfo( r.Customer_info, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeArrayMessageCustomersInfo(r.Waiting_list, w)
+	
+	err = writeArrayMessageCustomersInfo( r.Waiting_list, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeMessageCustomersAuctionInfo(r.Customer_auction_info, w)
+	
+	err = writeMessageCustomersAuctionInfo( r.Customer_auction_info, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeMessageCarsModel(r.Car_model, w)
+	
+	err = writeMessageCarsModel( r.Car_model, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
+	
 	return err
 }
 
@@ -108,61 +128,89 @@ func (r *MessageRoomInfo) SchemaName() string {
 	return "proto.MessageRoomInfo"
 }
 
-func (_ *MessageRoomInfo) SetBoolean(v bool)    { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetInt(v int32)       { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetLong(v int64)      { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetFloat(v float32)   { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetDouble(v float64)  { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetBytes(v []byte)    { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) SetString(v string)   { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetBoolean(v bool) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetInt(v int32) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetLong(v int64) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetFloat(v float32) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetDouble(v float64) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetBytes(v []byte) { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) SetString(v string) { panic("Unsupported operation") }
 func (_ *MessageRoomInfo) SetUnionElem(v int64) { panic("Unsupported operation") }
 
 func (r *MessageRoomInfo) Get(i int) types.Field {
-	switch i {
-
+	switch (i) {
+	
 	case 0:
-
-		return (*types.Int)(&r.Room_id)
-
+		
+		
+			return (*types.Int)(&r.Room_id)
+		
+	
 	case 1:
-
-		return (*types.Int)(&r.Order_count)
-
+		
+		
+			return (*types.Int)(&r.Order_count)
+		
+	
 	case 2:
-
-		r.Customer_info = NewMessageCustomersInfo()
-
-		return r.Customer_info
-
+		
+			r.Customer_info = NewMessageCustomersInfo()
+	
+		
+		
+			return r.Customer_info
+		
+	
 	case 3:
-
-		r.Waiting_list = make([]*MessageCustomersInfo, 0)
-
-		return (*ArrayMessageCustomersInfoWrapper)(&r.Waiting_list)
-
+		
+			r.Waiting_list = make([]*MessageCustomersInfo, 0)
+	
+		
+		
+			return (*ArrayMessageCustomersInfoWrapper)(&r.Waiting_list)
+		
+	
 	case 4:
-
-		r.Customer_auction_info = NewMessageCustomersAuctionInfo()
-
-		return r.Customer_auction_info
-
+		
+			r.Customer_auction_info = NewMessageCustomersAuctionInfo()
+	
+		
+		
+			return r.Customer_auction_info
+		
+	
 	case 5:
-
-		r.Car_model = NewMessageCarsModel()
-
-		return r.Car_model
-
+		
+			r.Car_model = NewMessageCarsModel()
+	
+		
+		
+			return r.Car_model
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *MessageRoomInfo) SetDefault(i int) {
-	switch i {
-
+	switch (i) {
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
 	}
 	panic("Unknown field index")
 }
 
 func (_ *MessageRoomInfo) AppendMap(key string) types.Field { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) AppendArray() types.Field         { panic("Unsupported operation") }
-func (_ *MessageRoomInfo) Finalize()                        {}
+func (_ *MessageRoomInfo) AppendArray() types.Field { panic("Unsupported operation") }
+func (_ *MessageRoomInfo) Finalize() { }

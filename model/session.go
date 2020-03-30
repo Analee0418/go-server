@@ -6,28 +6,41 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	avro "com.lueey.shop/protocol"
+	"com.lueey.shop/utils"
 	guuid "github.com/google/uuid"
 )
 
 type Session struct {
-	conn         net.Conn
-	id           guuid.UUID
-	ip           string
-	customerInfo avro.MessageCustomersInfo
-	salesAdvisor string
+	conn                     net.Conn
+	id                       guuid.UUID
+	ip                       string
+	customerInfo             avro.MessageCustomersInfo
+	name                     string
+	salesAdvisor             string
+	lastHeartBeat            time.Time
+	lastHeartBeatMillisecond int64
+	dead                     bool
+}
+
+func (s *Session) UUID() string {
+	return s.id.String()
 }
 
 func (s *Session) String() string {
-	return fmt.Sprintf("%v/%v", s.ip, s.id.String())
+	return fmt.Sprintf("%v/%v/%v/%v/%v", s.ip, s.id.String(), s.name, s.lastHeartBeat, s.lastHeartBeatMillisecond)
 }
 
 func (s *Session) InitAdvisor(conn net.Conn, salesAdvisor string) {
 	s.conn = conn
 	s.id = guuid.New()
 	s.ip = s.conn.RemoteAddr().String()
+	s.name = salesAdvisor
 	s.salesAdvisor = salesAdvisor
+	s.lastHeartBeat = time.Now()
+	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
 	AddSession(s)
 }
 
@@ -35,6 +48,7 @@ func (s *Session) InitCustomer(conn net.Conn, customer avro.MessageCustomersInfo
 	s.conn = conn
 	s.id = guuid.New()
 	AddSession(s)
+	// TODO
 }
 
 func SendMessage(conn net.Conn, msg avro.Message) {
@@ -71,19 +85,31 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 }
 
 func (s *Session) SendMessage(message avro.Message) {
+	if s.dead {
+		log.Printf("Warn, the sesison[%v, %s] has closed\n", s.id, s.name)
+		return
+	}
 	SendMessage(s.conn, message)
 }
 
-func (s *Session) close() {
-	if s == nil {
-		log.Print()
-		return
-	}
-	msg := avro.Message{
-		Action:            avro.ActionMessage_room_info,
-		Message_room_info: avro.NewUnionNullMessageRoomInfo(),
-	}
-	s.SendMessage(msg)
+func (s *Session) Heartbeat() {
+	now := time.Now()
+	s.lastHeartBeat = now
+	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(now)
+}
+
+func (s *Session) Close(reason string) (guuid.UUID, string) {
+	msg := GenerateMessage(avro.ActionError_message)
+	msg.Error_message = &avro.Error_messageUnion{String: reason, UnionType: avro.Error_messageUnionTypeEnumString}
+
+	s.SendMessage(*msg)
 	s.conn.Close()
-	DeleteSession(s)
+	s.dead = true
+
+	// 如果在竞拍
+	// 如果在排队
+	// 如果已进入房间
+	//
+
+	return s.id, s.name
 }

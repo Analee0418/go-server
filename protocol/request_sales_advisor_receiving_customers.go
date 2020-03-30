@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"

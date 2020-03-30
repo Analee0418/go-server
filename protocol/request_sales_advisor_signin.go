@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
@@ -17,12 +17,12 @@ type RequestSalesAdvisorSignin struct {
 
 	
 	
-		Sales_advisor_id *UnionNullString
+		Sales_advisor_id *Sales_advisor_idUnion
 	
 
 	
 	
-		Sales_advisor_alias *UnionNullString
+		Sales_advisor_alias *Sales_advisor_aliasUnion
 	
 
 }
@@ -63,12 +63,12 @@ func DeserializeRequestSalesAdvisorSigninFromSchema(r io.Reader, schema string) 
 func writeRequestSalesAdvisorSignin(r *RequestSalesAdvisorSignin, w io.Writer) error {
 	var err error
 	
-	err = writeUnionNullString( r.Sales_advisor_id, w)
+	err = writeSales_advisor_idUnion( r.Sales_advisor_id, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = writeUnionNullString( r.Sales_advisor_alias, w)
+	err = writeSales_advisor_aliasUnion( r.Sales_advisor_alias, w)
 	if err != nil {
 		return err			
 	}
@@ -102,7 +102,7 @@ func (r *RequestSalesAdvisorSignin) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Sales_advisor_id = NewUnionNullString()
+			r.Sales_advisor_id = NewSales_advisor_idUnion()
 	
 		
 		
@@ -111,7 +111,7 @@ func (r *RequestSalesAdvisorSignin) Get(i int) types.Field {
 	
 	case 1:
 		
-			r.Sales_advisor_alias = NewUnionNullString()
+			r.Sales_advisor_alias = NewSales_advisor_aliasUnion()
 	
 		
 		

@@ -3,7 +3,7 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
@@ -17,7 +17,7 @@ type RequestSalesAdvisorBuildContract struct {
 
 	
 	
-		Contract_content *UnionNullString
+		Contract_content *Contract_contentUnion
 	
 
 }
@@ -58,7 +58,7 @@ func DeserializeRequestSalesAdvisorBuildContractFromSchema(r io.Reader, schema s
 func writeRequestSalesAdvisorBuildContract(r *RequestSalesAdvisorBuildContract, w io.Writer) error {
 	var err error
 	
-	err = writeUnionNullString( r.Contract_content, w)
+	err = writeContract_contentUnion( r.Contract_content, w)
 	if err != nil {
 		return err			
 	}
@@ -92,7 +92,7 @@ func (r *RequestSalesAdvisorBuildContract) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Contract_content = NewUnionNullString()
+			r.Contract_content = NewContract_contentUnion()
 	
 		
 		

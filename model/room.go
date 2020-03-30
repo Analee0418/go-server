@@ -157,9 +157,9 @@ func init() {
 			}
 
 			roomInstance.roomInfo.Customer_info = &avro.MessageCustomersInfo{
-				Mobile:   avro.NewUnionNullString(),
-				Idcard:   avro.NewUnionNullString(),
-				Username: avro.NewUnionNullString(),
+				Mobile:   avro.NewMobileUnion(),
+				Idcard:   avro.NewIdcardUnion(),
+				Username: avro.NewUsernameUnion(),
 			} // 客户信息
 			if val, err := HGetRedis(roomKey, "customerMobile"); err == nil {
 				roomInstance.roomInfo.Customer_info.Mobile.String = val.(string)
@@ -178,9 +178,9 @@ func init() {
 				if err := json.Unmarshal([]byte(val.(string)), &fooList); err == nil {
 					for _, item := range fooList {
 						roomInstance.roomInfo.Waiting_list = append(roomInstance.roomInfo.Waiting_list, &avro.MessageCustomersInfo{
-							Mobile:   &avro.UnionNullString{String: item["customerMobile"].(string)},
-							Idcard:   &avro.UnionNullString{String: item["customerIDCard"].(string)},
-							Username: &avro.UnionNullString{String: item["customerName"].(string)},
+							Mobile:   &avro.MobileUnion{String: item["customerMobile"].(string), UnionType: avro.MobileUnionTypeEnumString},
+							Idcard:   &avro.IdcardUnion{String: item["customerIDCard"].(string), UnionType: avro.IdcardUnionTypeEnumString},
+							Username: &avro.UsernameUnion{String: item["customerName"].(string), UnionType: avro.UsernameUnionTypeEnumString},
 						})
 					}
 				}
@@ -204,9 +204,9 @@ func init() {
 			}
 
 			roomInstance.roomInfo.Car_model = &avro.MessageCarsModel{
-				Brand:  avro.NewUnionNullString(),
-				Color:  avro.NewUnionNullString(),
-				Series: avro.NewUnionNullString(),
+				Brand:  avro.NewBrandUnion(),
+				Color:  avro.NewColorUnion(),
+				Series: avro.NewSeriesUnion(),
 			} // 汽车模型
 			if val, err := HGetRedis(roomKey, "carBrand"); err == nil {
 				roomInstance.roomInfo.Car_model.Brand.String = val.(string)
@@ -225,9 +225,9 @@ func init() {
 			roomInstance.UpdateRoomID()
 			roomInstance.UpdateOrderCount(0)                            // 成交数量
 			roomInstance.UpdateCustomerInfo(&avro.MessageCustomersInfo{ // 客户信息
-				Mobile:   &avro.UnionNullString{String: ""},
-				Idcard:   &avro.UnionNullString{String: ""},
-				Username: &avro.UnionNullString{String: ""},
+				Mobile:   &avro.MobileUnion{String: "", UnionType: avro.MobileUnionTypeEnumString},
+				Idcard:   &avro.IdcardUnion{String: "", UnionType: avro.IdcardUnionTypeEnumString},
+				Username: &avro.UsernameUnion{String: "", UnionType: avro.UsernameUnionTypeEnumString},
 			})
 			roomInstance.UpdateWaitingList([]*avro.MessageCustomersInfo{})        // 排队人数
 			roomInstance.UpdateCustomerAuction(&avro.MessageCustomersAuctionInfo{ // 竞拍信息
@@ -235,9 +235,9 @@ func init() {
 				Discount_list: &avro.MapDouble{M: map[string]float64{}},
 			})
 			roomInstance.UpdateCarModel(&avro.MessageCarsModel{ // 汽车模型
-				Brand:  &avro.UnionNullString{String: ""},
-				Color:  &avro.UnionNullString{String: ""},
-				Series: &avro.UnionNullString{String: ""},
+				Brand:  &avro.BrandUnion{String: "", UnionType: avro.BrandUnionTypeEnumString},
+				Color:  &avro.ColorUnion{String: "", UnionType: avro.ColorUnionTypeEnumNull},
+				Series: &avro.SeriesUnion{String: "", UnionType: avro.SeriesUnionTypeEnumString},
 			})
 
 			RoomContainer[roomInstance.roomKey] = roomInstance

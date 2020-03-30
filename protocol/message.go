@@ -3,54 +3,112 @@
  * SOURCE:
  *     lueey.avsc
  */
-package avro
+package protocol
 
 import (
 	"io"
-
-	"github.com/actgardner/gogen-avro/compiler"
-	"github.com/actgardner/gogen-avro/vm"
 	"github.com/actgardner/gogen-avro/vm/types"
+	"github.com/actgardner/gogen-avro/vm"
+	"github.com/actgardner/gogen-avro/compiler"
 )
 
+  
 type Message struct {
-	Action Action
 
-	Sales_advisor_signin *UnionNullRequestSalesAdvisorSignin
+	
+	
+		Action Action
+	
 
-	Sales_advisor_receiving_customers *UnionNullRequestSalesAdvisorReceivingCustomers
+	
+	
+		SessionId *SessionIdUnion
+	
 
-	Sales_advisor_leave_customers *UnionNullRequestSalesAdvisorLeaveCustomers
+	
+	
+		Sales_advisor_signin *Sales_advisor_signinUnion
+	
 
-	Sales_advisor_build_contract *UnionNullRequestSalesAdvisorBuildContract
+	
+	
+		Sales_advisor_receiving_customers *Sales_advisor_receiving_customersUnion
+	
 
-	Sales_advisor_confirm_paid *UnionNullRequestSalesAdvisorConfirmPaid
+	
+	
+		Sales_advisor_leave_customers *Sales_advisor_leave_customersUnion
+	
 
-	Message_room_info *UnionNullMessageRoomInfo
+	
+	
+		Sales_advisor_build_contract *Sales_advisor_build_contractUnion
+	
 
-	Message_room_waiting_customers *UnionNullMessageRoomWaitingCustomers
+	
+	
+		Sales_advisor_confirm_paid *Sales_advisor_confirm_paidUnion
+	
 
-	Error_message *UnionNullString
+	
+	
+		Customer_signin *Customer_signinUnion
+	
+
+	
+	
+		Customer_auction_bid *Customer_auction_bidUnion
+	
+
+	
+	
+		Customer_join_queue *Customer_join_queueUnion
+	
+
+	
+	
+		Host_switch_state *Host_switch_stateUnion
+	
+
+	
+	
+		Message_session *Message_sessionUnion
+	
+
+	
+	
+		Message_room_info *Message_room_infoUnion
+	
+
+	
+	
+		Message_room_waiting_customers *Message_room_waiting_customersUnion
+	
+
+	
+	
+		Message_cars_model *Message_cars_modelUnion
+	
+
+	
+	
+		Message_auction_info *Message_auction_infoUnion
+	
+
+	
+	
+		Tips *TipsUnion
+	
+
+	
+	
+		Error_message *Error_messageUnion
+	
+
 }
 
-func NewMessage() *Message {
-	return &Message{
-		Sales_advisor_signin: NewUnionNullRequestSalesAdvisorSignin(),
-
-		Sales_advisor_receiving_customers: NewUnionNullRequestSalesAdvisorReceivingCustomers(),
-
-		Sales_advisor_leave_customers: NewUnionNullRequestSalesAdvisorLeaveCustomers(),
-
-		Sales_advisor_build_contract: NewUnionNullRequestSalesAdvisorBuildContract(),
-
-		Sales_advisor_confirm_paid: NewUnionNullRequestSalesAdvisorConfirmPaid(),
-
-		Message_room_info: NewUnionNullMessageRoomInfo(),
-
-		Message_room_waiting_customers: NewUnionNullMessageRoomWaitingCustomers(),
-
-		Error_message: NewUnionNullString(),
-	}
+func NewMessage() (*Message) {
+	return &Message{}
 }
 
 func DeserializeMessage(r io.Reader) (*Message, error) {
@@ -62,7 +120,7 @@ func DeserializeMessage(r io.Reader) (*Message, error) {
 
 	err = vm.Eval(r, deser, t)
 	if err != nil {
-		return nil, err
+		return nil, err	
 	}
 	return t, err
 }
@@ -77,59 +135,104 @@ func DeserializeMessageFromSchema(r io.Reader, schema string) (*Message, error) 
 
 	err = vm.Eval(r, deser, t)
 	if err != nil {
-		return nil, err
+		return nil, err	
 	}
 	return t, err
 }
 
 func writeMessage(r *Message, w io.Writer) error {
 	var err error
-
-	err = writeAction(r.Action, w)
+	
+	err = writeAction( r.Action, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullRequestSalesAdvisorSignin(r.Sales_advisor_signin, w)
+	
+	err = writeSessionIdUnion( r.SessionId, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullRequestSalesAdvisorReceivingCustomers(r.Sales_advisor_receiving_customers, w)
+	
+	err = writeSales_advisor_signinUnion( r.Sales_advisor_signin, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullRequestSalesAdvisorLeaveCustomers(r.Sales_advisor_leave_customers, w)
+	
+	err = writeSales_advisor_receiving_customersUnion( r.Sales_advisor_receiving_customers, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullRequestSalesAdvisorBuildContract(r.Sales_advisor_build_contract, w)
+	
+	err = writeSales_advisor_leave_customersUnion( r.Sales_advisor_leave_customers, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullRequestSalesAdvisorConfirmPaid(r.Sales_advisor_confirm_paid, w)
+	
+	err = writeSales_advisor_build_contractUnion( r.Sales_advisor_build_contract, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullMessageRoomInfo(r.Message_room_info, w)
+	
+	err = writeSales_advisor_confirm_paidUnion( r.Sales_advisor_confirm_paid, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullMessageRoomWaitingCustomers(r.Message_room_waiting_customers, w)
+	
+	err = writeCustomer_signinUnion( r.Customer_signin, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
-	err = writeUnionNullString(r.Error_message, w)
+	
+	err = writeCustomer_auction_bidUnion( r.Customer_auction_bid, w)
 	if err != nil {
-		return err
+		return err			
 	}
-
+	
+	err = writeCustomer_join_queueUnion( r.Customer_join_queue, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeHost_switch_stateUnion( r.Host_switch_state, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeMessage_sessionUnion( r.Message_session, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeMessage_room_infoUnion( r.Message_room_info, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeMessage_room_waiting_customersUnion( r.Message_room_waiting_customers, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeMessage_cars_modelUnion( r.Message_cars_model, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeMessage_auction_infoUnion( r.Message_auction_info, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeTipsUnion( r.Tips, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeError_messageUnion( r.Error_message, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -138,88 +241,231 @@ func (r *Message) Serialize(w io.Writer) error {
 }
 
 func (r *Message) Schema() string {
-	return "{\"fields\":[{\"name\":\"action\",\"type\":{\"name\":\"enum.Action\",\"symbols\":[\"heartbeat\",\"request_sales_advisor_signin\",\"request_sales_advisor_receiving_customers\",\"request_sales_advisor_leave_customers\",\"request_sales_advisor_build_contract\",\"request_sales_advisor_confirm_paid\",\"message_room_info\",\"message_room_waiting_customers\",\"message_customers_info\",\"message_customers_auction_info\",\"message_cars_model\",\"message_contract\",\"error_message\"],\"type\":\"enum\"}},{\"name\":\"sales_advisor_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorSignin\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_receiving_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_leave_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":\"proto.MessageCustomersInfo\"}],\"name\":\"RequestSalesAdvisorLeaveCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_build_contract\",\"type\":[\"null\",{\"fields\":[{\"name\":\"contract_content\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorBuildContract\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_confirm_paid\",\"type\":[\"null\",{\"fields\":[],\"name\":\"RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}]},{\"name\":\"message_room_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"room_id\",\"type\":\"int\"},{\"name\":\"order_count\",\"type\":\"int\"},{\"name\":\"customer_info\",\"type\":\"proto.MessageCustomersInfo\"},{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}},{\"name\":\"customer_auction_info\",\"type\":{\"fields\":[{\"name\":\"auction_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}},{\"name\":\"discount_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}}],\"name\":\"MessageCustomersAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}},{\"name\":\"car_model\",\"type\":{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCarsModel\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"MessageRoomInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_waiting_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}}],\"name\":\"MessageRoomWaitingCustomers\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"error_message\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.Message\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"action\",\"type\":{\"name\":\"enum.Action\",\"symbols\":[\"heartbeat\",\"request_sales_advisor_signin\",\"request_sales_advisor_receiving_customers\",\"request_sales_advisor_leave_customers\",\"request_sales_advisor_build_contract\",\"request_sales_advisor_confirm_paid\",\"request_customer_signin\",\"request_customer_auction_bid\",\"request_customer_join_queue\",\"request_host_switch_state\",\"message_session\",\"message_room_info\",\"message_room_waiting_customers\",\"message_customers_info\",\"message_customers_auction_info\",\"message_cars_model\",\"message_contract\",\"message_global_info\",\"message_auction_info\",\"tips\",\"error_message\"],\"type\":\"enum\"}},{\"name\":\"sessionId\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorSignin\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_receiving_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_leave_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":\"proto.MessageCustomersInfo\"}],\"name\":\"RequestSalesAdvisorLeaveCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_build_contract\",\"type\":[\"null\",{\"fields\":[{\"name\":\"contract_content\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorBuildContract\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_confirm_paid\",\"type\":[\"null\",{\"fields\":[],\"name\":\"RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}]},{\"name\":\"customer_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestCustomerSignin\",\"type\":\"record\"}]},{\"name\":\"customer_auction_bid\",\"type\":[\"null\",{\"fields\":[{\"name\":\"bid_price\",\"type\":\"float\"}],\"name\":\"RequestCustomerAuctionBid\",\"type\":\"record\"}]},{\"name\":\"customer_join_queue\",\"type\":[\"null\",{\"fields\":[{\"name\":\"mobile\",\"type\":{\"type\":\"map\",\"values\":\"string\"}}],\"name\":\"RequestCustomerJoinQueue\",\"type\":\"record\"}]},{\"name\":\"host_switch_state\",\"type\":[\"null\",{\"fields\":[{\"name\":\"globalState\",\"type\":{\"name\":\"enum.GlobalState\",\"symbols\":[\"starting_animations\",\"speeching\",\"aution\",\"products\",\"discount_strategy\",\"chat_with_advisor\"],\"type\":\"enum\"}},{\"name\":\"countDownSeconds\",\"type\":\"int\"},{\"name\":\"body\",\"type\":\"string\"}],\"name\":\"RequestHostSwitchState\",\"type\":\"record\"}]},{\"name\":\"message_session\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sid\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageSession\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"room_id\",\"type\":\"int\"},{\"name\":\"order_count\",\"type\":\"int\"},{\"name\":\"customer_info\",\"type\":\"proto.MessageCustomersInfo\"},{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}},{\"name\":\"customer_auction_info\",\"type\":{\"fields\":[{\"name\":\"auction_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}},{\"name\":\"discount_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}}],\"name\":\"MessageCustomersAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}},{\"name\":\"car_model\",\"type\":{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCarsModel\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"MessageRoomInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_waiting_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}}],\"name\":\"MessageRoomWaitingCustomers\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_cars_model\",\"type\":[\"null\",\"proto.MessageCarsModel\"]},{\"name\":\"message_auction_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"remain_seconds\",\"type\":\"int\"},{\"name\":\"goods\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"goods_name\",\"type\":\"int\"},{\"name\":\"original_price\",\"type\":\"float\"},{\"name\":\"final_price\",\"type\":\"float\"},{\"name\":\"users_num\",\"type\":\"int\"},{\"name\":\"final_record\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"MessageAuctionRecord\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"auction_records\",\"type\":{\"items\":\"proto.MessageAuctionRecord\",\"type\":\"array\"}}],\"name\":\"MessageAuctionGoods\",\"namespace\":\"proto\",\"type\":\"record\"}]}],\"name\":\"MessageAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"tips\",\"type\":[\"null\",\"string\"]},{\"name\":\"error_message\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.Message\",\"type\":\"record\"}"
 }
 
 func (r *Message) SchemaName() string {
 	return "proto.Message"
 }
 
-func (_ *Message) SetBoolean(v bool)    { panic("Unsupported operation") }
-func (_ *Message) SetInt(v int32)       { panic("Unsupported operation") }
-func (_ *Message) SetLong(v int64)      { panic("Unsupported operation") }
-func (_ *Message) SetFloat(v float32)   { panic("Unsupported operation") }
-func (_ *Message) SetDouble(v float64)  { panic("Unsupported operation") }
-func (_ *Message) SetBytes(v []byte)    { panic("Unsupported operation") }
-func (_ *Message) SetString(v string)   { panic("Unsupported operation") }
+func (_ *Message) SetBoolean(v bool) { panic("Unsupported operation") }
+func (_ *Message) SetInt(v int32) { panic("Unsupported operation") }
+func (_ *Message) SetLong(v int64) { panic("Unsupported operation") }
+func (_ *Message) SetFloat(v float32) { panic("Unsupported operation") }
+func (_ *Message) SetDouble(v float64) { panic("Unsupported operation") }
+func (_ *Message) SetBytes(v []byte) { panic("Unsupported operation") }
+func (_ *Message) SetString(v string) { panic("Unsupported operation") }
 func (_ *Message) SetUnionElem(v int64) { panic("Unsupported operation") }
 
 func (r *Message) Get(i int) types.Field {
-	switch i {
-
+	switch (i) {
+	
 	case 0:
-
-		return (*types.Int)(&r.Action)
-
+		
+		
+			return (*types.Int)(&r.Action)
+		
+	
 	case 1:
-
-		r.Sales_advisor_signin = NewUnionNullRequestSalesAdvisorSignin()
-
-		return r.Sales_advisor_signin
-
+		
+			r.SessionId = NewSessionIdUnion()
+	
+		
+		
+			return r.SessionId
+		
+	
 	case 2:
-
-		r.Sales_advisor_receiving_customers = NewUnionNullRequestSalesAdvisorReceivingCustomers()
-
-		return r.Sales_advisor_receiving_customers
-
+		
+			r.Sales_advisor_signin = NewSales_advisor_signinUnion()
+	
+		
+		
+			return r.Sales_advisor_signin
+		
+	
 	case 3:
-
-		r.Sales_advisor_leave_customers = NewUnionNullRequestSalesAdvisorLeaveCustomers()
-
-		return r.Sales_advisor_leave_customers
-
+		
+			r.Sales_advisor_receiving_customers = NewSales_advisor_receiving_customersUnion()
+	
+		
+		
+			return r.Sales_advisor_receiving_customers
+		
+	
 	case 4:
-
-		r.Sales_advisor_build_contract = NewUnionNullRequestSalesAdvisorBuildContract()
-
-		return r.Sales_advisor_build_contract
-
+		
+			r.Sales_advisor_leave_customers = NewSales_advisor_leave_customersUnion()
+	
+		
+		
+			return r.Sales_advisor_leave_customers
+		
+	
 	case 5:
-
-		r.Sales_advisor_confirm_paid = NewUnionNullRequestSalesAdvisorConfirmPaid()
-
-		return r.Sales_advisor_confirm_paid
-
+		
+			r.Sales_advisor_build_contract = NewSales_advisor_build_contractUnion()
+	
+		
+		
+			return r.Sales_advisor_build_contract
+		
+	
 	case 6:
-
-		r.Message_room_info = NewUnionNullMessageRoomInfo()
-
-		return r.Message_room_info
-
+		
+			r.Sales_advisor_confirm_paid = NewSales_advisor_confirm_paidUnion()
+	
+		
+		
+			return r.Sales_advisor_confirm_paid
+		
+	
 	case 7:
-
-		r.Message_room_waiting_customers = NewUnionNullMessageRoomWaitingCustomers()
-
-		return r.Message_room_waiting_customers
-
+		
+			r.Customer_signin = NewCustomer_signinUnion()
+	
+		
+		
+			return r.Customer_signin
+		
+	
 	case 8:
-
-		r.Error_message = NewUnionNullString()
-
-		return r.Error_message
-
+		
+			r.Customer_auction_bid = NewCustomer_auction_bidUnion()
+	
+		
+		
+			return r.Customer_auction_bid
+		
+	
+	case 9:
+		
+			r.Customer_join_queue = NewCustomer_join_queueUnion()
+	
+		
+		
+			return r.Customer_join_queue
+		
+	
+	case 10:
+		
+			r.Host_switch_state = NewHost_switch_stateUnion()
+	
+		
+		
+			return r.Host_switch_state
+		
+	
+	case 11:
+		
+			r.Message_session = NewMessage_sessionUnion()
+	
+		
+		
+			return r.Message_session
+		
+	
+	case 12:
+		
+			r.Message_room_info = NewMessage_room_infoUnion()
+	
+		
+		
+			return r.Message_room_info
+		
+	
+	case 13:
+		
+			r.Message_room_waiting_customers = NewMessage_room_waiting_customersUnion()
+	
+		
+		
+			return r.Message_room_waiting_customers
+		
+	
+	case 14:
+		
+			r.Message_cars_model = NewMessage_cars_modelUnion()
+	
+		
+		
+			return r.Message_cars_model
+		
+	
+	case 15:
+		
+			r.Message_auction_info = NewMessage_auction_infoUnion()
+	
+		
+		
+			return r.Message_auction_info
+		
+	
+	case 16:
+		
+			r.Tips = NewTipsUnion()
+	
+		
+		
+			return r.Tips
+		
+	
+	case 17:
+		
+			r.Error_message = NewError_messageUnion()
+	
+		
+		
+			return r.Error_message
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *Message) SetDefault(i int) {
-	switch i {
-
+	switch (i) {
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
 	}
 	panic("Unknown field index")
 }
 
 func (_ *Message) AppendMap(key string) types.Field { panic("Unsupported operation") }
-func (_ *Message) AppendArray() types.Field         { panic("Unsupported operation") }
-func (_ *Message) Finalize()                        {}
+func (_ *Message) AppendArray() types.Field { panic("Unsupported operation") }
+func (_ *Message) Finalize() { }
