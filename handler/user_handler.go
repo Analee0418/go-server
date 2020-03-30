@@ -16,6 +16,10 @@ func (h *SalesAdvisorSignin) setConn(conn *net.Conn) {
 	h.conn = conn
 }
 
+func (h *SalesAdvisorSignin) selected(s *model.Session) {
+	h.session = s
+}
+
 func (h *SalesAdvisorSignin) do(msg avro.Message) {
 	// alias := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_alias.String
 	advisorID := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_id.String
