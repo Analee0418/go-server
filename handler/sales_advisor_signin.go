@@ -63,6 +63,7 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 			h.session.SendMessage(*smsg)
 
 			roominfo := r.GetRoomInfo()
+			log.Println(r)
 			msg := *model.GenerateMessage(avro.ActionMessage_room_info)
 			msg.Message_room_info = &avro.Message_room_infoUnion{
 				MessageRoomInfo: &roominfo,

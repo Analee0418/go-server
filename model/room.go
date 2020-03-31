@@ -164,12 +164,15 @@ func InitRoom() {
 			} // 客户信息
 			if val, err := HGetRedis(roomKey, "customerMobile"); err == nil {
 				roomInstance.roomInfo.Customer_info.Mobile.String = val.(string)
+				roomInstance.roomInfo.Customer_info.Mobile.UnionType = avro.MobileUnionTypeEnumString
 			}
 			if val, err := HGetRedis(roomKey, "customerIDCard"); err == nil {
 				roomInstance.roomInfo.Customer_info.Idcard.String = val.(string)
+				roomInstance.roomInfo.Customer_info.Idcard.UnionType = avro.IdcardUnionTypeEnumString
 			}
 			if val, err := HGetRedis(roomKey, "customerName"); err == nil {
 				roomInstance.roomInfo.Customer_info.Username.String = val.(string)
+				roomInstance.roomInfo.Customer_info.Username.UnionType = avro.UsernameUnionTypeEnumString
 			}
 
 			roomInstance.roomInfo.Waiting_list = []*avro.MessageCustomersInfo{} // 排队人数
@@ -180,7 +183,7 @@ func InitRoom() {
 					for _, item := range fooList {
 						roomInstance.roomInfo.Waiting_list = append(roomInstance.roomInfo.Waiting_list, &avro.MessageCustomersInfo{
 							Mobile:       &avro.MobileUnion{String: item["customerMobile"].(string), UnionType: avro.MobileUnionTypeEnumString},
-							MobileRegion: &avro.MobileRegionUnion{String: "新疆 伊犁哈萨克自治州", UnionType: avro.MobileRegionUnionTypeEnumString},
+							MobileRegion: &avro.MobileRegionUnion{String: "", UnionType: avro.MobileRegionUnionTypeEnumString},
 							Idcard:       &avro.IdcardUnion{String: item["customerIDCard"].(string), UnionType: avro.IdcardUnionTypeEnumString},
 							Username:     &avro.UsernameUnion{String: item["customerName"].(string), UnionType: avro.UsernameUnionTypeEnumString},
 						})
@@ -212,12 +215,15 @@ func InitRoom() {
 			} // 汽车模型
 			if val, err := HGetRedis(roomKey, "carBrand"); err == nil {
 				roomInstance.roomInfo.Car_model.Brand.String = val.(string)
+				roomInstance.roomInfo.Car_model.Brand.UnionType = avro.BrandUnionTypeEnumString
 			}
 			if val, err := HGetRedis(roomKey, "carColor"); err == nil {
 				roomInstance.roomInfo.Car_model.Color.String = val.(string)
+				roomInstance.roomInfo.Car_model.Color.UnionType = avro.ColorUnionTypeEnumString
 			}
 			if val, err := HGetRedis(roomKey, "carSeries"); err == nil {
 				roomInstance.roomInfo.Car_model.Series.String = val.(string)
+				roomInstance.roomInfo.Car_model.Series.UnionType = avro.SeriesUnionTypeEnumString
 			}
 
 			RoomContainer[roomInstance.roomKey] = roomInstance
