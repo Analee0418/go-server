@@ -71,7 +71,7 @@ func (r *RequestSalesAdvisorReceivingCustomers) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorReceivingCustomers) Schema() string {
-	return "{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"proto.RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"proto.RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorReceivingCustomers) SchemaName() string {

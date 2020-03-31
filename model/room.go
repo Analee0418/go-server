@@ -139,7 +139,7 @@ func (r *Room) String() string {
 	return ""
 }
 
-func init() {
+func InitRoom() {
 	for _, advisorID := range AdvisorID {
 		roomKey := GenerateRoomKey(advisorID)
 		log.Println(roomKey)
@@ -157,9 +157,10 @@ func init() {
 			}
 
 			roomInstance.roomInfo.Customer_info = &avro.MessageCustomersInfo{
-				Mobile:   avro.NewMobileUnion(),
-				Idcard:   avro.NewIdcardUnion(),
-				Username: avro.NewUsernameUnion(),
+				Mobile:       avro.NewMobileUnion(),
+				MobileRegion: avro.NewMobileRegionUnion(),
+				Idcard:       avro.NewIdcardUnion(),
+				Username:     avro.NewUsernameUnion(),
 			} // 客户信息
 			if val, err := HGetRedis(roomKey, "customerMobile"); err == nil {
 				roomInstance.roomInfo.Customer_info.Mobile.String = val.(string)
@@ -178,9 +179,10 @@ func init() {
 				if err := json.Unmarshal([]byte(val.(string)), &fooList); err == nil {
 					for _, item := range fooList {
 						roomInstance.roomInfo.Waiting_list = append(roomInstance.roomInfo.Waiting_list, &avro.MessageCustomersInfo{
-							Mobile:   &avro.MobileUnion{String: item["customerMobile"].(string), UnionType: avro.MobileUnionTypeEnumString},
-							Idcard:   &avro.IdcardUnion{String: item["customerIDCard"].(string), UnionType: avro.IdcardUnionTypeEnumString},
-							Username: &avro.UsernameUnion{String: item["customerName"].(string), UnionType: avro.UsernameUnionTypeEnumString},
+							Mobile:       &avro.MobileUnion{String: item["customerMobile"].(string), UnionType: avro.MobileUnionTypeEnumString},
+							MobileRegion: &avro.MobileRegionUnion{String: "新疆 伊犁哈萨克自治州", UnionType: avro.MobileRegionUnionTypeEnumString},
+							Idcard:       &avro.IdcardUnion{String: item["customerIDCard"].(string), UnionType: avro.IdcardUnionTypeEnumString},
+							Username:     &avro.UsernameUnion{String: item["customerName"].(string), UnionType: avro.UsernameUnionTypeEnumString},
 						})
 					}
 				}
@@ -225,22 +227,37 @@ func init() {
 			roomInstance.UpdateRoomID()
 			roomInstance.UpdateOrderCount(0)                            // 成交数量
 			roomInstance.UpdateCustomerInfo(&avro.MessageCustomersInfo{ // 客户信息
-				Mobile:   &avro.MobileUnion{String: "", UnionType: avro.MobileUnionTypeEnumString},
-				Idcard:   &avro.IdcardUnion{String: "", UnionType: avro.IdcardUnionTypeEnumString},
-				Username: &avro.UsernameUnion{String: "", UnionType: avro.UsernameUnionTypeEnumString},
+				Mobile:       &avro.MobileUnion{String: "13119999999", UnionType: avro.MobileUnionTypeEnumString},
+				MobileRegion: &avro.MobileRegionUnion{String: "新疆 伊犁哈萨克自治州", UnionType: avro.MobileRegionUnionTypeEnumString},
+				Idcard:       &avro.IdcardUnion{String: "110200399833338292", UnionType: avro.IdcardUnionTypeEnumString},
+				Username:     &avro.UsernameUnion{String: "测试用户1", UnionType: avro.UsernameUnionTypeEnumString},
 			})
-			roomInstance.UpdateWaitingList([]*avro.MessageCustomersInfo{})        // 排队人数
+			roomInstance.UpdateWaitingList([]*avro.MessageCustomersInfo{ // 排队人数
+				&avro.MessageCustomersInfo{
+					Mobile:       &avro.MobileUnion{String: "13119999999", UnionType: avro.MobileUnionTypeEnumString},
+					MobileRegion: &avro.MobileRegionUnion{String: "新疆 伊犁哈萨克自治州", UnionType: avro.MobileRegionUnionTypeEnumString},
+					Idcard:       &avro.IdcardUnion{String: "110200399833338292", UnionType: avro.IdcardUnionTypeEnumString},
+					Username:     &avro.UsernameUnion{String: "测试用户1", UnionType: avro.UsernameUnionTypeEnumString},
+				},
+				&avro.MessageCustomersInfo{
+					Mobile:       &avro.MobileUnion{String: "13188379982", UnionType: avro.MobileUnionTypeEnumString},
+					MobileRegion: &avro.MobileRegionUnion{String: "辽宁 丹东市", UnionType: avro.MobileRegionUnionTypeEnumString},
+					Idcard:       &avro.IdcardUnion{String: "110182199005170013", UnionType: avro.IdcardUnionTypeEnumString},
+					Username:     &avro.UsernameUnion{String: "测试用户2", UnionType: avro.UsernameUnionTypeEnumString},
+				},
+			})
 			roomInstance.UpdateCustomerAuction(&avro.MessageCustomersAuctionInfo{ // 竞拍信息
-				Auction_list:  &avro.MapDouble{M: map[string]float64{}},
-				Discount_list: &avro.MapDouble{M: map[string]float64{}},
+				Auction_list:  &avro.MapDouble{M: map[string]float64{"竞拍1": 31.03, "竞拍2": 323.42, "竞拍3": 109982.00}},
+				Discount_list: &avro.MapDouble{M: map[string]float64{"折扣券1": -1000, "折扣券2": -10}},
 			})
 			roomInstance.UpdateCarModel(&avro.MessageCarsModel{ // 汽车模型
-				Brand:  &avro.BrandUnion{String: "", UnionType: avro.BrandUnionTypeEnumString},
-				Color:  &avro.ColorUnion{String: "", UnionType: avro.ColorUnionTypeEnumNull},
-				Series: &avro.SeriesUnion{String: "", UnionType: avro.SeriesUnionTypeEnumString},
+				Brand:  &avro.BrandUnion{String: "一汽大众（应该使用配置文件）", UnionType: avro.BrandUnionTypeEnumString},
+				Color:  &avro.ColorUnion{String: "宝石蓝（应该使用配置文件）", UnionType: avro.ColorUnionTypeEnumNull},
+				Series: &avro.SeriesUnion{String: "CC（应该使用配置文件）", UnionType: avro.SeriesUnionTypeEnumString},
 			})
 
 			RoomContainer[roomInstance.roomKey] = roomInstance
+			log.Printf("Create new room info with roomKey: %s", roomKey)
 		}
 	}
 

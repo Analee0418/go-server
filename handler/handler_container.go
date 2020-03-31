@@ -11,6 +11,7 @@ import (
 var handlerMapping = map[avro.Action]ActionHandler{
 	avro.ActionHeartbeat:                    &heartBeat{},
 	avro.ActionRequest_sales_advisor_signin: &SalesAdvisorSignin{},
+	avro.ActionRequest_customer_signin:      &CustomerSignin{},
 }
 
 type ActionHandler interface {

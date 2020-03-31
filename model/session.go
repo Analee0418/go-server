@@ -44,9 +44,13 @@ func (s *Session) InitAdvisor(conn net.Conn, salesAdvisor string) {
 	AddSession(s)
 }
 
-func (s *Session) InitCustomer(conn net.Conn, customer avro.MessageCustomersInfo) {
+func (s *Session) InitCustomer(conn net.Conn, idcard string) {
 	s.conn = conn
 	s.id = guuid.New()
+	s.ip = s.conn.RemoteAddr().String()
+	s.name = idcard
+	s.lastHeartBeat = time.Now()
+	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
 	AddSession(s)
 	// TODO
 }

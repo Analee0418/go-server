@@ -22,6 +22,11 @@ type MessageCustomersInfo struct {
 
 	
 	
+		MobileRegion *MobileRegionUnion
+	
+
+	
+	
 		Idcard *IdcardUnion
 	
 
@@ -73,6 +78,11 @@ func writeMessageCustomersInfo(r *MessageCustomersInfo, w io.Writer) error {
 		return err			
 	}
 	
+	err = writeMobileRegionUnion( r.MobileRegion, w)
+	if err != nil {
+		return err			
+	}
+	
 	err = writeIdcardUnion( r.Idcard, w)
 	if err != nil {
 		return err			
@@ -91,7 +101,7 @@ func (r *MessageCustomersInfo) Serialize(w io.Writer) error {
 }
 
 func (r *MessageCustomersInfo) Schema() string {
-	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
 }
 
 func (r *MessageCustomersInfo) SchemaName() string {
@@ -121,6 +131,15 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 	
 	case 1:
 		
+			r.MobileRegion = NewMobileRegionUnion()
+	
+		
+		
+			return r.MobileRegion
+		
+	
+	case 2:
+		
 			r.Idcard = NewIdcardUnion()
 	
 		
@@ -128,7 +147,7 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 			return r.Idcard
 		
 	
-	case 2:
+	case 3:
 		
 			r.Username = NewUsernameUnion()
 	
@@ -143,6 +162,8 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 
 func (r *MessageCustomersInfo) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

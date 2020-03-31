@@ -23,6 +23,9 @@ func init() {
 		PoolSize:     10,
 		PoolTimeout:  30 * time.Second,
 	})
+
+	go InitRoom()
+	go InitCustomer()
 }
 
 func ExampleNewClient() {
@@ -138,10 +141,11 @@ func HSetRedis(key string, values ...interface{}) {
 }
 
 func HGetRedis(key string, field string) (res interface{}, e error) {
+	// log.Printf("%v %v", reflect.TypeOf(rdb), rdb)
 	val, err := rdb.HGet(key, field).Result()
-	log.Println(",,,,,,,", err)
+	// log.Println(",,,,,,,", err)
 	if err == redis.Nil {
-		log.Println(".................")
+		// log.Println(".................")
 		return nil, err
 	} else if err != nil {
 		log.Panic(err)
@@ -150,9 +154,7 @@ func HGetRedis(key string, field string) (res interface{}, e error) {
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println("Redis.get ", reflect.TypeOf(val))
-
+	// log.Println("Redis.get ", reflect.TypeOf(val))
 	return val, nil
 }
 

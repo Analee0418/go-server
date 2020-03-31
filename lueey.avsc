@@ -64,6 +64,10 @@
         "type": ["null", "string"]
       },
       {
+        "name": "mobileRegion",
+        "type": ["null", "string"]
+      },
+      {
         "name": "idcard",
         "type": ["null", "string"]
       },
@@ -200,6 +204,10 @@
       {
         "name": "bid_price",
         "type": "float"
+      },
+      {
+        "name": "is_final",
+        "type": "boolean"
       },
       {
         "name": "timestamp",
