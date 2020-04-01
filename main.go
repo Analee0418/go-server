@@ -76,7 +76,8 @@ func handleConnection(conn net.Conn) {
 	var reader = flate.NewReader(buffer)
 	errs := vm.Eval(reader, deser, &message)
 	if errs != nil {
-		log.Println(errs)
+		log.Printf("ERROR invalid data package: %v\n", errs)
+		return
 	}
 
 	log.Println(message)
