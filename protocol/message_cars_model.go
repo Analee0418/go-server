@@ -27,6 +27,11 @@ type MessageCarsModel struct {
 
 	
 	
+		Interior *InteriorUnion
+	
+
+	
+	
 		Series *SeriesUnion
 	
 
@@ -78,6 +83,11 @@ func writeMessageCarsModel(r *MessageCarsModel, w io.Writer) error {
 		return err			
 	}
 	
+	err = writeInteriorUnion( r.Interior, w)
+	if err != nil {
+		return err			
+	}
+	
 	err = writeSeriesUnion( r.Series, w)
 	if err != nil {
 		return err			
@@ -91,7 +101,7 @@ func (r *MessageCarsModel) Serialize(w io.Writer) error {
 }
 
 func (r *MessageCarsModel) Schema() string {
-	return "{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCarsModel\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"interior\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCarsModel\",\"type\":\"record\"}"
 }
 
 func (r *MessageCarsModel) SchemaName() string {
@@ -130,6 +140,15 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 	
 	case 2:
 		
+			r.Interior = NewInteriorUnion()
+	
+		
+		
+			return r.Interior
+		
+	
+	case 3:
+		
 			r.Series = NewSeriesUnion()
 	
 		
@@ -143,6 +162,8 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 
 func (r *MessageCarsModel) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

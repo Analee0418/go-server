@@ -71,7 +71,7 @@ func (r *RequestSalesAdvisorLeaveCustomers) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorLeaveCustomers) Schema() string {
-	return "{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"proto.RequestSalesAdvisorLeaveCustomers\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"proto.RequestSalesAdvisorLeaveCustomers\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorLeaveCustomers) SchemaName() string {

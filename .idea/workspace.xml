@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="72e08ee0-8793-44d6-88d5-49034f1c10e4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/config/template.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handler/hosts_update_state.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/http/http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/http/httpServer.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/auction_goods.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/protocol/address_union.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/protocol/goods_name_union.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/fileUtil.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/customer_signin.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/customer_signin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/handler_container.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/handler_container.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/sales_advisor_signin.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/sales_advisor_signin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lueey.avsc" beforeDir="false" afterPath="$PROJECT_DIR$/lueey.avsc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/customer.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/customer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/redis_conn.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/redis_conn.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/room.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/room.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/session_cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/session_cache.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/global_state.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/global_state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_auction_goods.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_auction_goods.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_auction_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_auction_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_auction_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_auction_record.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_cars_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_cars_model.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_customers_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_customers_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_room_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_room_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/message_room_waiting_customers.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/message_room_waiting_customers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/request_host_switch_state.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/request_host_switch_state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/request_sales_advisor_leave_customers.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/request_sales_advisor_leave_customers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol/request_sales_advisor_receiving_customers.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocol/request_sales_advisor_receiving_customers.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1a76JNBfttnDGJKWJYTCdGg6akd" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="72e08ee0-8793-44d6-88d5-49034f1c10e4" name="Default Changelist" comment="" />
+      <created>1586074212320</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1586074212320</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="326" y="323" key="Performance.Activity.Monitor" timestamp="1586074227762">
+      <screen x="29" y="23" width="1411" height="877" />
+    </state>
+    <state x="326" y="323" key="Performance.Activity.Monitor/29.23.1411.877@29.23.1411.877" timestamp="1586074227762" />
+  </component>
+</project>

@@ -17,7 +17,12 @@ type RequestSalesAdvisorBuildContract struct {
 
 	
 	
-		Contract_content *Contract_contentUnion
+		Filename string
+	
+
+	
+	
+		Filebytes []byte
 	
 
 }
@@ -58,7 +63,12 @@ func DeserializeRequestSalesAdvisorBuildContractFromSchema(r io.Reader, schema s
 func writeRequestSalesAdvisorBuildContract(r *RequestSalesAdvisorBuildContract, w io.Writer) error {
 	var err error
 	
-	err = writeContract_contentUnion( r.Contract_content, w)
+	err = vm.WriteString( r.Filename, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = vm.WriteBytes( r.Filebytes, w)
 	if err != nil {
 		return err			
 	}
@@ -71,7 +81,7 @@ func (r *RequestSalesAdvisorBuildContract) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorBuildContract) Schema() string {
-	return "{\"fields\":[{\"name\":\"contract_content\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.RequestSalesAdvisorBuildContract\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"filename\",\"type\":\"string\"},{\"name\":\"filebytes\",\"type\":\"bytes\"}],\"name\":\"proto.RequestSalesAdvisorBuildContract\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorBuildContract) SchemaName() string {
@@ -92,11 +102,14 @@ func (r *RequestSalesAdvisorBuildContract) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Contract_content = NewContract_contentUnion()
+		
+			return (*types.String)(&r.Filename)
+		
 	
+	case 1:
 		
 		
-			return r.Contract_content
+			return (*types.Bytes)(&r.Filebytes)
 		
 	
 	}
@@ -105,6 +118,8 @@ func (r *RequestSalesAdvisorBuildContract) Get(i int) types.Field {
 
 func (r *RequestSalesAdvisorBuildContract) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

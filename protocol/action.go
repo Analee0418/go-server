@@ -35,29 +35,33 @@ const (
 
 	ActionRequest_customer_join_queue Action = 8
 
-	ActionRequest_host_switch_state Action = 9
+	ActionRequest_customer_build_signature Action = 9
 
-	ActionMessage_session Action = 10
+	ActionRequest_host_switch_state Action = 10
 
-	ActionMessage_room_info Action = 11
+	ActionMessage_session Action = 11
 
-	ActionMessage_room_waiting_customers Action = 12
+	ActionMessage_room_info Action = 12
 
-	ActionMessage_customers_info Action = 13
+	ActionMessage_room_waiting_customers Action = 13
 
-	ActionMessage_customers_auction_info Action = 14
+	ActionMessage_room_chat_ends Action = 14
 
-	ActionMessage_cars_model Action = 15
+	ActionMessage_customers_info Action = 15
 
-	ActionMessage_contract Action = 16
+	ActionMessage_customers_auction_info Action = 16
 
-	ActionMessage_global_info Action = 17
+	ActionMessage_cars_model Action = 17
 
-	ActionMessage_auction_info Action = 18
+	ActionMessage_contract Action = 18
 
-	ActionTips Action = 19
+	ActionMessage_global_info Action = 19
 
-	ActionError_message Action = 20
+	ActionMessage_auction_info Action = 20
+
+	ActionTips Action = 21
+
+	ActionError_message Action = 22
 
 )
 
@@ -91,6 +95,9 @@ func (e Action) String() string {
 	case ActionRequest_customer_join_queue:
 		return "request_customer_join_queue"
 
+	case ActionRequest_customer_build_signature:
+		return "request_customer_build_signature"
+
 	case ActionRequest_host_switch_state:
 		return "request_host_switch_state"
 
@@ -102,6 +109,9 @@ func (e Action) String() string {
 
 	case ActionMessage_room_waiting_customers:
 		return "message_room_waiting_customers"
+
+	case ActionMessage_room_chat_ends:
+		return "message_room_chat_ends"
 
 	case ActionMessage_customers_info:
 		return "message_customers_info"
@@ -165,6 +175,9 @@ func NewActionValue(raw string) (r Action, err error) {
 	case "request_customer_join_queue":
 		return ActionRequest_customer_join_queue, nil
 
+	case "request_customer_build_signature":
+		return ActionRequest_customer_build_signature, nil
+
 	case "request_host_switch_state":
 		return ActionRequest_host_switch_state, nil
 
@@ -176,6 +189,9 @@ func NewActionValue(raw string) (r Action, err error) {
 
 	case "message_room_waiting_customers":
 		return ActionMessage_room_waiting_customers, nil
+
+	case "message_room_chat_ends":
+		return ActionMessage_room_chat_ends, nil
 
 	case "message_customers_info":
 		return ActionMessage_customers_info, nil

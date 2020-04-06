@@ -35,6 +35,11 @@ type MessageCustomersInfo struct {
 		Username *UsernameUnion
 	
 
+	
+	
+		Address *AddressUnion
+	
+
 }
 
 func NewMessageCustomersInfo() (*MessageCustomersInfo) {
@@ -93,6 +98,11 @@ func writeMessageCustomersInfo(r *MessageCustomersInfo, w io.Writer) error {
 		return err			
 	}
 	
+	err = writeAddressUnion( r.Address, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -101,7 +111,7 @@ func (r *MessageCustomersInfo) Serialize(w io.Writer) error {
 }
 
 func (r *MessageCustomersInfo) Schema() string {
-	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
 }
 
 func (r *MessageCustomersInfo) SchemaName() string {
@@ -156,12 +166,23 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 			return r.Username
 		
 	
+	case 4:
+		
+			r.Address = NewAddressUnion()
+	
+		
+		
+			return r.Address
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *MessageCustomersInfo) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

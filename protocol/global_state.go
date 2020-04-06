@@ -17,22 +17,27 @@ type GlobalState int32
 
 const (
 
-	GlobalStateStarting_animations GlobalState = 0
+	GlobalStateAwating_starting GlobalState = 0
 
-	GlobalStateSpeeching GlobalState = 1
+	GlobalStateStarting_animations GlobalState = 1
 
-	GlobalStateAution GlobalState = 2
+	GlobalStateSpeeching GlobalState = 2
 
-	GlobalStateProducts GlobalState = 3
+	GlobalStateAution GlobalState = 3
 
-	GlobalStateDiscount_strategy GlobalState = 4
+	GlobalStateProducts GlobalState = 4
 
-	GlobalStateChat_with_advisor GlobalState = 5
+	GlobalStateDiscount_strategy GlobalState = 5
+
+	GlobalStateChat_with_advisor GlobalState = 6
 
 )
 
 func (e GlobalState) String() string {
 	switch e {
+
+	case GlobalStateAwating_starting:
+		return "awating_starting"
 
 	case GlobalStateStarting_animations:
 		return "starting_animations"
@@ -62,6 +67,9 @@ func writeGlobalState(r GlobalState, w io.Writer) error {
 
 func NewGlobalStateValue(raw string) (r GlobalState, err error) {
 	switch raw {
+
+	case "awating_starting":
+		return GlobalStateAwating_starting, nil
 
 	case "starting_animations":
 		return GlobalStateStarting_animations, nil

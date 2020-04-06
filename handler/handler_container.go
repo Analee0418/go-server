@@ -9,9 +9,16 @@ import (
 )
 
 var handlerMapping = map[avro.Action]ActionHandler{
-	avro.ActionHeartbeat:                    &heartBeat{},
-	avro.ActionRequest_sales_advisor_signin: &SalesAdvisorSignin{},
-	avro.ActionRequest_customer_signin:      &CustomerSignin{},
+	avro.ActionHeartbeat:                                 &heartBeat{},
+	avro.ActionRequest_sales_advisor_signin:              &SalesAdvisorSignin{},
+	avro.ActionRequest_sales_advisor_receiving_customers: &SalesAdvisorInvite{},
+	avro.ActionRequest_sales_advisor_leave_customers:     &SalesAdvisorKick{},
+	avro.ActionRequest_sales_advisor_build_contract:      &SalesAdvisorBuildContract{},
+	avro.ActionRequest_sales_advisor_confirm_paid:        &SalesAdvisorConfirmedSignedContract{},
+	avro.ActionRequest_customer_signin:                   &CustomerSignin{},
+	avro.ActionRequest_customer_join_queue:               &CustomerApplyJoinRoom{},
+	avro.ActionRequest_customer_build_signature:          &CustomerBuildSignature{},
+	avro.ActionRequest_host_switch_state:                 &HostsUpdateState{},
 }
 
 type ActionHandler interface {
@@ -31,16 +38,37 @@ func (s *HandlerSelector) Selects(conn *net.Conn, msg avro.Message) {
 	if ok {
 		s.conn = conn
 		handler.setConn(conn)
-		handler.do(msg)
-		cacheSession, exist := model.SessionByID(msg.SessionId.String)
-		if exist {
-			s.session = cacheSession
-			handler.selected(cacheSession)
-			log.Printf("exist: %v, cacheSession: %v", exist, cacheSession)
+
+		// 登录不需要session外，其他请求都需要sesison
+		if _, ok := map[avro.Action]string{
+			avro.ActionRequest_customer_signin:      "cutomer_signin",
+			avro.ActionRequest_sales_advisor_signin: "salce_signin",
+			// avro.ActionRequest_sales_advisor_signin: "salce_signin",
+		}[msg.Action]; ok { // 登录操作
+
+			handler.do(msg)
+
+		} else { // 其他行为都需要提前具备 session 实例
+
+			cacheSession, exist := model.SessionByID(msg.SessionId.String)
+			if exist && !cacheSession.Dead() {
+				s.session = cacheSession
+				handler.selected(cacheSession)
+				log.Printf("exist: %v, cacheSession: %v", exist, cacheSession)
+				handler.do(msg)
+			} else {
+				log.Println("ERROR: login first pls")
+				msg := model.GenerateMessage(avro.ActionError_message)
+				msg.Error_message = &avro.Error_messageUnion{
+					String:    "请先登录账户",
+					UnionType: avro.Error_messageUnionTypeEnumString,
+				}
+				model.SendMessage(*s.conn, *msg)
+				return
+			}
 		}
-		handler.do(msg)
 	} else {
-		log.Printf("Action not found: %v", msg.Action)
+		log.Printf("ERROR: Action not found: %v", msg.Action)
 	}
 }
 
@@ -59,17 +87,7 @@ func (h *heartBeat) selected(s *model.Session) {
 func (h *heartBeat) do(msg avro.Message) {
 	_conn := *h.conn
 	log.Printf("[%v] heartbeat message %v\n", _conn.RemoteAddr().String(), h.session)
-	if h.session == nil {
-		log.Println("login first pls")
-		msg := model.GenerateMessage(avro.ActionError_message)
-		msg.Error_message = &avro.Error_messageUnion{
-			String:    "login first pls",
-			UnionType: avro.Error_messageUnionTypeEnumString,
-		}
-		model.SendMessage(_conn, *msg)
-	} else {
-		h.session.Heartbeat()
-		h.session.SendMessage(*model.GenerateMessage(avro.ActionHeartbeat))
-		log.Printf("%v", h.session)
-	}
+	h.session.Heartbeat()
+	h.session.SendMessage(*model.GenerateMessage(avro.ActionHeartbeat))
+	log.Printf("%v", h.session)
 }

@@ -17,7 +17,7 @@ type RequestSalesAdvisorReceivingCustomers struct {
 
 	
 	
-		Customers_info *MessageCustomersInfo
+		Customers_idcard string
 	
 
 }
@@ -58,7 +58,7 @@ func DeserializeRequestSalesAdvisorReceivingCustomersFromSchema(r io.Reader, sch
 func writeRequestSalesAdvisorReceivingCustomers(r *RequestSalesAdvisorReceivingCustomers, w io.Writer) error {
 	var err error
 	
-	err = writeMessageCustomersInfo( r.Customers_info, w)
+	err = vm.WriteString( r.Customers_idcard, w)
 	if err != nil {
 		return err			
 	}
@@ -71,7 +71,7 @@ func (r *RequestSalesAdvisorReceivingCustomers) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorReceivingCustomers) Schema() string {
-	return "{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"proto.RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"customers_idcard\",\"type\":\"string\"}],\"name\":\"proto.RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorReceivingCustomers) SchemaName() string {
@@ -92,11 +92,8 @@ func (r *RequestSalesAdvisorReceivingCustomers) Get(i int) types.Field {
 	
 	case 0:
 		
-			r.Customers_info = NewMessageCustomersInfo()
-	
 		
-		
-			return r.Customers_info
+			return (*types.String)(&r.Customers_idcard)
 		
 	
 	}

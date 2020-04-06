@@ -14,8 +14,6 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Sales_advisor_receiving_customers: avro.NewSales_advisor_receiving_customersUnion(),
 
-		Sales_advisor_leave_customers: avro.NewSales_advisor_leave_customersUnion(),
-
 		Sales_advisor_build_contract: avro.NewSales_advisor_build_contractUnion(),
 
 		Sales_advisor_confirm_paid: avro.NewSales_advisor_confirm_paidUnion(),
@@ -26,7 +24,7 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Customer_auction_bid: avro.NewCustomer_auction_bidUnion(),
 
-		Customer_join_queue: avro.NewCustomer_join_queueUnion(),
+		Request_customer_build_signature: avro.NewRequest_customer_build_signatureUnion(),
 
 		// 主持人端
 

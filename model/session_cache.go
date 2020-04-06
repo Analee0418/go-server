@@ -12,8 +12,11 @@ var lastReleaseTime int64 = utils.NowMilliseconds()
 var sessionCacheByUserName = map[string]*Session{}
 var sessionCacheByID = map[guuid.UUID]*Session{}
 
+func init() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Lmicroseconds)
+}
+
 func SessionByID(uuid string) (*Session, bool) {
-	log.Println(`+++++++++++++++++++++`)
 	if len(uuid) == 0 {
 		return nil, false
 	}
@@ -22,20 +25,17 @@ func SessionByID(uuid string) (*Session, bool) {
 		log.Printf("Error: %v", e)
 		return nil, false
 	}
-	log.Println(sid)
-	log.Println(sessionCacheByID)
 	if s, ok := sessionCacheByID[sid]; ok {
-		log.Println(`+***************+`)
 		return s, true
 	}
 	return nil, false
 }
 
-func GetSessionByName(name string) (Session, bool) {
+func GetSessionByName(name string) (*Session, bool) {
 	if s, ok := sessionCacheByUserName[name]; ok {
-		return *s, true
+		return s, true
 	}
-	return Session{}, false
+	return nil, false
 }
 
 func AddSession(s *Session) {
@@ -65,20 +65,24 @@ func ReleaseSessionCache(now int64) {
 		return
 	}
 
-	log.Printf("Start finding invalid session. %d\n", len(sessionCacheByID))
+	// log.Printf("Start finding invalid session. %d\n", len(sessionCacheByID))
 
 	invalidKeys := []func(){}
 	for _, session := range sessionCacheByID {
-		if utils.NowMilliseconds()-session.lastHeartBeatMillisecond > 30000 {
-			uuid, name := session.Close("Your connection will be forcibly closed later")
+		if session.dead {
+			invalidKeys = append(invalidKeys, func() { DeleteSession(session.id, session.name) })
+		} else {
+			if utils.NowMilliseconds()-session.lastHeartBeatMillisecond > 30000 {
+				uuid, name := session.Close("Your connection will be forcibly closed later")
 
-			// 放置 goroutine queue
-			invalidKeys = append(invalidKeys, func() { DeleteSession(uuid, name) })
-			// go DeleteSession(conn, uuid, name)
+				// 放置 goroutine queue
+				invalidKeys = append(invalidKeys, func() { DeleteSession(uuid, name) })
+				// go DeleteSession(conn, uuid, name)
+			}
 		}
 	}
 
-	log.Printf("Invalid sesisons count %d", len(invalidKeys))
+	// log.Printf("Invalid sesisons count %d", len(invalidKeys))
 	for _, fun := range invalidKeys {
 		fun()
 	}

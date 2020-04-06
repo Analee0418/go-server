@@ -17,7 +17,8 @@ type Session struct {
 	conn                     net.Conn
 	id                       guuid.UUID
 	ip                       string
-	customerInfo             avro.MessageCustomersInfo
+	customerInfo             *Customer
+	roomInfo                 *Room
 	name                     string
 	salesAdvisor             string
 	lastHeartBeat            time.Time
@@ -29,26 +30,40 @@ func (s *Session) UUID() string {
 	return s.id.String()
 }
 
+func (s *Session) Dead() bool {
+	return s.dead
+}
+
 func (s *Session) String() string {
 	return fmt.Sprintf("%v/%v/%v/%v/%v", s.ip, s.id.String(), s.name, s.lastHeartBeat, s.lastHeartBeatMillisecond)
 }
 
-func (s *Session) InitAdvisor(conn net.Conn, salesAdvisor string) {
+func (s *Session) CurrentUser() *Customer {
+	return s.customerInfo
+}
+
+func (s *Session) Room() *Room {
+	return s.roomInfo
+}
+
+func (s *Session) InitAdvisor(conn net.Conn, room *Room) {
 	s.conn = conn
 	s.id = guuid.New()
 	s.ip = s.conn.RemoteAddr().String()
-	s.name = salesAdvisor
-	s.salesAdvisor = salesAdvisor
+	s.name = room.SalesAdvisorID
+	s.salesAdvisor = room.SalesAdvisorID
+	s.roomInfo = room
 	s.lastHeartBeat = time.Now()
 	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
 	AddSession(s)
 }
 
-func (s *Session) InitCustomer(conn net.Conn, idcard string) {
+func (s *Session) InitCustomer(conn net.Conn, customer *Customer) {
 	s.conn = conn
 	s.id = guuid.New()
 	s.ip = s.conn.RemoteAddr().String()
-	s.name = idcard
+	s.name = customer.ID
+	s.customerInfo = customer
 	s.lastHeartBeat = time.Now()
 	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
 	AddSession(s)
@@ -106,14 +121,22 @@ func (s *Session) Close(reason string) (guuid.UUID, string) {
 	msg := GenerateMessage(avro.ActionError_message)
 	msg.Error_message = &avro.Error_messageUnion{String: reason, UnionType: avro.Error_messageUnionTypeEnumString}
 
+	log.Printf("WARN: session[%v, %s, %s] Disconnected. Reason: %s", s.id, s.name, s.customerInfo, reason)
+
 	s.SendMessage(*msg)
 	s.conn.Close()
-	s.dead = true
+
+	if s.customerInfo != nil {
+		GlobalOnCustomerDisconnect(s.customerInfo.ID)
+		s.customerInfo = nil
+	}
 
 	// 如果在竞拍
 	// 如果在排队
 	// 如果已进入房间
 	//
+
+	s.dead = true
 
 	return s.id, s.name
 }

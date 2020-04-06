@@ -47,11 +47,6 @@ type MessageAuctionRecord struct {
 
 	
 	
-		Is_final bool
-	
-
-	
-	
 		Timestamp int64
 	
 
@@ -123,11 +118,6 @@ func writeMessageAuctionRecord(r *MessageAuctionRecord, w io.Writer) error {
 		return err			
 	}
 	
-	err = vm.WriteBool( r.Is_final, w)
-	if err != nil {
-		return err			
-	}
-	
 	err = vm.WriteLong( r.Timestamp, w)
 	if err != nil {
 		return err			
@@ -141,7 +131,7 @@ func (r *MessageAuctionRecord) Serialize(w io.Writer) error {
 }
 
 func (r *MessageAuctionRecord) Schema() string {
-	return "{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"is_final\",\"type\":\"boolean\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"proto.MessageAuctionRecord\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"proto.MessageAuctionRecord\",\"type\":\"record\"}"
 }
 
 func (r *MessageAuctionRecord) SchemaName() string {
@@ -211,12 +201,6 @@ func (r *MessageAuctionRecord) Get(i int) types.Field {
 	case 6:
 		
 		
-			return (*types.Boolean)(&r.Is_final)
-		
-	
-	case 7:
-		
-		
 			return (*types.Long)(&r.Timestamp)
 		
 	
@@ -226,8 +210,6 @@ func (r *MessageAuctionRecord) Get(i int) types.Field {
 
 func (r *MessageAuctionRecord) SetDefault(i int) {
 	switch (i) {
-	
-        
 	
         
 	

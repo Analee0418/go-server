@@ -1,6 +1,7 @@
-package model
+package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -23,9 +24,6 @@ func init() {
 		PoolSize:     10,
 		PoolTimeout:  30 * time.Second,
 	})
-
-	go InitRoom()
-	go InitCustomer()
 }
 
 func ExampleNewClient() {
@@ -438,6 +436,66 @@ func ExamplePubSub() {
 	}
 
 	// Output: mychannel1 hello
+}
+
+func ChangeGlobalState(state string) error {
+	err := rdb.Publish("global_state", state).Err()
+	return err
+}
+
+func ReceiveGlobalState() {
+	pubsub := rdb.Subscribe("global_state")
+	defer func() { pubsub.Close() }()
+
+	ch := pubsub.ChannelSize(1)
+	for {
+		res := <-ch
+		lang, err := json.Marshal(res)
+		if err == nil {
+			log.Printf("%v ----------------- %v", &rdb, string(lang))
+		} else {
+			log.Printf("msg cannot decode! %s", res)
+		}
+	}
+	// go func() {
+	// 	ch := pubsub.ChannelSize(1)
+	// 	for {
+	// 		res := <-ch
+
+	// 		lang, err := json.Marshal(res)
+	// 		if err == nil {
+	// 			log.Printf("----------------- %v", string(lang))
+	// 		} else {
+	// 			log.Printf("msg cannot decode! %s", res)
+	// 		}
+	// 	}
+	// }()
+
+	// go func() {
+	// 	for {
+	// 		res, err := pubsub.ReceiveTimeout(100 * time.Second)
+	// 		if err != nil {
+	// 			log.Println(err)
+	// 			continue
+	// 		}
+	// 		done <- res
+	// 	}
+	// }()
+
+	// go func() {
+	// 	for {
+	// 		select {
+	// 		case msg := <-done:
+	// 			lang, err := json.Marshal(msg)
+	// 			if err == nil {
+	// 				log.Println(string(lang))
+	// 			} else {
+	// 				log.Printf("msg cannot decode! %s", msg)
+	// 			}
+	// 		}
+	// 	}
+	// }()
+
 }
 
 func ExamplePubSub_Receive() {

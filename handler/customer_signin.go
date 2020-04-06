@@ -24,40 +24,45 @@ func (h *CustomerSignin) do(msg avro.Message) {
 	Idcard := msg.Customer_signin.RequestCustomerSignin.Idcard.String
 	mobile := msg.Customer_signin.RequestCustomerSignin.Mobile.String
 
-	if s, exists := model.GetSessionByName(Idcard); exists {
+	if _, exists := model.GetSessionByName(Idcard); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
-			String:    "Do not log in repeatedly",
-			UnionType: avro.Error_messageUnionTypeEnumString,
-		}
-		s.SendMessage(msg)
-		return
-	}
-
-	ok := false
-	keys := []string{}
-	for k, _ := range model.AllCustomerContainer {
-		keys = append(keys, k)
-	}
-	log.Println("-----------------------", keys, Idcard)
-	c, ok := model.AllCustomerContainer[Idcard]
-	if !ok {
-		msg := *model.GenerateMessage(avro.ActionError_message)
-		msg.Error_message = &avro.Error_messageUnion{
-			String:    "Can not found user",
+			String:    "您已在其他设备登录",
 			UnionType: avro.Error_messageUnionTypeEnumString,
 		}
 		model.SendMessage(*h.conn, msg)
 		return
 	}
-	if c.CustomerInfo.Mobile.String == mobile {
-		ok = true
+
+	log.Printf("DEBUG customer signin with %s, %s", Idcard, mobile)
+
+	ok := false
+	c, ok := model.AllCustomerContainer[Idcard]
+	if !ok || c.Mobile != mobile {
+		msg := *model.GenerateMessage(avro.ActionError_message)
+		msg.Error_message = &avro.Error_messageUnion{
+			String:    "无效用户",
+			UnionType: avro.Error_messageUnionTypeEnumString,
+		}
+		model.SendMessage(*h.conn, msg)
+		return
+	}
+
+	_, ok = model.RoomContainer[c.SalesAdvisorID]
+	if !ok {
+		msg := *model.GenerateMessage(avro.ActionError_message)
+		msg.Error_message = &avro.Error_messageUnion{
+			String:    "您没有受销售顾问的邀请",
+			UnionType: avro.Error_messageUnionTypeEnumString,
+		}
+		model.SendMessage(*h.conn, msg)
+		return
 	}
 
 	// 允许登录
 	if ok {
 		h.session = new(model.Session)
-		h.session.InitCustomer(*h.conn, Idcard)
+		h.session.InitCustomer(*h.conn, c)
 
 		smsg := model.GenerateMessage(avro.ActionMessage_session)
 		smsg.Message_session = &avro.Message_sessionUnion{
@@ -72,30 +77,31 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		log.Println("-----------------------", smsg.Message_session.MessageSession.Sid.String)
 		h.session.SendMessage(*smsg)
 
-		keys = []string{}
-		for k, _ := range model.RoomContainer {
-			keys = append(keys, k)
-		}
+		msgs := model.GlobalOnCustomerSignin(Idcard)
+		if msgs != nil {
 
-		log.Println(keys, c.SalesAdvisorID)
-
-		if r, ok := model.RoomContainer[model.GenerateRoomKey(c.SalesAdvisorID)]; ok {
-			log.Printf("Sales advisor room: %v", r)
-
-			roominfo := r.GetRoomInfo()
-			msg := *model.GenerateMessage(avro.ActionMessage_room_info)
-			msg.Message_room_info = &avro.Message_room_infoUnion{
-				MessageRoomInfo: &roominfo,
-				UnionType:       avro.Message_room_infoUnionTypeEnumMessageRoomInfo,
+			for _, msg := range msgs {
+				h.session.SendMessage(*msg)
 			}
-			h.session.SendMessage(msg)
-		} else {
-			msg := *model.GenerateMessage(avro.ActionError_message)
-			msg.Error_message = &avro.Error_messageUnion{
-				String:    "Invalid users",
-				UnionType: avro.Error_messageUnionTypeEnumString,
-			}
-			model.SendMessage(*h.conn, msg)
+
+			// if r, ok := model.RoomContainer[model.GenerateRoomKey(c.SalesAdvisorID)]; ok {
+			// 	log.Printf("Sales advisor room: %v", r)
+
+			// 	roominfo := r.BuildRoomMessage()
+			// 	msg := *model.GenerateMessage(avro.ActionMessage_room_info)
+			// 	msg.Message_room_info = &avro.Message_room_infoUnion{
+			// 		MessageRoomInfo: roominfo,
+			// 		UnionType:       avro.Message_room_infoUnionTypeEnumMessageRoomInfo,
+			// 	}
+			// 	h.session.SendMessage(msg)
+			// } else {
+			// 	msg := *model.GenerateMessage(avro.ActionError_message)
+			// 	msg.Error_message = &avro.Error_messageUnion{
+			// 		String:    "Invalid users",
+			// 		UnionType: avro.Error_messageUnionTypeEnumString,
+			// 	}
+			// 	model.SendMessage(*h.conn, msg)
+			// }
 		}
 	}
 }

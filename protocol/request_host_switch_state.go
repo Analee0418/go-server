@@ -91,7 +91,7 @@ func (r *RequestHostSwitchState) Serialize(w io.Writer) error {
 }
 
 func (r *RequestHostSwitchState) Schema() string {
-	return "{\"fields\":[{\"name\":\"globalState\",\"type\":{\"name\":\"enum.GlobalState\",\"symbols\":[\"starting_animations\",\"speeching\",\"aution\",\"products\",\"discount_strategy\",\"chat_with_advisor\"],\"type\":\"enum\"}},{\"name\":\"countDownSeconds\",\"type\":\"int\"},{\"name\":\"body\",\"type\":\"string\"}],\"name\":\"proto.RequestHostSwitchState\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"globalState\",\"type\":{\"name\":\"enum.GlobalState\",\"symbols\":[\"awating_starting\",\"starting_animations\",\"speeching\",\"aution\",\"products\",\"discount_strategy\",\"chat_with_advisor\"],\"type\":\"enum\"}},{\"name\":\"countDownSeconds\",\"type\":\"int\"},{\"name\":\"body\",\"type\":\"string\"}],\"name\":\"proto.RequestHostSwitchState\",\"type\":\"record\"}"
 }
 
 func (r *RequestHostSwitchState) SchemaName() string {

@@ -71,7 +71,7 @@ func (r *MessageRoomWaitingCustomers) Serialize(w io.Writer) error {
 }
 
 func (r *MessageRoomWaitingCustomers) Schema() string {
-	return "{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"},\"type\":\"array\"}}],\"name\":\"proto.MessageRoomWaitingCustomers\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"},\"type\":\"array\"}}],\"name\":\"proto.MessageRoomWaitingCustomers\",\"type\":\"record\"}"
 }
 
 func (r *MessageRoomWaitingCustomers) SchemaName() string {

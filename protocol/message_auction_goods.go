@@ -22,7 +22,7 @@ type MessageAuctionGoods struct {
 
 	
 	
-		Goods_name int32
+		Goods_name *Goods_nameUnion
 	
 
 	
@@ -33,6 +33,11 @@ type MessageAuctionGoods struct {
 	
 	
 		Final_price float32
+	
+
+	
+	
+		Limit_price float32
 	
 
 	
@@ -93,7 +98,7 @@ func writeMessageAuctionGoods(r *MessageAuctionGoods, w io.Writer) error {
 		return err			
 	}
 	
-	err = vm.WriteInt( r.Goods_name, w)
+	err = writeGoods_nameUnion( r.Goods_name, w)
 	if err != nil {
 		return err			
 	}
@@ -104,6 +109,11 @@ func writeMessageAuctionGoods(r *MessageAuctionGoods, w io.Writer) error {
 	}
 	
 	err = vm.WriteFloat( r.Final_price, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = vm.WriteFloat( r.Limit_price, w)
 	if err != nil {
 		return err			
 	}
@@ -131,7 +141,7 @@ func (r *MessageAuctionGoods) Serialize(w io.Writer) error {
 }
 
 func (r *MessageAuctionGoods) Schema() string {
-	return "{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"goods_name\",\"type\":\"int\"},{\"name\":\"original_price\",\"type\":\"float\"},{\"name\":\"final_price\",\"type\":\"float\"},{\"name\":\"users_num\",\"type\":\"int\"},{\"name\":\"final_record\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"is_final\",\"type\":\"boolean\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"MessageAuctionRecord\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"auction_records\",\"type\":{\"items\":\"proto.MessageAuctionRecord\",\"type\":\"array\"}}],\"name\":\"proto.MessageAuctionGoods\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"goods_name\",\"type\":[\"null\",\"string\"]},{\"name\":\"original_price\",\"type\":\"float\"},{\"name\":\"final_price\",\"type\":\"float\"},{\"name\":\"limit_price\",\"type\":\"float\"},{\"name\":\"users_num\",\"type\":\"int\"},{\"name\":\"final_record\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"MessageAuctionRecord\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"auction_records\",\"type\":{\"items\":\"proto.MessageAuctionRecord\",\"type\":\"array\"}}],\"name\":\"proto.MessageAuctionGoods\",\"type\":\"record\"}"
 }
 
 func (r *MessageAuctionGoods) SchemaName() string {
@@ -158,8 +168,11 @@ func (r *MessageAuctionGoods) Get(i int) types.Field {
 	
 	case 1:
 		
+			r.Goods_name = NewGoods_nameUnion()
+	
 		
-			return (*types.Int)(&r.Goods_name)
+		
+			return r.Goods_name
 		
 	
 	case 2:
@@ -177,10 +190,16 @@ func (r *MessageAuctionGoods) Get(i int) types.Field {
 	case 4:
 		
 		
-			return (*types.Int)(&r.Users_num)
+			return (*types.Float)(&r.Limit_price)
 		
 	
 	case 5:
+		
+		
+			return (*types.Int)(&r.Users_num)
+		
+	
+	case 6:
 		
 			r.Final_record = NewFinal_recordUnion()
 	
@@ -189,7 +208,7 @@ func (r *MessageAuctionGoods) Get(i int) types.Field {
 			return r.Final_record
 		
 	
-	case 6:
+	case 7:
 		
 			r.Auction_records = make([]*MessageAuctionRecord, 0)
 	
@@ -204,6 +223,8 @@ func (r *MessageAuctionGoods) Get(i int) types.Field {
 
 func (r *MessageAuctionGoods) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

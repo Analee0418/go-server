@@ -3,6 +3,7 @@
     "name": "enum.GlobalState",
     "type": "enum",
     "symbols": [
+      "awating_starting",
       "starting_animations",
       "speeching",
       "aution",
@@ -26,12 +27,14 @@
       "request_customer_signin",
       "request_customer_auction_bid",
       "request_customer_join_queue",
+      "request_customer_build_signature",
 
       "request_host_switch_state",
 
       "message_session",
       "message_room_info",
       "message_room_waiting_customers",
+      "message_room_chat_ends",
       "message_customers_info",
       "message_customers_auction_info",
       "message_cars_model",
@@ -73,6 +76,10 @@
       },
       {
         "name": "username",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "address",
         "type": ["null", "string"]
       }
     ]
@@ -123,6 +130,10 @@
       },
       {
         "name": "color",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "interior",
         "type": ["null", "string"]
       },
       {
@@ -206,10 +217,6 @@
         "type": "float"
       },
       {
-        "name": "is_final",
-        "type": "boolean"
-      },
-      {
         "name": "timestamp",
         "type": "long"
       }
@@ -226,7 +233,7 @@
       },
       {
         "name": "goods_name",
-        "type": "int"
+        "type": ["null", "string"]
       },
       {
         "name": "original_price",
@@ -234,6 +241,10 @@
       },
       {
         "name": "final_price",
+        "type": "float"
+      },
+      {
+        "name": "limit_price",
         "type": "float"
       },
       {
@@ -336,21 +347,8 @@
           "type": "record",
           "fields": [
             {
-              "name": "customers_info",
-              "type": "MessageCustomersInfo"
-            }
-          ]
-        }]
-      },
-      {
-        "name": "sales_advisor_leave_customers",
-        "type": ["null", {
-          "name": "RequestSalesAdvisorLeaveCustomers",
-          "type": "record",
-          "fields": [
-            {
-              "name": "customers_info",
-              "type": "MessageCustomersInfo"
+              "name": "customers_idcard",
+              "type": "string"
             }
           ]
         }]
@@ -362,8 +360,11 @@
           "type": "record",
           "fields": [
             {
-              "name": "contract_content",
-              "type": ["null", "string"]
+              "name": "filename",
+              "type": "string"
+            }, {
+              "name": "filebytes",
+              "type": "bytes"
             }
           ]
         }]
@@ -412,17 +413,17 @@
         }]
       },
       {
-        "name": "customer_join_queue",
+        "name": "request_customer_build_signature",
         "type": ["null", {
-          "name": "RequestCustomerJoinQueue",
+          "name": "RequestCustomerBuildSignature",
           "type": "record",
           "fields": [
             {
-              "name": "mobile",
-              "type": {
-                "type": "map",
-                "values": "string"
-              }
+              "name": "filename",
+              "type": "string"
+            }, {
+              "name": "filebytes",
+              "type": "bytes"
             }
           ]
         }]

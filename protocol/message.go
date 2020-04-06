@@ -37,11 +37,6 @@ type Message struct {
 
 	
 	
-		Sales_advisor_leave_customers *Sales_advisor_leave_customersUnion
-	
-
-	
-	
 		Sales_advisor_build_contract *Sales_advisor_build_contractUnion
 	
 
@@ -62,7 +57,7 @@ type Message struct {
 
 	
 	
-		Customer_join_queue *Customer_join_queueUnion
+		Request_customer_build_signature *Request_customer_build_signatureUnion
 	
 
 	
@@ -163,11 +158,6 @@ func writeMessage(r *Message, w io.Writer) error {
 		return err			
 	}
 	
-	err = writeSales_advisor_leave_customersUnion( r.Sales_advisor_leave_customers, w)
-	if err != nil {
-		return err			
-	}
-	
 	err = writeSales_advisor_build_contractUnion( r.Sales_advisor_build_contract, w)
 	if err != nil {
 		return err			
@@ -188,7 +178,7 @@ func writeMessage(r *Message, w io.Writer) error {
 		return err			
 	}
 	
-	err = writeCustomer_join_queueUnion( r.Customer_join_queue, w)
+	err = writeRequest_customer_build_signatureUnion( r.Request_customer_build_signature, w)
 	if err != nil {
 		return err			
 	}
@@ -241,7 +231,7 @@ func (r *Message) Serialize(w io.Writer) error {
 }
 
 func (r *Message) Schema() string {
-	return "{\"fields\":[{\"name\":\"action\",\"type\":{\"name\":\"enum.Action\",\"symbols\":[\"heartbeat\",\"request_sales_advisor_signin\",\"request_sales_advisor_receiving_customers\",\"request_sales_advisor_leave_customers\",\"request_sales_advisor_build_contract\",\"request_sales_advisor_confirm_paid\",\"request_customer_signin\",\"request_customer_auction_bid\",\"request_customer_join_queue\",\"request_host_switch_state\",\"message_session\",\"message_room_info\",\"message_room_waiting_customers\",\"message_customers_info\",\"message_customers_auction_info\",\"message_cars_model\",\"message_contract\",\"message_global_info\",\"message_auction_info\",\"tips\",\"error_message\"],\"type\":\"enum\"}},{\"name\":\"sessionId\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorSignin\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_receiving_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_leave_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_info\",\"type\":\"proto.MessageCustomersInfo\"}],\"name\":\"RequestSalesAdvisorLeaveCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_build_contract\",\"type\":[\"null\",{\"fields\":[{\"name\":\"contract_content\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorBuildContract\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_confirm_paid\",\"type\":[\"null\",{\"fields\":[],\"name\":\"RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}]},{\"name\":\"customer_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestCustomerSignin\",\"type\":\"record\"}]},{\"name\":\"customer_auction_bid\",\"type\":[\"null\",{\"fields\":[{\"name\":\"bid_price\",\"type\":\"float\"}],\"name\":\"RequestCustomerAuctionBid\",\"type\":\"record\"}]},{\"name\":\"customer_join_queue\",\"type\":[\"null\",{\"fields\":[{\"name\":\"mobile\",\"type\":{\"type\":\"map\",\"values\":\"string\"}}],\"name\":\"RequestCustomerJoinQueue\",\"type\":\"record\"}]},{\"name\":\"host_switch_state\",\"type\":[\"null\",{\"fields\":[{\"name\":\"globalState\",\"type\":{\"name\":\"enum.GlobalState\",\"symbols\":[\"starting_animations\",\"speeching\",\"aution\",\"products\",\"discount_strategy\",\"chat_with_advisor\"],\"type\":\"enum\"}},{\"name\":\"countDownSeconds\",\"type\":\"int\"},{\"name\":\"body\",\"type\":\"string\"}],\"name\":\"RequestHostSwitchState\",\"type\":\"record\"}]},{\"name\":\"message_session\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sid\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageSession\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"room_id\",\"type\":\"int\"},{\"name\":\"order_count\",\"type\":\"int\"},{\"name\":\"customer_info\",\"type\":\"proto.MessageCustomersInfo\"},{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}},{\"name\":\"customer_auction_info\",\"type\":{\"fields\":[{\"name\":\"auction_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}},{\"name\":\"discount_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}}],\"name\":\"MessageCustomersAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}},{\"name\":\"car_model\",\"type\":{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCarsModel\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"MessageRoomInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_waiting_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}}],\"name\":\"MessageRoomWaitingCustomers\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_cars_model\",\"type\":[\"null\",\"proto.MessageCarsModel\"]},{\"name\":\"message_auction_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"remain_seconds\",\"type\":\"int\"},{\"name\":\"goods\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"goods_name\",\"type\":\"int\"},{\"name\":\"original_price\",\"type\":\"float\"},{\"name\":\"final_price\",\"type\":\"float\"},{\"name\":\"users_num\",\"type\":\"int\"},{\"name\":\"final_record\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"is_final\",\"type\":\"boolean\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"MessageAuctionRecord\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"auction_records\",\"type\":{\"items\":\"proto.MessageAuctionRecord\",\"type\":\"array\"}}],\"name\":\"MessageAuctionGoods\",\"namespace\":\"proto\",\"type\":\"record\"}]}],\"name\":\"MessageAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"tips\",\"type\":[\"null\",\"string\"]},{\"name\":\"error_message\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.Message\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"action\",\"type\":{\"name\":\"enum.Action\",\"symbols\":[\"heartbeat\",\"request_sales_advisor_signin\",\"request_sales_advisor_receiving_customers\",\"request_sales_advisor_leave_customers\",\"request_sales_advisor_build_contract\",\"request_sales_advisor_confirm_paid\",\"request_customer_signin\",\"request_customer_auction_bid\",\"request_customer_join_queue\",\"request_customer_build_signature\",\"request_host_switch_state\",\"message_session\",\"message_room_info\",\"message_room_waiting_customers\",\"message_room_chat_ends\",\"message_customers_info\",\"message_customers_auction_info\",\"message_cars_model\",\"message_contract\",\"message_global_info\",\"message_auction_info\",\"tips\",\"error_message\"],\"type\":\"enum\"}},{\"name\":\"sessionId\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestSalesAdvisorSignin\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_receiving_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"customers_idcard\",\"type\":\"string\"}],\"name\":\"RequestSalesAdvisorReceivingCustomers\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_build_contract\",\"type\":[\"null\",{\"fields\":[{\"name\":\"filename\",\"type\":\"string\"},{\"name\":\"filebytes\",\"type\":\"bytes\"}],\"name\":\"RequestSalesAdvisorBuildContract\",\"type\":\"record\"}]},{\"name\":\"sales_advisor_confirm_paid\",\"type\":[\"null\",{\"fields\":[],\"name\":\"RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}]},{\"name\":\"customer_signin\",\"type\":[\"null\",{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]}],\"name\":\"RequestCustomerSignin\",\"type\":\"record\"}]},{\"name\":\"customer_auction_bid\",\"type\":[\"null\",{\"fields\":[{\"name\":\"bid_price\",\"type\":\"float\"}],\"name\":\"RequestCustomerAuctionBid\",\"type\":\"record\"}]},{\"name\":\"request_customer_build_signature\",\"type\":[\"null\",{\"fields\":[{\"name\":\"filename\",\"type\":\"string\"},{\"name\":\"filebytes\",\"type\":\"bytes\"}],\"name\":\"RequestCustomerBuildSignature\",\"type\":\"record\"}]},{\"name\":\"host_switch_state\",\"type\":[\"null\",{\"fields\":[{\"name\":\"globalState\",\"type\":{\"name\":\"enum.GlobalState\",\"symbols\":[\"awating_starting\",\"starting_animations\",\"speeching\",\"aution\",\"products\",\"discount_strategy\",\"chat_with_advisor\"],\"type\":\"enum\"}},{\"name\":\"countDownSeconds\",\"type\":\"int\"},{\"name\":\"body\",\"type\":\"string\"}],\"name\":\"RequestHostSwitchState\",\"type\":\"record\"}]},{\"name\":\"message_session\",\"type\":[\"null\",{\"fields\":[{\"name\":\"sid\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageSession\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"room_id\",\"type\":\"int\"},{\"name\":\"order_count\",\"type\":\"int\"},{\"name\":\"customer_info\",\"type\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"}},{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}},{\"name\":\"customer_auction_info\",\"type\":{\"fields\":[{\"name\":\"auction_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}},{\"name\":\"discount_list\",\"type\":{\"type\":\"map\",\"values\":\"double\"}}],\"name\":\"MessageCustomersAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}},{\"name\":\"car_model\",\"type\":{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"interior\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCarsModel\",\"namespace\":\"proto\",\"type\":\"record\"}}],\"name\":\"MessageRoomInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_room_waiting_customers\",\"type\":[\"null\",{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":\"proto.MessageCustomersInfo\",\"type\":\"array\"}}],\"name\":\"MessageRoomWaitingCustomers\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"message_cars_model\",\"type\":[\"null\",\"proto.MessageCarsModel\"]},{\"name\":\"message_auction_info\",\"type\":[\"null\",{\"fields\":[{\"name\":\"remain_seconds\",\"type\":\"int\"},{\"name\":\"goods\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"goods_name\",\"type\":[\"null\",\"string\"]},{\"name\":\"original_price\",\"type\":\"float\"},{\"name\":\"final_price\",\"type\":\"float\"},{\"name\":\"limit_price\",\"type\":\"float\"},{\"name\":\"users_num\",\"type\":\"int\"},{\"name\":\"final_record\",\"type\":[\"null\",{\"fields\":[{\"name\":\"goods_id\",\"type\":\"int\"},{\"name\":\"customer_mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_mobile_region\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"customer_username\",\"type\":[\"null\",\"string\"]},{\"name\":\"bid_price\",\"type\":\"float\"},{\"name\":\"timestamp\",\"type\":\"long\"}],\"name\":\"MessageAuctionRecord\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"auction_records\",\"type\":{\"items\":\"proto.MessageAuctionRecord\",\"type\":\"array\"}}],\"name\":\"MessageAuctionGoods\",\"namespace\":\"proto\",\"type\":\"record\"}]}],\"name\":\"MessageAuctionInfo\",\"namespace\":\"proto\",\"type\":\"record\"}]},{\"name\":\"tips\",\"type\":[\"null\",\"string\"]},{\"name\":\"error_message\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.Message\",\"type\":\"record\"}"
 }
 
 func (r *Message) SchemaName() string {
@@ -295,15 +285,6 @@ func (r *Message) Get(i int) types.Field {
 	
 	case 4:
 		
-			r.Sales_advisor_leave_customers = NewSales_advisor_leave_customersUnion()
-	
-		
-		
-			return r.Sales_advisor_leave_customers
-		
-	
-	case 5:
-		
 			r.Sales_advisor_build_contract = NewSales_advisor_build_contractUnion()
 	
 		
@@ -311,7 +292,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Sales_advisor_build_contract
 		
 	
-	case 6:
+	case 5:
 		
 			r.Sales_advisor_confirm_paid = NewSales_advisor_confirm_paidUnion()
 	
@@ -320,7 +301,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Sales_advisor_confirm_paid
 		
 	
-	case 7:
+	case 6:
 		
 			r.Customer_signin = NewCustomer_signinUnion()
 	
@@ -329,7 +310,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Customer_signin
 		
 	
-	case 8:
+	case 7:
 		
 			r.Customer_auction_bid = NewCustomer_auction_bidUnion()
 	
@@ -338,16 +319,16 @@ func (r *Message) Get(i int) types.Field {
 			return r.Customer_auction_bid
 		
 	
+	case 8:
+		
+			r.Request_customer_build_signature = NewRequest_customer_build_signatureUnion()
+	
+		
+		
+			return r.Request_customer_build_signature
+		
+	
 	case 9:
-		
-			r.Customer_join_queue = NewCustomer_join_queueUnion()
-	
-		
-		
-			return r.Customer_join_queue
-		
-	
-	case 10:
 		
 			r.Host_switch_state = NewHost_switch_stateUnion()
 	
@@ -356,7 +337,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Host_switch_state
 		
 	
-	case 11:
+	case 10:
 		
 			r.Message_session = NewMessage_sessionUnion()
 	
@@ -365,7 +346,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Message_session
 		
 	
-	case 12:
+	case 11:
 		
 			r.Message_room_info = NewMessage_room_infoUnion()
 	
@@ -374,7 +355,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Message_room_info
 		
 	
-	case 13:
+	case 12:
 		
 			r.Message_room_waiting_customers = NewMessage_room_waiting_customersUnion()
 	
@@ -383,7 +364,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Message_room_waiting_customers
 		
 	
-	case 14:
+	case 13:
 		
 			r.Message_cars_model = NewMessage_cars_modelUnion()
 	
@@ -392,7 +373,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Message_cars_model
 		
 	
-	case 15:
+	case 14:
 		
 			r.Message_auction_info = NewMessage_auction_infoUnion()
 	
@@ -401,7 +382,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Message_auction_info
 		
 	
-	case 16:
+	case 15:
 		
 			r.Tips = NewTipsUnion()
 	
@@ -410,7 +391,7 @@ func (r *Message) Get(i int) types.Field {
 			return r.Tips
 		
 	
-	case 17:
+	case 16:
 		
 			r.Error_message = NewError_messageUnion()
 	
@@ -425,8 +406,6 @@ func (r *Message) Get(i int) types.Field {
 
 func (r *Message) SetDefault(i int) {
 	switch (i) {
-	
-        
 	
         
 	
