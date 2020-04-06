@@ -55,7 +55,7 @@ func (s *Session) InitAdvisor(conn net.Conn, room *Room) {
 	s.roomInfo = room
 	s.lastHeartBeat = time.Now()
 	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
-	AddSession(s)
+	AddSession(conn, s)
 }
 
 func (s *Session) InitCustomer(conn net.Conn, customer *Customer) {
@@ -66,7 +66,7 @@ func (s *Session) InitCustomer(conn net.Conn, customer *Customer) {
 	s.customerInfo = customer
 	s.lastHeartBeat = time.Now()
 	s.lastHeartBeatMillisecond = utils.NowMillisecondsByTime(s.lastHeartBeat)
-	AddSession(s)
+	AddSession(conn, s)
 	// TODO
 }
 
@@ -118,13 +118,14 @@ func (s *Session) Heartbeat() {
 }
 
 func (s *Session) Close(reason string) (guuid.UUID, string) {
+	defer func() { s.conn.Close() }()
+
 	msg := GenerateMessage(avro.ActionError_message)
 	msg.Error_message = &avro.Error_messageUnion{String: reason, UnionType: avro.Error_messageUnionTypeEnumString}
 
 	log.Printf("WARN: session[%v, %s, %s] Disconnected. Reason: %s", s.id, s.name, s.customerInfo, reason)
 
 	s.SendMessage(*msg)
-	s.conn.Close()
 
 	if s.customerInfo != nil {
 		GlobalOnCustomerDisconnect(s.customerInfo.ID)

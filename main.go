@@ -5,9 +5,11 @@ import (
 	"compress/flate"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
+	"reflect"
 	"runtime"
 	"time"
 
@@ -75,8 +77,15 @@ func handleConnection(conn net.Conn) {
 
 	_ret := make([]byte, 4)
 	n, e := conn.Read(_ret)
+	if e != nil {
+		if e == io.EOF { // 客户端主动断开
+			log.Println("WARN: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! discover client disconnect.")
+			model.OnClientDisconnect(conn)
+			return
+		}
+	}
 	dataLen := int(binary.LittleEndian.Uint32(_ret))
-	log.Println("->->->->->->->->->->->-> length", dataLen, e)
+	log.Println("->->->->->->->->->->->-> length", dataLen, n, e)
 
 	ulimitBuffer := bytes.NewBuffer(nil)
 	remain := dataLen
@@ -131,7 +140,7 @@ func handleConnection(conn net.Conn) {
 	// if err == nil {
 	// 	log.Println(string(lang))
 	// }
-	log.Println(message.Action, " Request ", n, " Byte")
+	log.Println(message.Action, " Request ", ulimitBuffer.Len(), " Byte")
 
 	selector := handler.HandlerSelector{}
 	go selector.Selects(&conn, message)
@@ -161,6 +170,7 @@ func startTCPServer() {
 			log.Println("accept failed", err)
 			continue
 		}
+		log.Println("conn: ", reflect.TypeOf(conn), conn)
 		go handleConnection(conn)
 	}
 }
