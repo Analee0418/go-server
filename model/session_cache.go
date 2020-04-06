@@ -87,9 +87,8 @@ func ReleaseSessionCache(now int64) {
 			if utils.NowMilliseconds()-session.lastHeartBeatMillisecond > func() int64 {
 				if config.DEBUG {
 					return 60000
-				} else {
-					return 30000
 				}
+				return 10000
 			}() {
 				conn := session.conn
 				invalidKeys = append(invalidKeys, func() { DeleteSession(session.id, session.name, conn) })
