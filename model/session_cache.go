@@ -41,6 +41,13 @@ func GetSessionByName(name string) (*Session, bool) {
 	return nil, false
 }
 
+func GetSessionByConn(conn net.Conn) (*Session, bool) {
+	if s, ok := sessionConn[conn]; ok {
+		return s, true
+	}
+	return nil, false
+}
+
 func AddSession(conn net.Conn, s *Session) {
 	if _, ok := sessionCacheByID[s.id]; ok {
 		log.Printf("has been exists in cache: %v\n", s)
@@ -79,10 +86,17 @@ func ReleaseSessionCache(now int64) {
 
 	// log.Printf("Start finding invalid session. %d\n", len(sessionCacheByID))
 
-	invalidKeys := []func(){}
+	type inte struct {
+		Sid guuid.UUID
+		Sn  string
+		Sc  net.Conn
+	}
+
+	invalidKeys := []inte{}
 	for _, session := range sessionCacheByID {
-		if session.dead {
-			invalidKeys = append(invalidKeys, func() { DeleteSession(session.id, session.name, session.conn) })
+		if session.Dead() {
+			invalidKeys = append(invalidKeys, inte{session.id, session.name, session.conn})
+			log.Printf("DEBUG: add dead session %v, %v, %v", session.id, session.name, session.conn)
 		} else {
 			if utils.NowMilliseconds()-session.lastHeartBeatMillisecond > func() int64 {
 				if config.DEBUG {
@@ -90,21 +104,23 @@ func ReleaseSessionCache(now int64) {
 				}
 				return 10000
 			}() {
-				conn := session.conn
-				invalidKeys = append(invalidKeys, func() { DeleteSession(session.id, session.name, conn) })
+				invalidKeys = append(invalidKeys, inte{session.id, session.name, session.conn})
 				session.Close("Connection without vital signs. No heartbeat detected.")
-
-				// 放置 goroutine queue
-				// go DeleteSession(conn, uuid, name)
 			}
 		}
 	}
 
-	// log.Printf("Invalid sesisons count %d", len(invalidKeys))
-	for _, fun := range invalidKeys {
-		fun()
+	lang, err := json.MarshalIndent(invalidKeys, "", "   ")
+	if err == nil {
+		if config.DEBUG {
+			log.Printf("invalid session keys: %v", string(lang))
+		}
+	}
+	for _, i := range invalidKeys {
+		DeleteSession(i.Sid, i.Sn, i.Sc)
 	}
 
+	lastReleaseTime = now
 }
 
 func OnClientDisconnect(conn net.Conn) {
@@ -116,7 +132,7 @@ func OnClientDisconnect(conn net.Conn) {
 			s.customerInfo = nil
 		}
 		s.conn.Close()
-		s.dead = true
+		s.SetDead()
 		log.Printf("Client disconnect after clear session[%s].", s.name)
 	}
 

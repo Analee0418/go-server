@@ -26,6 +26,16 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 
 	log.Printf("DEBUG sales advisor login on %s", advisorID)
 
+	if _, exists := model.GetSessionByConn(*h.conn); exists {
+		msg := *model.GenerateMessage(avro.ActionError_message)
+		msg.Error_message = &avro.Error_messageUnion{
+			String:    "该设备已经登录了其他账号",
+			UnionType: avro.Error_messageUnionTypeEnumString,
+		}
+		model.SendMessage(*h.conn, msg)
+		return
+	}
+
 	if _, exists := model.GetSessionByName(advisorID); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{

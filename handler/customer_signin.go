@@ -24,6 +24,16 @@ func (h *CustomerSignin) do(msg avro.Message) {
 	Idcard := msg.Customer_signin.RequestCustomerSignin.Idcard.String
 	mobile := msg.Customer_signin.RequestCustomerSignin.Mobile.String
 
+	if _, exists := model.GetSessionByConn(*h.conn); exists {
+		msg := *model.GenerateMessage(avro.ActionError_message)
+		msg.Error_message = &avro.Error_messageUnion{
+			String:    "该设备已经登录了其他账号",
+			UnionType: avro.Error_messageUnionTypeEnumString,
+		}
+		model.SendMessage(*h.conn, msg)
+		return
+	}
+
 	if _, exists := model.GetSessionByName(Idcard); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{

@@ -91,7 +91,7 @@ func (h *CustomerBuildSignature) do(msg avro.Message) {
 	ss := strings.Split(msg.Request_customer_build_signature.RequestCustomerBuildSignature.Filename, ".")
 	err := ioutil.WriteFile(utils.ExpandUser(fmt.Sprintf("~/contract.tmp/signature.%s.%s",
 		h.session.CurrentUser().ID, ss[len(ss)-1])),
-		msg.Sales_advisor_build_contract.RequestSalesAdvisorBuildContract.Filebytes, 0644)
+		msg.Request_customer_build_signature.RequestCustomerBuildSignature.Filebytes, 0644)
 	if err != nil {
 		log.Printf("ERROR: %v", err)
 		msg := *model.GenerateMessage(avro.ActionError_message)
@@ -103,14 +103,6 @@ func (h *CustomerBuildSignature) do(msg avro.Message) {
 		return
 	}
 
-	// signatureMsg := model.GenerateMessage(avro.ActionRequest_customer_build_signature)
-	// signatureMsg.Request_customer_build_signature = &avro.Request_customer_build_signatureUnion{
-	// 	UnionType: avro.Request_customer_build_signatureUnionTypeEnumRequestCustomerBuildSignature,
-	// 	RequestCustomerBuildSignature: &avro.RequestCustomerBuildSignature{
-	// 		Filename:  msg.Request_customer_build_signature.RequestCustomerBuildSignature.Filename,
-	// 		Filebytes: msg.Sales_advisor_build_contract.RequestSalesAdvisorBuildContract.Filebytes,
-	// 	},
-	// }
 	salesAdvisorSession.SendMessage(msg)
 
 }

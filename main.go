@@ -187,7 +187,7 @@ func startTimer(f func(int64)) {
 		for {
 			now := time.Now()
 			f(utils.NowMillisecondsByTime(now))
-			next := now.Add(time.Second * 10)
+			next := now.Add(time.Millisecond * 100)
 			next = time.Date(next.Year(), next.Month(), next.Day(), next.Hour(), next.Minute(), next.Second(), next.Nanosecond(), next.Location())
 			t := time.NewTimer(next.Sub(now))
 			<-t.C

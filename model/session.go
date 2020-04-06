@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"compress/flate"
+	"encoding/binary"
 	"fmt"
 	"log"
 	"net"
@@ -30,7 +31,12 @@ func (s *Session) UUID() string {
 	return s.id.String()
 }
 
+func (s *Session) SetDead() {
+	s.dead = true
+}
+
 func (s *Session) Dead() bool {
+	log.Printf("Session[%s] isDead: %v", s.name, s.dead)
 	return s.dead
 }
 
@@ -81,13 +87,22 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 	msg.Serialize(compressedWriter)
 	compressedWriter.Flush()
 
-	log.Println(blockBuffer.Len())
 	defer func() {
 		compressedWriter.Close()
 	}()
 
 	// head := make([]byte, HEAD_SIZE)
-	content := blockBuffer.Bytes()
+
+	lenBytes := make([]byte, 4)
+	binary.LittleEndian.PutUint32(lenBytes, uint32(blockBuffer.Len()))
+	log.Printf("DEBUG: will write to %d, %v byte", blockBuffer.Len(), lenBytes)
+
+	finalByteArray := make([]byte, 0)
+	finalBlockBuffer := bytes.NewBuffer(finalByteArray)
+
+	finalBlockBuffer.Write(lenBytes)
+	finalBlockBuffer.Write(blockBuffer.Bytes())
+
 	// headSize := blockBuffer.Len()
 	// binary.BigEndian.PutUint16(head, uint16(headSize))
 
@@ -97,7 +112,7 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 	// 	log.Fatal(err)
 	// 	return err
 	// }
-	_, err = conn.Write(content)
+	_, err = conn.Write(finalBlockBuffer.Bytes())
 	if err != nil {
 		log.Println(err)
 	}
@@ -137,7 +152,7 @@ func (s *Session) Close(reason string) (guuid.UUID, string) {
 	// 如果已进入房间
 	//
 
-	s.dead = true
+	s.SetDead()
 
 	return s.id, s.name
 }
