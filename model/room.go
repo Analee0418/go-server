@@ -163,6 +163,14 @@ func (r *Room) DeleteWaiting(customerID string) {
 }
 
 func (r *Room) UpdateCarModel(model *avro.MessageCarsModel) {
+	lang, e := json.MarshalIndent(model, "", "   ")
+	if e == nil {
+		log.Print(string(lang))
+	}
+
+	if r.CarModel == nil {
+		r.CarModel = &CarModel{}
+	}
 	r.CarModel.Brand = model.Brand.String
 	r.CarModel.Color = model.Color.String
 	r.CarModel.Series = model.Series.String

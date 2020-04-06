@@ -62,7 +62,7 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 	// 刷新销售端
 	h.session.SendMessage(*refreshMsg)
 
-	// 等值当事人用户端聊天结束
+	// 通知当事人用户端聊天结束
 	if waitingCustomerSession, exist := model.GetSessionByName(old); exist {
 		evenMessage := model.GenerateMessage(avro.ActionMessage_room_chat_ends)
 		waitingCustomerSession.SendMessage(*evenMessage)

@@ -15,6 +15,7 @@ var handlerMapping = map[avro.Action]ActionHandler{
 	avro.ActionRequest_sales_advisor_leave_customers:     &SalesAdvisorKick{},
 	avro.ActionRequest_sales_advisor_build_contract:      &SalesAdvisorBuildContract{},
 	avro.ActionRequest_sales_advisor_confirm_paid:        &SalesAdvisorConfirmedSignedContract{},
+	avro.ActionMessage_cars_model:                        &SalesAdvisorUpdateCarModel{},
 	avro.ActionRequest_customer_signin:                   &CustomerSignin{},
 	avro.ActionRequest_customer_join_queue:               &CustomerApplyJoinRoom{},
 	avro.ActionRequest_customer_build_signature:          &CustomerBuildSignature{},
