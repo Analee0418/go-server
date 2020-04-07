@@ -99,6 +99,9 @@ func handleConnection(conn net.Conn) {
 		pkg := make([]byte, l)
 		n, _ := conn.Read(pkg)
 		log.Printf("len: %d, read len: %d, remain: %d\n", l, n, remain)
+		if n == 0 {
+			break
+		}
 		ulimitBuffer.Write(pkg[:n])
 
 		remain = dataLen - len(ulimitBuffer.Bytes())
