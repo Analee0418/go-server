@@ -110,14 +110,14 @@ func ReleaseSessionCache(now int64) {
 		}
 	}
 
-	lang, err := json.MarshalIndent(invalidKeys, "", "   ")
-	if err == nil {
-		if config.DEBUG {
+	if len(invalidKeys) > 0 {
+		lang, err := json.MarshalIndent(invalidKeys, "", "   ")
+		if err == nil {
 			log.Printf("invalid session keys: %v", string(lang))
 		}
-	}
-	for _, i := range invalidKeys {
-		DeleteSession(i.Sid, i.Sn, i.Sc)
+		for _, i := range invalidKeys {
+			DeleteSession(i.Sid, i.Sn, i.Sc)
+		}
 	}
 
 	lastReleaseTime = now

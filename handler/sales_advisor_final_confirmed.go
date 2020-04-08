@@ -48,6 +48,8 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 
 		// 从房间请出
 		r.UpdateCustomer("")
+		// 增加成交数量
+		r.UpdateOrderCount(r.OrderCount + 1)
 	}
 
 	// TODO 广播签约成功

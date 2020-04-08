@@ -92,9 +92,10 @@ func handleConnection(conn net.Conn) {
 	for {
 		l := buffSize
 		if l < dataLen {
-			if l > remain {
-				l = remain
-			}
+			l = dataLen
+		}
+		if l > remain {
+			l = remain
 		}
 		pkg := make([]byte, l)
 		n, _ := conn.Read(pkg)

@@ -121,6 +121,8 @@ func (r *Room) UpdateRoomID() {
 }
 
 func (r *Room) UpdateOrderCount(orderCount int32) {
+	rwm.RLock()
+	defer rwm.RUnlock()
 	r.OrderCount = orderCount
 	utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "orderCount", r.OrderCount)
 	log.Printf("Update order count To %d by roomkey %v", orderCount, r.SalesAdvisorID)
