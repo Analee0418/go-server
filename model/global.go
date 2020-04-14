@@ -110,6 +110,13 @@ func GlobalOnCustomerSignin(customerID string) []*avro.Message {
 		log.Println("Aucion step")
 	}
 
+	msg := GenerateMessage(avro.ActionMessage_customers_info)
+	msg.Message_customer_info = &avro.Message_customer_infoUnion{
+		MessageCustomersInfo: currentCustomer.BuildCustomerMessage(),
+		UnionType:            avro.Message_customer_infoUnionTypeEnumMessageCustomersInfo,
+	}
+	msgs = append(msgs, msg)
+
 	return msgs
 }
 

@@ -99,6 +99,10 @@
           "type": "array",
           "items": "MessageCustomersInfo"
         }
+      },
+      {
+        "name": "rank",
+        "type": "int"
       }
     ]
   },
@@ -472,6 +476,10 @@
       {
         "name": "message_auction_info",
         "type": ["null", "MessageAuctionInfo"]
+      },
+      {
+        "name": "message_customer_info",
+        "type": ["null", "MessageCustomersInfo"]
       },
       {
         "name": "tips",

@@ -37,31 +37,39 @@ const (
 
 	ActionRequest_customer_build_signature Action = 9
 
-	ActionRequest_host_switch_state Action = 10
+	ActionRequest_host_connect Action = 10
 
-	ActionMessage_session Action = 11
+	ActionRequest_host_set_start_time Action = 11
 
-	ActionMessage_room_info Action = 12
+	ActionRequest_host_switch_state Action = 12
 
-	ActionMessage_room_waiting_customers Action = 13
+	ActionRequest_host_choice_auction_goods Action = 13
 
-	ActionMessage_room_chat_ends Action = 14
+	ActionRequest_host_auction_goods Action = 14
 
-	ActionMessage_customers_info Action = 15
+	ActionMessage_session Action = 15
 
-	ActionMessage_customers_auction_info Action = 16
+	ActionMessage_room_info Action = 16
 
-	ActionMessage_cars_model Action = 17
+	ActionMessage_room_waiting_customers Action = 17
 
-	ActionMessage_contract Action = 18
+	ActionMessage_room_chat_ends Action = 18
 
-	ActionMessage_global_info Action = 19
+	ActionMessage_customers_info Action = 19
 
-	ActionMessage_auction_info Action = 20
+	ActionMessage_customers_auction_info Action = 20
 
-	ActionTips Action = 21
+	ActionMessage_cars_model Action = 21
 
-	ActionError_message Action = 22
+	ActionMessage_contract Action = 22
+
+	ActionMessage_global_info Action = 23
+
+	ActionMessage_auction_info Action = 24
+
+	ActionTips Action = 25
+
+	ActionError_message Action = 26
 
 )
 
@@ -98,8 +106,20 @@ func (e Action) String() string {
 	case ActionRequest_customer_build_signature:
 		return "request_customer_build_signature"
 
+	case ActionRequest_host_connect:
+		return "request_host_connect"
+
+	case ActionRequest_host_set_start_time:
+		return "request_host_set_start_time"
+
 	case ActionRequest_host_switch_state:
 		return "request_host_switch_state"
+
+	case ActionRequest_host_choice_auction_goods:
+		return "request_host_choice_auction_goods"
+
+	case ActionRequest_host_auction_goods:
+		return "request_host_auction_goods"
 
 	case ActionMessage_session:
 		return "message_session"
@@ -178,8 +198,20 @@ func NewActionValue(raw string) (r Action, err error) {
 	case "request_customer_build_signature":
 		return ActionRequest_customer_build_signature, nil
 
+	case "request_host_connect":
+		return ActionRequest_host_connect, nil
+
+	case "request_host_set_start_time":
+		return ActionRequest_host_set_start_time, nil
+
 	case "request_host_switch_state":
 		return ActionRequest_host_switch_state, nil
+
+	case "request_host_choice_auction_goods":
+		return ActionRequest_host_choice_auction_goods, nil
+
+	case "request_host_auction_goods":
+		return ActionRequest_host_auction_goods, nil
 
 	case "message_session":
 		return ActionMessage_session, nil

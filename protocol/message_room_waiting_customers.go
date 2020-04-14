@@ -20,6 +20,11 @@ type MessageRoomWaitingCustomers struct {
 		Waiting_list []*MessageCustomersInfo
 	
 
+	
+	
+		Rank int32
+	
+
 }
 
 func NewMessageRoomWaitingCustomers() (*MessageRoomWaitingCustomers) {
@@ -63,6 +68,11 @@ func writeMessageRoomWaitingCustomers(r *MessageRoomWaitingCustomers, w io.Write
 		return err			
 	}
 	
+	err = vm.WriteInt( r.Rank, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -71,7 +81,7 @@ func (r *MessageRoomWaitingCustomers) Serialize(w io.Writer) error {
 }
 
 func (r *MessageRoomWaitingCustomers) Schema() string {
-	return "{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"},\"type\":\"array\"}}],\"name\":\"proto.MessageRoomWaitingCustomers\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"waiting_list\",\"type\":{\"items\":{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"MessageCustomersInfo\",\"namespace\":\"proto\",\"type\":\"record\"},\"type\":\"array\"}},{\"name\":\"rank\",\"type\":\"int\"}],\"name\":\"proto.MessageRoomWaitingCustomers\",\"type\":\"record\"}"
 }
 
 func (r *MessageRoomWaitingCustomers) SchemaName() string {
@@ -99,12 +109,20 @@ func (r *MessageRoomWaitingCustomers) Get(i int) types.Field {
 			return (*ArrayMessageCustomersInfoWrapper)(&r.Waiting_list)
 		
 	
+	case 1:
+		
+		
+			return (*types.Int)(&r.Rank)
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *MessageRoomWaitingCustomers) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	
