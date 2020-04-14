@@ -14,6 +14,10 @@ import (
 
 var rdb *redis.Client
 
+func GetRDB() *redis.Client {
+	return rdb
+}
+
 func init() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Lmicroseconds)
 	rdb = redis.NewClient(&redis.Options{
@@ -138,6 +142,15 @@ func HSetRedis(key string, values ...interface{}) {
 	}
 }
 
+func HDelRedis(key string, field string) (r int64, e error) {
+	val, err := rdb.HDel(key, field).Result()
+	if err != nil {
+		log.Printf("ERROR: %v", err)
+		return 0, err
+	}
+	return val, nil
+}
+
 func HGetRedis(key string, field string) (res interface{}, e error) {
 	// log.Printf("%v %v", reflect.TypeOf(rdb), rdb)
 	val, err := rdb.HGet(key, field).Result()
@@ -153,6 +166,16 @@ func HGetRedis(key string, field string) (res interface{}, e error) {
 		return nil, err
 	}
 	// log.Println("Redis.get ", reflect.TypeOf(val))
+	return val, nil
+}
+
+func HGetAllRedis(key string) (m map[string]string, e error) {
+	// log.Printf("%v %v", reflect.TypeOf(rdb), rdb)
+	val, err := rdb.HGetAll(key).Result()
+	if err != nil {
+		log.Printf("ERROR: %v", err)
+		return nil, err
+	}
 	return val, nil
 }
 
@@ -436,6 +459,11 @@ func ExamplePubSub() {
 	}
 
 	// Output: mychannel1 hello
+}
+
+func PublishMessage(channel string, msg string) error {
+	err := rdb.Publish(channel, msg).Err()
+	return err
 }
 
 func ChangeGlobalState(state string) error {

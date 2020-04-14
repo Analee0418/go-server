@@ -173,10 +173,18 @@ func (r *Room) UpdateCarModel(model *avro.MessageCarsModel) {
 	if r.CarModel == nil {
 		r.CarModel = &CarModel{}
 	}
-	r.CarModel.Brand = model.Brand.String
-	r.CarModel.Color = model.Color.String
-	r.CarModel.Series = model.Series.String
-	r.CarModel.Interior = model.Interior.String
+	if model.Brand.UnionType != avro.BrandUnionTypeEnumNull {
+		r.CarModel.Brand = model.Brand.String
+	}
+	if model.Color.UnionType != avro.ColorUnionTypeEnumNull {
+		r.CarModel.Color = model.Color.String
+	}
+	if model.Series.UnionType != avro.SeriesUnionTypeEnumNull {
+		r.CarModel.Series = model.Series.String
+	}
+	if model.Interior.UnionType != avro.InteriorUnionTypeEnumNull {
+		r.CarModel.Interior = model.Interior.String
+	}
 
 	lang, err := json.Marshal(r.CarModel)
 	if err == nil {
@@ -224,7 +232,7 @@ func (r *Room) String() string {
 }
 
 func InitRoom() {
-	for advisorID, _ := range config.SalesAdvisorTemplate {
+	for advisorID := range config.SalesAdvisorTemplate {
 		roomInstance := &Room{
 			SalesAdvisorID: advisorID,
 		}
@@ -267,7 +275,8 @@ func InitRoom() {
 		}
 	}
 
-	log.Printf("%v", RoomContainer)
+	log.Printf("All room entity: %v", RoomContainer)
+	log.Printf("Load room entity data OK.\n\n")
 
 }
 

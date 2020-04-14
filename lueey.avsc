@@ -29,7 +29,11 @@
       "request_customer_join_queue",
       "request_customer_build_signature",
 
+      "request_host_connect",
+      "request_host_set_start_time",
       "request_host_switch_state",
+      "request_host_choice_auction_goods",
+      "request_host_auction_goods",
 
       "message_session",
       "message_room_info",

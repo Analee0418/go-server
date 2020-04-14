@@ -15,8 +15,14 @@ var sessionCacheByUserName = map[string]*Session{}
 var sessionCacheByID = map[guuid.UUID]*Session{}
 var sessionConn = map[net.Conn]*Session{}
 
+var hostsSession *Session = nil
+
 func init() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Lmicroseconds)
+}
+
+func Onlines() int32 {
+	return int32(len(sessionCacheByID))
 }
 
 func SessionByID(uuid string) (*Session, bool) {
@@ -118,6 +124,8 @@ func ReleaseSessionCache(now int64) {
 		for _, i := range invalidKeys {
 			DeleteSession(i.Sid, i.Sn, i.Sc)
 		}
+
+		TCPServerInstance.TCPServerOnUpdateOnlines(Onlines(), false)
 	}
 
 	lastReleaseTime = now

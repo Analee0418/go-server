@@ -57,28 +57,28 @@ func (r *Customer) BuildCustomerMessage() *avro.MessageCustomersInfo {
 				String:    currentCustomer.Address,
 			},
 		}
-	} else {
-		return &avro.MessageCustomersInfo{
-			Mobile: &avro.MobileUnion{
-				UnionType: avro.MobileUnionTypeEnumNull,
-			},
+	}
 
-			MobileRegion: &avro.MobileRegionUnion{
-				UnionType: avro.MobileRegionUnionTypeEnumNull,
-			},
+	return &avro.MessageCustomersInfo{
+		Mobile: &avro.MobileUnion{
+			UnionType: avro.MobileUnionTypeEnumNull,
+		},
 
-			Idcard: &avro.IdcardUnion{
-				UnionType: avro.IdcardUnionTypeEnumNull,
-			},
+		MobileRegion: &avro.MobileRegionUnion{
+			UnionType: avro.MobileRegionUnionTypeEnumNull,
+		},
 
-			Username: &avro.UsernameUnion{
-				UnionType: avro.UsernameUnionTypeEnumNull,
-			},
+		Idcard: &avro.IdcardUnion{
+			UnionType: avro.IdcardUnionTypeEnumNull,
+		},
 
-			Address: &avro.AddressUnion{
-				UnionType: avro.AddressUnionTypeEnumNull,
-			},
-		}
+		Username: &avro.UsernameUnion{
+			UnionType: avro.UsernameUnionTypeEnumNull,
+		},
+
+		Address: &avro.AddressUnion{
+			UnionType: avro.AddressUnionTypeEnumNull,
+		},
 	}
 }
 
@@ -152,6 +152,8 @@ func InitCustomer() {
 			if val, err := utils.HGetRedis(cKey, "signedContract"); err == nil {
 				if val.(string) == "1" {
 					customerInstance.SignedContract = true
+				} else {
+					customerInstance.SignedContract = false
 				}
 			}
 
@@ -166,8 +168,10 @@ func InitCustomer() {
 		}
 	}
 
-	log.Printf("%v", AllCustomerContainer)
-	log.Println("Load customer data OK.")
+	if config.DEBUG {
+		log.Printf("All customer entity: %v", AllCustomerContainer)
+	}
+	log.Printf("Load customer data OK.\n\n")
 	time.Sleep(time.Second * 1)
 
 }

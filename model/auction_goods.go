@@ -117,7 +117,7 @@ func (g *AuctionGoods) ConfirmFinalOnEndOfAuction(r AuctionRecord) {
 	lang, err := json.Marshal(g.FinalRecord)
 	if err == nil {
 		utils.HSetRedis(GenerateAuctionGoodsKey(g.GoodsID), "finalRecord", string(lang))
-		log.Printf("Confirmed final bid info %s by goodsID %s", string(lang), g.GoodsID)
+		log.Printf("Confirmed final bid info %s by goodsID %d", string(lang), g.GoodsID)
 	}
 }
 
@@ -132,7 +132,7 @@ func (g *AuctionGoods) CustomerBidding(customerID string, r avro.MessageAuctionR
 	lang, err := json.Marshal(g.Records)
 	if err == nil {
 		utils.HSetRedis(GenerateAuctionGoodsKey(g.GoodsID), "recordList", string(lang))
-		log.Printf("Add new user bid info %s to goodsID %s", string(lang), g.GoodsID)
+		log.Printf("Add new user bid info %s to goodsID %d", string(lang), g.GoodsID)
 	}
 
 	if c, ok := AllCustomerContainer[customerID]; ok {
@@ -201,8 +201,10 @@ func InitAuctionGoods() {
 		}
 	}
 
-	log.Printf("%v", AllAuctionGoodsContainer)
-	log.Println("Load auction goods data OK.")
+	if config.DEBUG {
+		log.Printf("All auction goods: %v", AllAuctionGoodsContainer)
+	}
+	log.Printf("Load auction goods data OK.\n\n")
 	time.Sleep(time.Second * 1)
 }
 

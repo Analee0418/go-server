@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,7 +30,7 @@ func Init() {
 	lang, err := json.MarshalIndent(files, "", "   ")
 	if err == nil {
 		strs := string(lang)
-		log.Printf("==================== %s", strs) // contains a list of all files in the current directory
+		log.Printf("==================== ALL CONFIG FILES %s", strs) // contains a list of all files in the current directory
 
 		for _, filename := range files {
 			log.Printf("Parse config %v", filename)
@@ -51,11 +50,15 @@ func Init() {
 			// Get all the rows in a sheet.
 			rows := xlsx.GetRows("Sheet1")
 			// log.Println(rows[100:])
-			log.Println(strings.Join(rows[0], ",\t"))
+			if DEBUG {
+				log.Println(strings.Join(rows[0], ",\t"))
+			}
 			lastAdvisor := ""
 			lastAdvisorName := ""
 			for _, row := range rows[1:] {
-				log.Println(strings.Join(row, ",\t"))
+				if DEBUG {
+					log.Println(strings.Join(row, ",\t"))
+				}
 				if strings.Contains(filename, "销售") {
 					idcard := row[0]
 					mobile := row[1]
@@ -76,7 +79,7 @@ func Init() {
 
 					} else {
 
-						resp, err := http.Get(fmt.Sprint("https://www.ip.cn/db?num=%2B%s", mobile))
+						resp, err := http.Get("https://www.ip.cn/db?num=%2B" + mobile)
 						if err != nil {
 							log.Printf("ERROR: crawl mobile region failed. %v", err)
 							continue
@@ -167,7 +170,7 @@ func Init() {
 	if err == nil {
 		log.Println(string(lang))
 	}
-	log.Println("Load templated ok.")
+	log.Printf("Load templated ok.\n\n")
 	// time.Sleep(time.Second * 3)
 
 }

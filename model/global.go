@@ -26,6 +26,9 @@ var GlobalGame map[string]*Customer = map[string]*Customer{}
 // GlobalVisitor 正在参观模型
 var GlobalVisitor map[string]*Customer = map[string]*Customer{}
 
+// CurrentAuctionGoodsID 当前的正在竞拍的商品
+var CurrentAuctionGoodsID int32 = -1
+
 // InitGlobal 初始化全局状态
 func InitGlobal() {
 	log.Println("Start to load global data.")
@@ -38,19 +41,29 @@ func InitGlobal() {
 		}
 	}
 
-	// if val, err := utils.HGetRedis("global", "signedContract"); err == nil {
-	// 	GlobalState, err = avro.NewGlobalStateValue(val.(string))
-	// 	if err == redis.Nil {
-	// 		GlobalState = avro.GlobalStateAwating_starting
-	// 	} else {
-	// 		log.Fatal("ERROR: global state is illegal.", err)
-	// 	}
-	// }
-
-	log.Println("Start to load global data OK.")
+	log.Printf("Start to load global data OK.\n\n")
 }
 
 func PostInitGlobal() {
+	// 已签约的用户
+	for id, c := range AllCustomerContainer {
+		if c.SignedContract {
+			GlobalSignedContract[id] = c
+		}
+	}
+
+	// 在房间内的用户
+	for _, r := range RoomContainer {
+		if c, ok := AllCustomerContainer[r.CurrentCustomerID]; ok {
+			GlobalInRooms[c.ID] = c
+		}
+
+		for _, cid := range r.WaitingList {
+			if c, ok := AllCustomerContainer[cid]; ok {
+				GlobalInRooms[c.ID] = c
+			}
+		}
+	}
 
 }
 
@@ -59,6 +72,13 @@ func GlobalOnHostsSwitchState(s avro.GlobalState) {
 	utils.HSetRedis("global", "state", GlobalState.String())
 
 	// TODO notify all session
+}
+
+func GlobalOnHostsChoiceGoods(gid int32) {
+	// if goods, ok := AllAuctionGoodsContainer[gid]; ok {
+	// 	if goods.FinalRecord == nil
+	// 	CurrentAuctionGoodsID = gid
+	// }
 }
 
 // GlobalOnCustomerSignin 用户登录

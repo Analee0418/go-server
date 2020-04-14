@@ -9,6 +9,7 @@ import (
 	"net"
 	"time"
 
+	"com.lueey.shop/config"
 	avro "com.lueey.shop/protocol"
 	"com.lueey.shop/utils"
 	guuid "github.com/google/uuid"
@@ -36,7 +37,7 @@ func (s *Session) SetDead() {
 }
 
 func (s *Session) Dead() bool {
-	log.Printf("Session[%s] isDead: %v", s.name, s.dead)
+	// log.Printf("Session[%s] isDead: %v", s.name, s.dead)
 	return s.dead
 }
 
@@ -112,9 +113,17 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 	// 	log.Fatal(err)
 	// 	return err
 	// }
+	ip := conn.RemoteAddr().String()
 	_, err = conn.Write(finalBlockBuffer.Bytes())
+
+	if config.DEBUG {
+		lang, err := json.MarshalIndent(msg, "", "   ")
+		if err == nil {
+			log.Printf("DEBUG send msg to %s,\n%s", ip, string(lang))
+		}
+	}
 	if err != nil {
-		log.Println(err)
+		log.Printf("ERROR: %s, IP: %s", err, ip)
 	}
 }
 

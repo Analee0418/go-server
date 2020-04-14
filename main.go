@@ -9,8 +9,10 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"reflect"
 	"runtime"
+	"syscall"
 	"time"
 
 	"com.lueey.shop/config"
@@ -38,6 +40,8 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	model.TCPServerInit()
+
 	config.Init()
 
 	model.InitAuctionGoods()
@@ -50,13 +54,40 @@ func main() {
 	model.PostInitRoom()
 	model.PostInitGlobal()
 
+	// crontab 任务
 	startTimer(func(now int64) {
 		// log.Printf("Time. time %s", (time.Now().Nanosecond() / 1e6))
 		// sessionca
 		model.ReleaseSessionCache(now)
+
+		// server refresh
+		model.TCPServerInstance.TCPServerRefresh(now)
 	})
 
+	// 接收世界状态
 	go utils.ReceiveGlobalState()
+
+	// 退出
+	c := make(chan os.Signal)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2) // 监听信号
+	go func() {
+		for s := range c {
+			switch s {
+			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM:
+				log.Println("Server program exit:", s)
+				model.TCPServerInstance.TCPServerUpdateStatus(model.ServerDeactivate, false)
+				utils.HDelRedis("hallserver##startup", model.TCPServerInstance.ID)
+				log.Printf("Notify HTTPServer")
+				os.Exit(0)
+			case syscall.SIGUSR1:
+				log.Println("usr1", s)
+			case syscall.SIGUSR2:
+				log.Println("usr2", s)
+			default:
+				log.Println("Other:", s)
+			}
+		}
+	}()
 
 	startTCPServer()
 
@@ -75,17 +106,25 @@ func handleConnection(conn net.Conn) {
 		time.Sleep(10 * time.Microsecond)
 	}()
 
+	ip := conn.RemoteAddr().String()
+
 	_ret := make([]byte, 4)
 	n, e := conn.Read(_ret)
 	if e != nil {
 		if e == io.EOF { // 客户端主动断开
-			log.Println("WARN: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! discover client disconnect.")
+			log.Println("WARN: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! discover client disconnect.", ip)
 			model.OnClientDisconnect(conn)
 			return
 		}
 	}
 	dataLen := int(binary.LittleEndian.Uint32(_ret))
-	log.Println("->->->->->->->->->->->-> length", dataLen, n, e)
+	log.Println("->->->->->->->->->->->-> length", dataLen, n, ip, e)
+
+	if dataLen >= 2097152 {
+		log.Println("ERROR: Illegal request ->->->->->->->->->->->-> ", ip)
+		conn.Close()
+		return
+	}
 
 	ulimitBuffer := bytes.NewBuffer(nil)
 	remain := dataLen
@@ -140,11 +179,13 @@ func handleConnection(conn net.Conn) {
 		return
 	}
 
-	// lang, err := json.Marshal(message)
-	// if err == nil {
-	// 	log.Println(string(lang))
-	// }
-	log.Println(message.Action, " Request ", ulimitBuffer.Len(), " Byte")
+	log.Println(message.Action, " Request ", ulimitBuffer.Len(), " Byte from ", ip)
+	if config.DEBUG {
+		lang, err := json.MarshalIndent(message, "", "   ")
+		if err == nil {
+			log.Println(string(lang))
+		}
+	}
 
 	selector := handler.HandlerSelector{}
 	go selector.Selects(&conn, message)
@@ -154,20 +195,20 @@ func handleConnection(conn net.Conn) {
 }
 
 func startTCPServer() {
-	var port string = ""
-	args := os.Args[1:]
-	if len(args) == 0 {
-		port = pORT
-	} else {
-		port = args[0]
-	}
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	// var port string = ""
+	// args := os.Args[1:]
+	// if len(args) == 0 {
+	// 	port = pORT
+	// } else {
+	// 	port = args[0]
+	// }
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", model.TCPServerInstance.PORT))
 	// if err != nil {
 	// 	log.Fatal(err)
 	// 	return
 	// }
 	checkError(err)
-	log.Printf("start listening on %s", port)
+	log.Printf("start listening on %d", model.TCPServerInstance.PORT)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

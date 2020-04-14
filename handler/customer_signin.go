@@ -87,6 +87,8 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		log.Println("-----------------------", smsg.Message_session.MessageSession.Sid.String)
 		h.session.SendMessage(*smsg)
 
+		model.TCPServerInstance.TCPServerOnUpdateOnlines(model.Onlines(), false)
+
 		msgs := model.GlobalOnCustomerSignin(Idcard)
 		if msgs != nil {
 
