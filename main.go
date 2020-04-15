@@ -40,8 +40,6 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	model.TCPServerInit()
-
 	config.Init()
 
 	model.InitAuctionGoods()
@@ -53,6 +51,8 @@ func main() {
 	model.PostInitCustoemr()
 	model.PostInitRoom()
 	model.PostInitGlobal()
+
+	model.TCPServerInit()
 
 	// crontab 任务
 	startTimer(func(now int64) {

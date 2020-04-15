@@ -39,18 +39,35 @@ func main() {
 			return
 		}
 		var salesAdvisorID string
-		salesAdvisorID, exists = c.GetQuery("s")
+		salesAdvisorID, exists = c.GetQuery("s") // 销售
 		if !exists || salesAdvisorID == "" {
-			idcard, exists := c.GetQuery("c")
+			idcard, exists := c.GetQuery("c") // 用户ID
 			if !exists {
-				log.Println("ERROR: Not found users params")
+				log.Println("ERROR: Not found users ID")
 				c.String(403, "Invalid request.")
 				return
 			}
-			if v, ok := config.CustomerTemplate[idcard]; ok {
-				salesAdvisorID = v["sales_advisor"]
+			mobile, exists := c.GetQuery("m") // 用户手机号
+			if !exists {
+				log.Println("ERROR: Not found users mobile")
+				c.String(403, "Invalid request.")
+				return
+			}
+
+			if v, ok := config.CustomerTemplate[idcard]; !ok {
+				for templateID, template := range config.CustomerTemplate {
+					if l := len(templateID); templateID[l-4:l] == idcard && template["mobile"] == mobile {
+						idcard = templateID
+						salesAdvisorID = template["sales_advisor"]
+						break
+					}
+				}
 			} else {
-				log.Printf("Can not found customer config by idcard[%s]", idcard)
+				salesAdvisorID = v["sales_advisor"]
+			}
+
+			if salesAdvisorID == "" {
+				log.Printf("Can not found customer config by idcard[%s] mobile[%s]", idcard, mobile)
 			}
 		}
 
@@ -101,15 +118,15 @@ func main() {
 		//
 		model.HTTPServerDiscovery(now)
 
-		for _, server := range model.HTTPServerAllHallServerContainer {
-			server.HTTPServerRefresh(now)
+		for sid := range model.HTTPServerAllHallServerContainer {
+			model.HTTPServerRefresh(now, sid)
 		}
 	})
 
 	go model.HTTPServerOnServerStartup()
-	for _, server := range model.HTTPServerAllHallServerContainer {
-		go server.HTTPServerOnServerUpdateOnlines()
-		go server.HTTPServerOnServerUpdateStatus()
+	for sid := range model.HTTPServerAllHallServerContainer {
+		go model.HTTPServerOnServerUpdateOnlines(sid)
+		go model.HTTPServerOnServerUpdateStatus(sid)
 	}
 
 	// Listen and serve on 0.0.0.0:8080

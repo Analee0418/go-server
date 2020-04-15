@@ -36,6 +36,8 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Message_room_info: avro.NewMessage_room_infoUnion(),
 
+		Message_customer_info: avro.NewMessage_customer_infoUnion(),
+
 		Message_room_waiting_customers: avro.NewMessage_room_waiting_customersUnion(),
 
 		Message_auction_info: avro.NewMessage_auction_infoUnion(),

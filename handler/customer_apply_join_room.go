@@ -92,4 +92,20 @@ func (h *CustomerApplyJoinRoom) do(msg avro.Message) {
 			waitingCustomerSession.SendMessage(*refreshMsg)
 		}
 	}
+	// 刷新当前客户端排名信息
+	// var rank int = -1
+	// for idx, waitingIdcard := range r.WaitingList {
+	// 	if waitingIdcard == h.session.CurrentUser().ID {
+	// 		rank = idx + 1
+	// 		break
+	// 	}
+	// }
+	// refreshMsg2 := model.GenerateMessage(avro.ActionMessage_room_waiting_customers)
+	// refreshMsg2.Message_room_waiting_customers = &avro.Message_room_waiting_customersUnion{
+	// 	UnionType: avro.Message_room_waiting_customersUnionTypeEnumMessageRoomWaitingCustomers,
+	// 	MessageRoomWaitingCustomers: &avro.MessageRoomWaitingCustomers{
+	// 		Rank: int32(rank),
+	// 	},
+	// }
+	// h.session.SendMessage(*refreshMsg2)
 }

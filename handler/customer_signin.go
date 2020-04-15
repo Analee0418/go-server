@@ -34,6 +34,22 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		return
 	}
 
+	log.Printf("DEBUG customer signin with %s, %s", Idcard, mobile)
+
+	var ok = false
+	var customer *model.Customer = nil
+
+	customer, ok = model.AllCustomerContainer[Idcard]
+	if !ok || customer == nil {
+		for _, c := range model.AllCustomerContainer {
+			if l := len(c.ID); c.ID[l-4:l] == Idcard && c.Mobile == mobile {
+				Idcard = c.ID
+				customer = c
+				break
+			}
+		}
+	}
+
 	if _, exists := model.GetSessionByName(Idcard); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
@@ -44,11 +60,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		return
 	}
 
-	log.Printf("DEBUG customer signin with %s, %s", Idcard, mobile)
-
-	ok := false
-	c, ok := model.AllCustomerContainer[Idcard]
-	if !ok || c.Mobile != mobile {
+	if customer == nil || customer.Mobile != mobile {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
 			String:    "无效用户",
@@ -58,7 +70,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		return
 	}
 
-	_, ok = model.RoomContainer[c.SalesAdvisorID]
+	_, ok = model.RoomContainer[customer.SalesAdvisorID]
 	if !ok {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
@@ -72,7 +84,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 	// 允许登录
 	if ok {
 		h.session = new(model.Session)
-		h.session.InitCustomer(*h.conn, c)
+		h.session.InitCustomer(*h.conn, customer)
 
 		smsg := model.GenerateMessage(avro.ActionMessage_session)
 		smsg.Message_session = &avro.Message_sessionUnion{

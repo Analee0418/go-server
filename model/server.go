@@ -276,7 +276,7 @@ func HTTPServerOnServerStartup() {
 	ch := pubsub.ChannelSize(1)
 	for {
 		res := <-ch
-		log.Printf("INFO: recived hallserver publish message: %s", res.Payload)
+		log.Printf("INFO: recived hallserver OnStartup message: %s", res.Payload)
 		a := map[string]string{}
 		if err := json.Unmarshal([]byte(res.Payload), &a); err == nil {
 			s := parseServerFromMap(a)
@@ -295,14 +295,18 @@ func HTTPServerOnServerStartup() {
 }
 
 // HTTPServerOnServerUpdateOnlines 更新服务器在线人数
-func (s *Server) HTTPServerOnServerUpdateOnlines() {
-	pubsub := utils.GetRDB().Subscribe(fmt.Sprintf("%s##onlines", GenerateServerKey(s.ID)))
+func HTTPServerOnServerUpdateOnlines(sid string) {
+	pubsub := utils.GetRDB().Subscribe(fmt.Sprintf("%s##onlines", GenerateServerKey(sid)))
 	defer func() { pubsub.Close() }()
 
 	ch := pubsub.ChannelSize(1)
 	for {
 		res := <-ch
-		log.Printf("INFO: recived hallserver publish message: %s", res.Payload)
+		s, ok := HTTPServerAllHallServerContainer[sid]
+		if !ok {
+			continue
+		}
+		log.Printf("INFO: recived hallserver UpdateOnlines message: %s", res.Payload)
 		if v, err := strconv.ParseInt(res.Payload, 10, 32); err == nil {
 			s.online = int32(v)
 			log.Printf("INFO: Server[%s] update onlines to %d.", GenerateServerKey(s.ID), s.online)
@@ -313,14 +317,18 @@ func (s *Server) HTTPServerOnServerUpdateOnlines() {
 }
 
 // HTTPServerOnServerUpdateStatus 更新服务器状态
-func (s *Server) HTTPServerOnServerUpdateStatus() {
-	pubsub := utils.GetRDB().Subscribe(fmt.Sprintf("%s##status", GenerateServerKey(s.ID)))
+func HTTPServerOnServerUpdateStatus(sid string) {
+	pubsub := utils.GetRDB().Subscribe(fmt.Sprintf("%s##status", GenerateServerKey(sid)))
 	defer func() { pubsub.Close() }()
 
 	ch := pubsub.ChannelSize(1)
 	for {
 		res := <-ch
-		log.Printf("INFO: recived hallserver publish message: %s", res.Payload)
+		s, ok := HTTPServerAllHallServerContainer[sid]
+		if !ok {
+			continue
+		}
+		log.Printf("INFO: recived hallserver UpdatesStatus message: %s", res.Payload)
 		if v, err := strconv.ParseInt(res.Payload, 10, 32); err == nil {
 			s.status = int32(v)
 			log.Printf("INFO: Server[%s] update status to %d.", GenerateServerKey(s.ID), s.status)
@@ -362,8 +370,12 @@ func HTTPServerDiscovery(now int64) {
 }
 
 // HTTPServerRefresh 定时刷新服务器信息
-func (s *Server) HTTPServerRefresh(now int64) {
+func HTTPServerRefresh(now int64, sid string) {
 	if now-httpServerLastRefreshTime < HTTPServerScanInterval {
+		return
+	}
+	s, ok := HTTPServerAllHallServerContainer[sid]
+	if !ok {
 		return
 	}
 	httpServerLastRefreshTime = now
@@ -417,9 +429,11 @@ func SelectHallServer(salesAdvisorID string, prowlNotify bool) string {
 	assignedHallServerID, err := utils.HGetRedis("SalesAdvisor###ServerID", salesAdvisorID)
 	assigned := err == nil && assignedHallServerID != "" // 是否已经分配过server
 	var maxOnlinesServer *Server = nil
-	if assigned {
-		s := HTTPServerAllHallServerContainer[assignedHallServerID.(string)]
-		if s.status == ServerDeactivate {
+	if assigned { // 是否需要重新分配
+		s, ok := HTTPServerAllHallServerContainer[assignedHallServerID.(string)]
+		if !ok {
+			assigned = false
+		} else if s.status == ServerDeactivate {
 			log.Printf("ERROR: The sales roome server has been shut down And needs to be reassigned. %v", s.ID)
 			assigned = false
 		}
