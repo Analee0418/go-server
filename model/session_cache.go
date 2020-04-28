@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"com.lueey.shop/config"
+	avro "com.lueey.shop/protocol"
 	"com.lueey.shop/utils"
 	guuid "github.com/google/uuid"
 )
@@ -144,4 +145,44 @@ func OnClientDisconnect(conn net.Conn) {
 		log.Printf("Client disconnect after clear session[%s].", s.name)
 	}
 
+}
+
+func OnBroadcastToGlobal() {
+	pubsub := utils.GetRDB().Subscribe("global_broadcast")
+	defer func() { pubsub.Close() }()
+
+	ch := pubsub.ChannelSize(1)
+	for {
+		res := <-ch
+		log.Printf("INFO: recived broadcast message: %s", res.Payload)
+
+		var message map[string]string
+		if err := json.Unmarshal([]byte(res.Payload), &message); err == nil {
+			log.Printf("INFO recived broadcast message: %s", message)
+			if key, ok := message["key"]; ok {
+				if sec, ok := message["sec"]; ok {
+					msg := GenerateMessage(avro.ActionMessage_broadcast)
+					msg.Message_broadcast = &avro.Message_broadcastUnion{
+						UnionType: avro.Message_broadcastUnionTypeEnumMessageForward,
+						MessageForward: &avro.MessageForward{
+							Key: &avro.KeyUnion{
+								UnionType: avro.KeyUnionTypeEnumString,
+								String:    key,
+							},
+							Sec: &avro.SecUnion{
+								UnionType: avro.SecUnionTypeEnumString,
+								String:    sec,
+							},
+						},
+					}
+
+					for _, session := range sessionConn {
+						if !session.dead {
+							session.SendMessage(*msg)
+						}
+					}
+				}
+			}
+		}
+	}
 }

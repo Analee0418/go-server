@@ -44,6 +44,12 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Message_cars_model: avro.NewMessage_cars_modelUnion(),
 
+		Message_forward_to_customer: avro.NewMessage_forward_to_customerUnion(),
+
+		Message_forward_to_sales_advisor: avro.NewMessage_forward_to_sales_advisorUnion(),
+
+		Message_broadcast: avro.NewMessage_broadcastUnion(),
+
 		// 提示消息
 
 		Tips: avro.NewTipsUnion(),

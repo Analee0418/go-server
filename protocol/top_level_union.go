@@ -43,7 +43,9 @@ const (
 
 	 TopLevelUnionTypeEnumMessageGlobalInfo TopLevelUnionTypeEnum = 12
 
-	 TopLevelUnionTypeEnumMessage TopLevelUnionTypeEnum = 13
+	 TopLevelUnionTypeEnumMessageForward TopLevelUnionTypeEnum = 13
+
+	 TopLevelUnionTypeEnumMessage TopLevelUnionTypeEnum = 14
 
 )
 
@@ -74,6 +76,8 @@ type TopLevelUnion struct {
 	MessageAuctionInfo *MessageAuctionInfo
 
 	MessageGlobalInfo *MessageGlobalInfo
+
+	MessageForward *MessageForward
 
 	Message *Message
 
@@ -125,6 +129,9 @@ func writeTopLevelUnion(r *TopLevelUnion, w io.Writer) error {
         
 	case TopLevelUnionTypeEnumMessageGlobalInfo:
 		return writeMessageGlobalInfo(r.MessageGlobalInfo, w)
+        
+	case TopLevelUnionTypeEnumMessageForward:
+		return writeMessageForward(r.MessageForward, w)
         
 	case TopLevelUnionTypeEnumMessage:
 		return writeMessage(r.Message, w)
@@ -250,6 +257,14 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		
 	
 	case 13:
+		
+		r.MessageForward = NewMessageForward()
+		
+		
+		return r.MessageForward
+		
+	
+	case 14:
 		
 		r.Message = NewMessage()
 		

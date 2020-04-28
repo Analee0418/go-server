@@ -32,11 +32,11 @@ func init() {
 }
 
 func main() {
-	// defer func() {
-	// 	if x := recover(); x != nil {
-	// 		log.Println("caught panic in main()", x)
-	// 	}
-	// }()
+	defer func() {
+		if x := recover(); x != nil {
+			log.Println("Fatal caught panic in main()", x)
+		}
+	}()
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
@@ -66,6 +66,9 @@ func main() {
 
 	// 接收世界状态
 	go utils.ReceiveGlobalState()
+
+	// 接收世界广播
+	go model.OnBroadcastToGlobal()
 
 	// 退出
 	c := make(chan os.Signal)
