@@ -67,15 +67,17 @@ const (
 
 	ActionMessage_auction_info Action = 24
 
-	ActionMessage_forward_to_customer Action = 25
+	ActionMessage_just_been_invited_into_room Action = 25
 
-	ActionMessage_forward_to_sales_advisor Action = 26
+	ActionMessage_forward_to_customer Action = 26
 
-	ActionMessage_broadcast Action = 27
+	ActionMessage_forward_to_sales_advisor Action = 27
 
-	ActionTips Action = 28
+	ActionMessage_broadcast Action = 28
 
-	ActionError_message Action = 29
+	ActionTips Action = 29
+
+	ActionError_message Action = 30
 
 )
 
@@ -156,6 +158,9 @@ func (e Action) String() string {
 
 	case ActionMessage_auction_info:
 		return "message_auction_info"
+
+	case ActionMessage_just_been_invited_into_room:
+		return "message_just_been_invited_into_room"
 
 	case ActionMessage_forward_to_customer:
 		return "message_forward_to_customer"
@@ -257,6 +262,9 @@ func NewActionValue(raw string) (r Action, err error) {
 
 	case "message_auction_info":
 		return ActionMessage_auction_info, nil
+
+	case "message_just_been_invited_into_room":
+		return ActionMessage_just_been_invited_into_room, nil
 
 	case "message_forward_to_customer":
 		return ActionMessage_forward_to_customer, nil

@@ -45,6 +45,7 @@
       "message_contract",
       "message_global_info",
       "message_auction_info",
+      "message_just_been_invited_into_room",
 
       "message_forward_to_customer",
       "message_forward_to_sales_advisor",

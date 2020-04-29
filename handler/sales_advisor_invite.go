@@ -107,6 +107,9 @@ func (h *SalesAdvisorInvite) do(msg avro.Message) {
 	// 刷新当事人用户端
 	if waitingCustomerSession, exist := model.GetSessionByName(idcard); exist {
 		waitingCustomerSession.SendMessage(*refreshMsg)
+
+		invitedMsg := model.GenerateMessage(avro.ActionMessage_just_been_invited_into_room)
+		waitingCustomerSession.SendMessage(*invitedMsg)
 	}
 }
 
