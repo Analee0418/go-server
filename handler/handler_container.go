@@ -20,7 +20,6 @@ var handlerMapping = map[avro.Action]ActionHandler{
 	avro.ActionRequest_customer_signin:                   &CustomerSignin{},
 	avro.ActionRequest_customer_join_queue:               &CustomerApplyJoinRoom{},
 	avro.ActionRequest_customer_build_signature:          &CustomerBuildSignature{},
-	avro.ActionRequest_host_switch_state:                 &HostsUpdateState{},
 	avro.ActionMessage_forward_to_customer:               &MessageForwardHandler{},
 	avro.ActionMessage_forward_to_sales_advisor:          &MessageForwardHandler{},
 	avro.ActionMessage_broadcast:                         &MessageForwardHandler{},

@@ -8,8 +8,21 @@
       "speeching",
       "aution",
       "products",
+      "earnest_money",
       "discount_strategy",
-      "chat_with_advisor"
+      "chat_with_advisor",
+      "activity_ends"
+    ]
+  },
+  {
+    "name": "enum.CustomerState",
+    "type": "enum",
+    "symbols": [
+      "idle",
+      "during_chat",
+      "game",
+      "browse_product",
+      "paying"
     ]
   },
   {
@@ -43,7 +56,8 @@
       "message_customers_auction_info",
       "message_cars_model",
       "message_contract",
-      "message_global_info",
+      "message_global_info_to_http",
+      "message_global_state",
       "message_auction_info",
       "message_just_been_invited_into_room",
 
@@ -152,6 +166,10 @@
       {
         "name": "series",
         "type": ["null", "string"]
+      },
+      {
+        "name": "price",
+        "type": "float"
       }
     ]
   },
@@ -310,16 +328,27 @@
         "type": "int"
       },
       {
-        "name": "broilers",
+        "name": "idle",
         "type": "int"
       },
       {
-        "name": "playing",
+        "name": "browse_product",
         "type": "int"
       },
       {
-        "name": "visitor",
+        "name": "game",
         "type": "int"
+      }
+    ]
+  },
+  {
+    "namespace": "proto",
+    "name": "MessageGlobalState",
+    "type": "record",
+    "fields":[
+      {
+        "name": "globalState",
+        "type": "enum.GlobalState"
       }
     ]
   },
@@ -403,6 +432,30 @@
           "name": "RequestSalesAdvisorConfirmPaid",
           "type": "record",
           "fields": [
+            {
+              "name": "brand",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "color",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "interior",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "series",
+              "type": ["null", "string"]
+            },
+            {
+              "name": "price",
+              "type": "float"
+            },
+            {
+              "name": "disPrice",
+              "type": "float"
+            }
           ]
         }]
       },
@@ -457,27 +510,6 @@
         }]
       },
       {
-        "name": "host_switch_state",
-        "type": ["null", {
-          "name": "RequestHostSwitchState",
-          "type": "record",
-          "fields": [
-            {
-              "name": "globalState",
-              "type": "enum.GlobalState"
-            },
-            {
-              "name": "countDownSeconds",
-              "type": "int"
-            },
-            {
-              "name": "body",
-              "type": "string"
-            }
-          ]
-        }]
-      },
-      {
         "name": "message_session",
         "type": ["null", "MessageSession"]
       },
@@ -512,6 +544,10 @@
       {
         "name": "message_broadcast",
         "type": ["null", "MessageForward"]
+      },
+      {
+        "name": "message_global_state",
+        "type": ["null", "MessageGlobalState"]
       },
       {
         "name": "tips",

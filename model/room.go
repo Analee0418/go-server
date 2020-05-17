@@ -26,19 +26,25 @@ func GenerateRoomKey(advisorID string) string {
 }
 
 type CarModel struct {
-	Brand    string // 品牌
-	Color    string // 颜色
-	Interior string // 内饰
-	Series   string // 系列
+	Brand    string  // 品牌
+	Color    string  // 颜色
+	Interior string  // 内饰
+	Series   string  // 系列
+	Price    float32 // 价格
 }
 
 type Room struct {
-	UUID              int32
-	SalesAdvisorID    string
-	OrderCount        int32
-	CurrentCustomerID string    // 当前正在交谈的客户
-	WaitingList       []string  // 排队信息
-	CarModel          *CarModel // 汽车模型信息
+	UUID               int32
+	SalesAdvisorID     string
+	SalesAdvisorMobile string
+	SalesAdvisorName   string
+	OrderCount         int32
+	CurrentCustomerID  string    // 当前正在交谈的客户
+	WaitingList        []string  // 排队信息
+	CarModel           *CarModel // 汽车模型信息
+	Province           string    // 省
+	City               string    // 市
+	Company            string    // 经销商
 }
 
 func (r *Room) BuildRoomMessage() *avro.MessageRoomInfo {
@@ -232,9 +238,14 @@ func (r *Room) String() string {
 }
 
 func InitRoom() {
-	for advisorID := range config.SalesAdvisorTemplate {
+	for advisorID, template := range config.SalesAdvisorTemplate {
 		roomInstance := &Room{
-			SalesAdvisorID: advisorID,
+			SalesAdvisorID:     advisorID,
+			SalesAdvisorMobile: template["advisor_mobile"],
+			SalesAdvisorName:   template["advisor_name"],
+			Province:           template["advisor_province"],
+			City:               template["advisor_city"],
+			Company:            template["advisor_company"],
 		}
 		roomKey := GenerateRoomKey(advisorID)
 		if val, err := utils.HGetRedis(roomKey, "roomID"); err == nil {

@@ -15,6 +15,36 @@ import (
   
 type RequestSalesAdvisorConfirmPaid struct {
 
+	
+	
+		Brand *BrandUnion
+	
+
+	
+	
+		Color *ColorUnion
+	
+
+	
+	
+		Interior *InteriorUnion
+	
+
+	
+	
+		Series *SeriesUnion
+	
+
+	
+	
+		Price float32
+	
+
+	
+	
+		DisPrice float32
+	
+
 }
 
 func NewRequestSalesAdvisorConfirmPaid() (*RequestSalesAdvisorConfirmPaid) {
@@ -53,6 +83,36 @@ func DeserializeRequestSalesAdvisorConfirmPaidFromSchema(r io.Reader, schema str
 func writeRequestSalesAdvisorConfirmPaid(r *RequestSalesAdvisorConfirmPaid, w io.Writer) error {
 	var err error
 	
+	err = writeBrandUnion( r.Brand, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeColorUnion( r.Color, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeInteriorUnion( r.Interior, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeSeriesUnion( r.Series, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = vm.WriteFloat( r.Price, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = vm.WriteFloat( r.DisPrice, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -61,7 +121,7 @@ func (r *RequestSalesAdvisorConfirmPaid) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorConfirmPaid) Schema() string {
-	return "{\"fields\":[],\"name\":\"proto.RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"interior\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]},{\"name\":\"price\",\"type\":\"float\"},{\"name\":\"disPrice\",\"type\":\"float\"}],\"name\":\"proto.RequestSalesAdvisorConfirmPaid\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorConfirmPaid) SchemaName() string {
@@ -80,12 +140,72 @@ func (_ *RequestSalesAdvisorConfirmPaid) SetUnionElem(v int64) { panic("Unsuppor
 func (r *RequestSalesAdvisorConfirmPaid) Get(i int) types.Field {
 	switch (i) {
 	
+	case 0:
+		
+			r.Brand = NewBrandUnion()
+	
+		
+		
+			return r.Brand
+		
+	
+	case 1:
+		
+			r.Color = NewColorUnion()
+	
+		
+		
+			return r.Color
+		
+	
+	case 2:
+		
+			r.Interior = NewInteriorUnion()
+	
+		
+		
+			return r.Interior
+		
+	
+	case 3:
+		
+			r.Series = NewSeriesUnion()
+	
+		
+		
+			return r.Series
+		
+	
+	case 4:
+		
+		
+			return (*types.Float)(&r.Price)
+		
+	
+	case 5:
+		
+		
+			return (*types.Float)(&r.DisPrice)
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *RequestSalesAdvisorConfirmPaid) SetDefault(i int) {
 	switch (i) {
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
+	
+        
 	
 	}
 	panic("Unknown field index")

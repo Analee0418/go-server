@@ -45,6 +45,14 @@ type Server struct {
 	OnlineCustomer []string
 }
 
+func (s *Server) String() string {
+	lang, err := json.MarshalIndent(s, "", "   ")
+	if err == nil {
+		return string(lang)
+	}
+	return ""
+}
+
 // TCPServerInit 服务器初始化
 func TCPServerInit() {
 	cfg := config.InitServerConfig()
@@ -344,9 +352,9 @@ func HTTPServerDiscovery(now int64) {
 		return
 	}
 	httpServerLastScannerTime = now
-	if config.DEBUG {
-		log.Println("Start scan and try get new hall server.")
-	}
+	// if config.DEBUG {
+	// 	log.Println("Start scan and try get new hall server.")
+	// }
 	if m, err := utils.HGetAllRedis("hallserver##startup"); err == nil {
 		for hallServerID, serverJsonstr := range m {
 			if _, ok := HTTPServerAllHallServerContainer[hallServerID]; !ok {
@@ -432,10 +440,12 @@ func SelectHallServer(salesAdvisorID string, prowlNotify bool) string {
 	if assigned { // 是否需要重新分配
 		s, ok := HTTPServerAllHallServerContainer[assignedHallServerID.(string)]
 		if !ok {
-			assigned = false
-		} else if s.status == ServerDeactivate {
-			log.Printf("ERROR: The sales roome server has been shut down And needs to be reassigned. %v", s.ID)
-			assigned = false
+			log.Printf("ERROR: hall serverID is invalid and cannot used assigned server instance! %v %s", s.ID)
+			return ""
+			// assigned = false
+			// } else if s.status == ServerDeactivate {
+			// 	log.Printf("ERROR: The sales roome server has been shut down And needs to be reassigned. %v", s.ID)
+			// 	assigned = false
 		}
 	}
 	if !assigned { // 还没有分配服务器

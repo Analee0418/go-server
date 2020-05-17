@@ -63,21 +63,23 @@ const (
 
 	ActionMessage_contract Action = 22
 
-	ActionMessage_global_info Action = 23
+	ActionMessage_global_info_to_http Action = 23
 
-	ActionMessage_auction_info Action = 24
+	ActionMessage_global_state Action = 24
 
-	ActionMessage_just_been_invited_into_room Action = 25
+	ActionMessage_auction_info Action = 25
 
-	ActionMessage_forward_to_customer Action = 26
+	ActionMessage_just_been_invited_into_room Action = 26
 
-	ActionMessage_forward_to_sales_advisor Action = 27
+	ActionMessage_forward_to_customer Action = 27
 
-	ActionMessage_broadcast Action = 28
+	ActionMessage_forward_to_sales_advisor Action = 28
 
-	ActionTips Action = 29
+	ActionMessage_broadcast Action = 29
 
-	ActionError_message Action = 30
+	ActionTips Action = 30
+
+	ActionError_message Action = 31
 
 )
 
@@ -153,8 +155,11 @@ func (e Action) String() string {
 	case ActionMessage_contract:
 		return "message_contract"
 
-	case ActionMessage_global_info:
-		return "message_global_info"
+	case ActionMessage_global_info_to_http:
+		return "message_global_info_to_http"
+
+	case ActionMessage_global_state:
+		return "message_global_state"
 
 	case ActionMessage_auction_info:
 		return "message_auction_info"
@@ -257,8 +262,11 @@ func NewActionValue(raw string) (r Action, err error) {
 	case "message_contract":
 		return ActionMessage_contract, nil
 
-	case "message_global_info":
-		return ActionMessage_global_info, nil
+	case "message_global_info_to_http":
+		return ActionMessage_global_info_to_http, nil
+
+	case "message_global_state":
+		return ActionMessage_global_state, nil
 
 	case "message_auction_info":
 		return ActionMessage_auction_info, nil

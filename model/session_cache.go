@@ -137,7 +137,6 @@ func OnClientDisconnect(conn net.Conn) {
 	s, ok := sessionConn[conn]
 	if ok {
 		if s.customerInfo != nil {
-			GlobalOnCustomerDisconnect(s.customerInfo.ID)
 			s.customerInfo = nil
 		}
 		s.conn.Close()
@@ -145,6 +144,14 @@ func OnClientDisconnect(conn net.Conn) {
 		log.Printf("Client disconnect after clear session[%s].", s.name)
 	}
 
+}
+
+func BroadcastMessage(msg avro.Message) {
+	for _, session := range sessionConn {
+		if !session.dead {
+			session.SendMessage(msg)
+		}
+	}
 }
 
 func OnBroadcastToGlobal() {

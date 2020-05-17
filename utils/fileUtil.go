@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -31,4 +33,11 @@ func ExpandUser(path string) string {
 	}
 
 	return path
+}
+
+// CalcMD5 get md5hash from bytes
+func CalcMD5(data []byte) string {
+	hasher := md5.New()
+	hasher.Write(data)
+	return hex.EncodeToString(hasher.Sum(nil))
 }

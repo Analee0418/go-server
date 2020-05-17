@@ -26,10 +26,6 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Request_customer_build_signature: avro.NewRequest_customer_build_signatureUnion(),
 
-		// 主持人端
-
-		Host_switch_state: avro.NewHost_switch_stateUnion(),
-
 		// 推送消息
 
 		Message_session: avro.NewMessage_sessionUnion(),
@@ -49,6 +45,8 @@ func GenerateMessage(action avro.Action) *avro.Message {
 		Message_forward_to_sales_advisor: avro.NewMessage_forward_to_sales_advisorUnion(),
 
 		Message_broadcast: avro.NewMessage_broadcastUnion(),
+
+		Message_global_state: avro.NewMessage_global_stateUnion(),
 
 		// 提示消息
 

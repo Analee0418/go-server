@@ -152,7 +152,6 @@ func (s *Session) Close(reason string) (guuid.UUID, string) {
 	s.SendMessage(*msg)
 
 	if s.customerInfo != nil {
-		GlobalOnCustomerDisconnect(s.customerInfo.ID)
 		s.customerInfo = nil
 	}
 

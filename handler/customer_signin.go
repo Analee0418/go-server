@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 
+	"com.lueey.shop/config"
 	"com.lueey.shop/model"
 	avro "com.lueey.shop/protocol"
 )
@@ -42,7 +43,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 	customer, ok = model.AllCustomerContainer[Idcard]
 	if !ok || customer == nil {
 		for _, c := range model.AllCustomerContainer {
-			if l := len(c.ID); c.ID[l-4:l] == Idcard && c.Mobile == mobile {
+			if l := len(c.ID); c.ID[l-6:l] == Idcard && c.Mobile == mobile {
 				Idcard = c.ID
 				customer = c
 				break
@@ -96,12 +97,14 @@ func (h *CustomerSignin) do(msg avro.Message) {
 			},
 			UnionType: avro.Message_sessionUnionTypeEnumMessageSession,
 		}
-		log.Println("-----------------------", smsg.Message_session.MessageSession.Sid.String)
+		if config.DEBUG {
+			log.Println("DEBUG: On user login successed!", smsg.Message_session.MessageSession.Sid.String)
+		}
 		h.session.SendMessage(*smsg)
 
 		model.TCPServerInstance.TCPServerOnUpdateOnlines(model.Onlines(), false)
 
-		msgs := model.GlobalOnCustomerSignin(Idcard)
+		msgs := model.TCPGlobalOnCustomerSignin(Idcard)
 		if msgs != nil {
 
 			for _, msg := range msgs {

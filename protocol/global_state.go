@@ -27,9 +27,13 @@ const (
 
 	GlobalStateProducts GlobalState = 4
 
-	GlobalStateDiscount_strategy GlobalState = 5
+	GlobalStateEarnest_money GlobalState = 5
 
-	GlobalStateChat_with_advisor GlobalState = 6
+	GlobalStateDiscount_strategy GlobalState = 6
+
+	GlobalStateChat_with_advisor GlobalState = 7
+
+	GlobalStateActivity_ends GlobalState = 8
 
 )
 
@@ -51,11 +55,17 @@ func (e GlobalState) String() string {
 	case GlobalStateProducts:
 		return "products"
 
+	case GlobalStateEarnest_money:
+		return "earnest_money"
+
 	case GlobalStateDiscount_strategy:
 		return "discount_strategy"
 
 	case GlobalStateChat_with_advisor:
 		return "chat_with_advisor"
+
+	case GlobalStateActivity_ends:
+		return "activity_ends"
 
 	}
 	return "unknown"
@@ -83,11 +93,17 @@ func NewGlobalStateValue(raw string) (r GlobalState, err error) {
 	case "products":
 		return GlobalStateProducts, nil
 
+	case "earnest_money":
+		return GlobalStateEarnest_money, nil
+
 	case "discount_strategy":
 		return GlobalStateDiscount_strategy, nil
 
 	case "chat_with_advisor":
 		return GlobalStateChat_with_advisor, nil
+
+	case "activity_ends":
+		return GlobalStateActivity_ends, nil
 
 	}
 

@@ -35,6 +35,11 @@ type MessageCarsModel struct {
 		Series *SeriesUnion
 	
 
+	
+	
+		Price float32
+	
+
 }
 
 func NewMessageCarsModel() (*MessageCarsModel) {
@@ -93,6 +98,11 @@ func writeMessageCarsModel(r *MessageCarsModel, w io.Writer) error {
 		return err			
 	}
 	
+	err = vm.WriteFloat( r.Price, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -101,7 +111,7 @@ func (r *MessageCarsModel) Serialize(w io.Writer) error {
 }
 
 func (r *MessageCarsModel) Schema() string {
-	return "{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"interior\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCarsModel\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"brand\",\"type\":[\"null\",\"string\"]},{\"name\":\"color\",\"type\":[\"null\",\"string\"]},{\"name\":\"interior\",\"type\":[\"null\",\"string\"]},{\"name\":\"series\",\"type\":[\"null\",\"string\"]},{\"name\":\"price\",\"type\":\"float\"}],\"name\":\"proto.MessageCarsModel\",\"type\":\"record\"}"
 }
 
 func (r *MessageCarsModel) SchemaName() string {
@@ -156,12 +166,20 @@ func (r *MessageCarsModel) Get(i int) types.Field {
 			return r.Series
 		
 	
+	case 4:
+		
+		
+			return (*types.Float)(&r.Price)
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *MessageCarsModel) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

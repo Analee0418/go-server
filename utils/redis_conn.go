@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -9,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"com.lueey.shop/common"
 	"github.com/go-redis/redis/v7"
 )
 
@@ -18,29 +18,36 @@ func GetRDB() *redis.Client {
 	return rdb
 }
 
-func init() {
+func InitRedisDB() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Lmicroseconds)
-	rdb = redis.NewClient(&redis.Options{
-		Addr:         ":6379",
+
+	rdbOpt := &redis.Options{
+		Addr:         fmt.Sprintf("%s:%s", common.RedisIP, common.RedisPort),
 		DialTimeout:  10 * time.Second,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		PoolSize:     10,
 		PoolTimeout:  30 * time.Second,
-	})
+	}
+	if common.RedisPass != "" {
+		rdbOpt.Password = common.RedisPass
+	}
+	rdb = redis.NewClient(rdbOpt)
+
+	log.Printf("Initialize redis connection ok. %s", rdb)
 }
 
-func ExampleNewClient() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // use default Addr
-		Password: "",               // no password set
-		DB:       0,                // use default DB
-	})
+// func ExampleNewClient() {
+// 	rdb := redis.NewClient(&redis.Options{
+// 		Addr:     "localhost:6379", // use default Addr
+// 		Password: "",               // no password set
+// 		DB:       0,                // use default DB
+// 	})
 
-	pong, err := rdb.Ping().Result()
-	fmt.Println(pong, err)
-	// Output: PONG <nil>
-}
+// 	pong, err := rdb.Ping().Result()
+// 	fmt.Println(pong, err)
+// 	// Output: PONG <nil>
+// }
 
 // func ExampleParseURL() {
 // 	opt, err := redis.ParseURL("redis://:qwerty@localhost:6379/1")
@@ -466,25 +473,23 @@ func PublishMessage(channel string, msg string) error {
 	return err
 }
 
-func ChangeGlobalState(state string) error {
-	err := rdb.Publish("global_state", state).Err()
+// HTTPGlobalUpdateState 主持人端更新全局状态
+func HTTPGlobalUpdateState(state string) error {
+	err := rdb.Publish("updated_global_state", state).Err()
 	return err
 }
 
-func ReceiveGlobalState() {
-	pubsub := rdb.Subscribe("global_state")
-	defer func() { pubsub.Close() }()
+// TCPGlobalReceiveGlobalState 主持人端更新全局状态
+func TCPGlobalReceiveGlobalState() {
+	// pubsub := rdb.Subscribe("global_state")
+	// defer func() { pubsub.Close() }()
 
-	ch := pubsub.ChannelSize(1)
-	for {
-		res := <-ch
-		lang, err := json.Marshal(res)
-		if err == nil {
-			log.Printf("%v ----------------- %v", &rdb, string(lang))
-		} else {
-			log.Printf("msg cannot decode! %s", res)
-		}
-	}
+	// ch := pubsub.ChannelSize(1)
+	// for {
+	// 	res := <-ch
+	// 	state := res.Payload
+	// 	TCPGlobalOnUpdateState(state)
+	// }
 	// go func() {
 	// 	ch := pubsub.ChannelSize(1)
 	// 	for {

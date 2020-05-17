@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"com.lueey.shop/common"
 	"com.lueey.shop/utils"
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
@@ -53,23 +53,41 @@ func Init() {
 			if DEBUG {
 				log.Println(strings.Join(rows[0], ",\t"))
 			}
-			lastAdvisor := ""
 			lastAdvisorName := ""
+			lastAdvisorMobile := ""
+			lastAdvisorID := ""
+			lastProvince := ""
+			lastCity := ""
+			lastCompany := ""
+			// 销售手机号	销售身份证号	经商销省份	经商销城市	经商销公司名称
 			for _, row := range rows[1:] {
 				if DEBUG {
 					log.Println(strings.Join(row, ",\t"))
 				}
+
 				if strings.Contains(filename, "销售") {
+					// 销售及用户的配置表
 					idcard := row[0]
 					mobile := row[1]
 					region := ""
 
-					if row[5] != "" {
-						lastAdvisor = row[5]
-					}
-
 					if row[4] != "" {
 						lastAdvisorName = row[4]
+					}
+					if row[5] != "" {
+						lastAdvisorMobile = row[5]
+					}
+					if row[6] != "" {
+						lastAdvisorID = row[6]
+					}
+					if row[7] != "" {
+						lastProvince = row[7]
+					}
+					if row[8] != "" {
+						lastCity = row[8]
+					}
+					if row[9] != "" {
+						lastCompany = row[9]
 					}
 
 					if val, err := utils.HGetRedis("mobileRegion", mobile); err == nil {
@@ -77,7 +95,7 @@ func Init() {
 						region = val.(string)
 						log.Printf("Mobile region from redis: %s", region)
 
-					} else {
+					} else if common.ServerCategory == common.SERVER_CATEGORY_HALL {
 
 						resp, err := http.Get("https://www.ip.cn/db?num=%2B" + mobile)
 						if err != nil {
@@ -112,17 +130,23 @@ func Init() {
 						"mobile_region": region,
 						"username":      row[2],
 						"address":       row[3],
-						"sales_advisor": lastAdvisor,
+						"sales_advisor": lastAdvisorID,
 					}
 					CustomerTemplate[idcard] = customerTemplate
 
-					salesadvisorID := row[5]
+					// salesadvisorID := row[5]
 					salesAdvisorTemplate := map[string]string{
-						"advisor_name": lastAdvisorName,
-						"advisor_id":   lastAdvisor,
+						"advisor_name":     lastAdvisorName,
+						"advisor_id":       lastAdvisorID,
+						"advisor_mobile":   lastAdvisorMobile,
+						"advisor_province": lastProvince,
+						"advisor_city":     lastCity,
+						"advisor_company":  lastCompany,
 					}
-					SalesAdvisorTemplate[salesadvisorID] = salesAdvisorTemplate
+					SalesAdvisorTemplate[lastAdvisorID] = salesAdvisorTemplate
+
 				} else if strings.Contains(filename, "竞拍商品") {
+					// 竞拍的配置表
 					goodsID, err := strconv.ParseInt(row[0], 10, 32)
 					if err != nil {
 						log.Printf("ERROR: Invalid goodsID in \"%s\" %v", row, err)

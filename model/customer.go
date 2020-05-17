@@ -27,6 +27,8 @@ type Customer struct {
 	AuctionRecords  []AuctionRecord // 竞拍记录
 	AuctionGoodsIDs []int32         // 竞拍得到的物品ID列表
 	SignedContract  bool            // 已签约
+	Contract        Contract        // 合约信息
+	State           string          // 当前状态
 }
 
 func (r *Customer) BuildCustomerMessage() *avro.MessageCustomersInfo {
@@ -104,13 +106,19 @@ func (c *Customer) BiddingGoods(r *avro.MessageAuctionRecord) {
 	lang, err := json.Marshal(c.AuctionRecords)
 	if err == nil {
 		utils.HSetRedis(GenerateCustomerKey(c.ID), "recordList", string(lang))
-		log.Printf("Add new user bid info %s to cutomer ID %s", string(lang), c.ID)
+		log.Printf("INFO: Add new user bid info %s to cutomer ID %s", string(lang), c.ID)
 	}
 }
 
-func (c *Customer) ConfirmedSignContract() {
+func (c *Customer) ConfirmedSignContract(salesID string, price float32, disprice float32, brand string, color string, interior string, series string) {
 	c.SignedContract = true
 	utils.HSetRedis(GenerateCustomerKey(c.ID), "signedContract", "1")
+	c.Contract = CreateContract(c.ID, salesID, price, disprice, brand, color, interior, series)
+	lang, err := json.Marshal(c.Contract)
+	if err == nil {
+		utils.HSetRedis(GenerateCustomerKey(c.ID), "dataContract", string(lang))
+	}
+	log.Printf("INFO: customer[%s] completed contract[%s].", c.ID, string(lang))
 }
 
 func (r *Customer) String() string {
@@ -131,6 +139,7 @@ func InitCustomer() {
 			Mobile:         template["mobile"],
 			MobileRegion:   template["mobile_region"],
 			Address:        template["address"],
+			State:          "idle",
 		}
 
 		cKey := GenerateCustomerKey(ID)
@@ -154,6 +163,16 @@ func InitCustomer() {
 					customerInstance.SignedContract = true
 				} else {
 					customerInstance.SignedContract = false
+				}
+			}
+
+			if val, err := utils.HGetRedis(cKey, "state"); err == nil {
+				customerInstance.State = val.(string)
+			}
+
+			if val, err := utils.HGetRedis(cKey, "dataContract"); err == nil {
+				if err := json.Unmarshal([]byte(val.(string)), &customerInstance.Contract); err == nil {
+					log.Println(customerInstance.Contract)
 				}
 			}
 

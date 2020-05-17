@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 
@@ -10,7 +9,10 @@ import (
 
 const DEBUG bool = true
 
+var TCPServerParams ServerConfig
+
 // ServerConfig 定义配置文件解析后的结构
+// 配置与可执行文件放到一起
 type ServerConfig struct {
 	ServerID          string
 	ServerHost        string
@@ -37,5 +39,6 @@ func InitServerConfig() (jst *ServerConfig) {
 		return
 	}
 
+	TCPServerParams = *jst
 	return jst
 }

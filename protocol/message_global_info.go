@@ -32,17 +32,17 @@ type MessageGlobalInfo struct {
 
 	
 	
-		Broilers int32
+		Idle int32
 	
 
 	
 	
-		Playing int32
+		Browse_product int32
 	
 
 	
 	
-		Visitor int32
+		Game int32
 	
 
 }
@@ -98,17 +98,17 @@ func writeMessageGlobalInfo(r *MessageGlobalInfo, w io.Writer) error {
 		return err			
 	}
 	
-	err = vm.WriteInt( r.Broilers, w)
+	err = vm.WriteInt( r.Idle, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = vm.WriteInt( r.Playing, w)
+	err = vm.WriteInt( r.Browse_product, w)
 	if err != nil {
 		return err			
 	}
 	
-	err = vm.WriteInt( r.Visitor, w)
+	err = vm.WriteInt( r.Game, w)
 	if err != nil {
 		return err			
 	}
@@ -121,7 +121,7 @@ func (r *MessageGlobalInfo) Serialize(w io.Writer) error {
 }
 
 func (r *MessageGlobalInfo) Schema() string {
-	return "{\"fields\":[{\"name\":\"total_online_users\",\"type\":\"int\"},{\"name\":\"chating_users\",\"type\":\"int\"},{\"name\":\"paid_users\",\"type\":\"int\"},{\"name\":\"broilers\",\"type\":\"int\"},{\"name\":\"playing\",\"type\":\"int\"},{\"name\":\"visitor\",\"type\":\"int\"}],\"name\":\"proto.MessageGlobalInfo\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"total_online_users\",\"type\":\"int\"},{\"name\":\"chating_users\",\"type\":\"int\"},{\"name\":\"paid_users\",\"type\":\"int\"},{\"name\":\"idle\",\"type\":\"int\"},{\"name\":\"browse_product\",\"type\":\"int\"},{\"name\":\"game\",\"type\":\"int\"}],\"name\":\"proto.MessageGlobalInfo\",\"type\":\"record\"}"
 }
 
 func (r *MessageGlobalInfo) SchemaName() string {
@@ -161,19 +161,19 @@ func (r *MessageGlobalInfo) Get(i int) types.Field {
 	case 3:
 		
 		
-			return (*types.Int)(&r.Broilers)
+			return (*types.Int)(&r.Idle)
 		
 	
 	case 4:
 		
 		
-			return (*types.Int)(&r.Playing)
+			return (*types.Int)(&r.Browse_product)
 		
 	
 	case 5:
 		
 		
-			return (*types.Int)(&r.Visitor)
+			return (*types.Int)(&r.Game)
 		
 	
 	}

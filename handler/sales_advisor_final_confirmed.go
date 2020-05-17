@@ -28,6 +28,13 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 		return
 	}
 
+	price := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.Price
+	disprice := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.DisPrice
+	brand := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.Brand.String
+	color := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.Color.String
+	interior := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.Interior.String
+	series := msg.Sales_advisor_confirm_paid.RequestSalesAdvisorConfirmPaid.Series.String
+
 	r := h.session.Room()
 
 	old := r.CurrentCustomerID
@@ -43,8 +50,8 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 
 	if c, ok := model.AllCustomerContainer[r.CurrentCustomerID]; ok {
 		// 标记签约成功
-		c.ConfirmedSignContract()
-		log.Printf("WARN: Customer[%s] signed conract ok, and confirmed payment info.", r.CurrentCustomerID)
+		c.ConfirmedSignContract(c.SalesAdvisorID, price, disprice, brand, color, interior, series)
+		log.Printf("WARN: Customer[%s] signed conract ok, and confirmed payment info. The contract: price: %f, disprice: %f, brand: %s, color: %s, interior: %s, series: %s", r.CurrentCustomerID, price, disprice, brand, color, interior, series)
 
 		// 从房间请出
 		r.UpdateCustomer("")
@@ -69,4 +76,5 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 		evenMessage := model.GenerateMessage(avro.ActionMessage_room_chat_ends)
 		waitingCustomerSession.SendMessage(*evenMessage)
 	}
+
 }

@@ -12,9 +12,11 @@ import (
 	"os/signal"
 	"reflect"
 	"runtime"
+	"runtime/debug"
 	"syscall"
 	"time"
 
+	"com.lueey.shop/common"
 	"com.lueey.shop/config"
 	"com.lueey.shop/handler"
 	"com.lueey.shop/model"
@@ -32,25 +34,30 @@ func init() {
 }
 
 func main() {
+	common.ServerCategory = common.SERVER_CATEGORY_HALL
+
 	defer func() {
 		if x := recover(); x != nil {
+			debug.PrintStack()
 			log.Println("Fatal caught panic in main()", x)
 		}
 	}()
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	config.InitDBConfig()
+	utils.InitRedisDB()
+
 	config.Init()
 
 	model.InitAuctionGoods()
 	model.InitCustomer()
 	model.InitRoom()
-	model.InitGlobal()
+	model.TCPInitGlobal()
 
 	model.PostInitAuctionGoods()
 	model.PostInitCustoemr()
 	model.PostInitRoom()
-	model.PostInitGlobal()
 
 	model.TCPServerInit()
 
@@ -65,7 +72,7 @@ func main() {
 	})
 
 	// 接收世界状态
-	go utils.ReceiveGlobalState()
+	go model.TCPGlobalReceiveGlobalState()
 
 	// 接收世界广播
 	go model.OnBroadcastToGlobal()

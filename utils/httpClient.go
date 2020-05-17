@@ -6,7 +6,12 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
+
+const HTTPSessionAge int = 1200
 
 // ProwlNotify 发送提醒
 func ProwlNotify(msg string) {
@@ -28,4 +33,11 @@ func ProwlNotify(msg string) {
 	defer resp.Body.Close() //一定要关闭resp.Body
 	data, _ := ioutil.ReadAll(resp.Body)
 	log.Println(string(data), err)
+}
+
+// HTTPSession HTTP 服务器 session
+func HTTPSession(c *gin.Context) sessions.Session {
+	s := sessions.Default(c)
+	s.Options(sessions.Options{MaxAge: HTTPSessionAge})
+	return s
 }
