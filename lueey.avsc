@@ -387,6 +387,10 @@
           "type": "record",
           "fields": [
             {
+              "name": "mobile",
+              "type": ["null", "string"]
+            },
+            {
               "name": "sales_advisor_id",
               "type": ["null", "string"]
             },

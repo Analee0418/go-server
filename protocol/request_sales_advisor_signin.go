@@ -17,6 +17,11 @@ type RequestSalesAdvisorSignin struct {
 
 	
 	
+		Mobile *MobileUnion
+	
+
+	
+	
 		Sales_advisor_id *Sales_advisor_idUnion
 	
 
@@ -63,6 +68,11 @@ func DeserializeRequestSalesAdvisorSigninFromSchema(r io.Reader, schema string) 
 func writeRequestSalesAdvisorSignin(r *RequestSalesAdvisorSignin, w io.Writer) error {
 	var err error
 	
+	err = writeMobileUnion( r.Mobile, w)
+	if err != nil {
+		return err			
+	}
+	
 	err = writeSales_advisor_idUnion( r.Sales_advisor_id, w)
 	if err != nil {
 		return err			
@@ -81,7 +91,7 @@ func (r *RequestSalesAdvisorSignin) Serialize(w io.Writer) error {
 }
 
 func (r *RequestSalesAdvisorSignin) Schema() string {
-	return "{\"fields\":[{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.RequestSalesAdvisorSignin\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_id\",\"type\":[\"null\",\"string\"]},{\"name\":\"sales_advisor_alias\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.RequestSalesAdvisorSignin\",\"type\":\"record\"}"
 }
 
 func (r *RequestSalesAdvisorSignin) SchemaName() string {
@@ -102,6 +112,15 @@ func (r *RequestSalesAdvisorSignin) Get(i int) types.Field {
 	
 	case 0:
 		
+			r.Mobile = NewMobileUnion()
+	
+		
+		
+			return r.Mobile
+		
+	
+	case 1:
+		
 			r.Sales_advisor_id = NewSales_advisor_idUnion()
 	
 		
@@ -109,7 +128,7 @@ func (r *RequestSalesAdvisorSignin) Get(i int) types.Field {
 			return r.Sales_advisor_id
 		
 	
-	case 1:
+	case 2:
 		
 			r.Sales_advisor_alias = NewSales_advisor_aliasUnion()
 	
@@ -124,6 +143,8 @@ func (r *RequestSalesAdvisorSignin) Get(i int) types.Field {
 
 func (r *RequestSalesAdvisorSignin) SetDefault(i int) {
 	switch (i) {
+	
+        
 	
         
 	

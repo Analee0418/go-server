@@ -21,11 +21,6 @@ func (h *SalesAdvisorSignin) selected(s *model.Session) {
 }
 
 func (h *SalesAdvisorSignin) do(msg avro.Message) {
-	// alias := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_alias.String
-	advisorID := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_id.String
-
-	log.Printf("DEBUG sales advisor login on %s", advisorID)
-
 	if _, exists := model.GetSessionByConn(*h.conn); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
@@ -34,6 +29,18 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 		}
 		model.SendMessage(*h.conn, msg)
 		return
+	}
+
+	advisorID := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_id.String
+	mobile := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Mobile.String
+
+	log.Printf("INFO: sales advisor signin with %s, %s", advisorID, mobile)
+
+	for _, r := range model.RoomContainer {
+		if l := len(r.SalesAdvisorID); r.SalesAdvisorID[l-6:l] == advisorID && r.SalesAdvisorMobile == mobile {
+			advisorID = r.SalesAdvisorID
+			break
+		}
 	}
 
 	if _, exists := model.GetSessionByName(advisorID); exists {
@@ -63,11 +70,9 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 			},
 			UnionType: avro.Message_sessionUnionTypeEnumMessageSession,
 		}
-		log.Println("-----------------------", smsg.Message_session.MessageSession.Sid.String)
 		h.session.SendMessage(*smsg)
 
 		roominfo := r.BuildRoomMessage()
-		log.Println(r)
 		msg := *model.GenerateMessage(avro.ActionMessage_room_info)
 		msg.Message_room_info = &avro.Message_room_infoUnion{
 			MessageRoomInfo: roominfo,

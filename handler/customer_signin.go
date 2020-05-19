@@ -22,9 +22,6 @@ func (h *CustomerSignin) selected(s *model.Session) {
 }
 
 func (h *CustomerSignin) do(msg avro.Message) {
-	Idcard := msg.Customer_signin.RequestCustomerSignin.Idcard.String
-	mobile := msg.Customer_signin.RequestCustomerSignin.Mobile.String
-
 	if _, exists := model.GetSessionByConn(*h.conn); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
@@ -35,23 +32,23 @@ func (h *CustomerSignin) do(msg avro.Message) {
 		return
 	}
 
-	log.Printf("DEBUG customer signin with %s, %s", Idcard, mobile)
+	idcard := msg.Customer_signin.RequestCustomerSignin.Idcard.String
+	mobile := msg.Customer_signin.RequestCustomerSignin.Mobile.String
+
+	log.Printf("INFO: customer signin with %s, %s", idcard, mobile)
 
 	var ok = false
 	var customer *model.Customer = nil
 
-	customer, ok = model.AllCustomerContainer[Idcard]
-	if !ok || customer == nil {
-		for _, c := range model.AllCustomerContainer {
-			if l := len(c.ID); c.ID[l-6:l] == Idcard && c.Mobile == mobile {
-				Idcard = c.ID
-				customer = c
-				break
-			}
+	for _, c := range model.AllCustomerContainer {
+		if l := len(c.ID); c.ID[l-6:l] == idcard && c.Mobile == mobile {
+			idcard = c.ID
+			customer = c
+			break
 		}
 	}
 
-	if _, exists := model.GetSessionByName(Idcard); exists {
+	if _, exists := model.GetSessionByName(idcard); exists {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
 			String:    "您已在其他设备登录",
@@ -104,7 +101,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 
 		model.TCPServerInstance.TCPServerOnUpdateOnlines(model.Onlines(), false)
 
-		msgs := model.TCPGlobalOnCustomerSignin(Idcard)
+		msgs := model.TCPGlobalOnCustomerSignin(idcard)
 		if msgs != nil {
 
 			for _, msg := range msgs {
