@@ -32,7 +32,7 @@ func SessionByID(uuid string) (*Session, bool) {
 	}
 	sid, e := guuid.Parse(uuid)
 	if e != nil {
-		log.Printf("Error: %v", e)
+		log.Printf("\033[1;31mERROR: \033[0m%v", e)
 		return nil, false
 	}
 	if s, ok := sessionCacheByID[sid]; ok {
@@ -57,12 +57,12 @@ func GetSessionByConn(conn net.Conn) (*Session, bool) {
 
 func AddSession(conn net.Conn, s *Session) {
 	if _, ok := sessionCacheByID[s.id]; ok {
-		log.Printf("has been exists in cache: %v\n", s)
+		log.Printf("INFO: has been exists in cache: %v\n", s)
 	} else {
 		sessionCacheByID[s.id] = s
 		sessionCacheByUserName[s.name] = s
 		sessionConn[conn] = s
-		log.Printf("add new session to cache: %v\n", s)
+		log.Printf("INFO: add new session to cache: %v\n", s)
 	}
 }
 
@@ -70,28 +70,30 @@ func DeleteSession(uuid guuid.UUID, name string, conn net.Conn) {
 	defer func() { conn.Close() }()
 	if _, ok := sessionCacheByID[uuid]; ok {
 		delete(sessionCacheByID, uuid)
-		log.Printf("has been deleted session from cache_ID: %v\n", uuid)
+		log.Printf("INFO: has been deleted session from cache_ID: %v\n", uuid)
 	}
 
 	if _, ok := sessionCacheByUserName[name]; ok {
 		delete(sessionCacheByUserName, name)
-		log.Printf("has been deleted session from cache_Name: %v\n", name)
+		log.Printf("INFO: has been deleted session from cache_Name: %v\n", name)
 	}
 
 	if _, ok := sessionConn[conn]; ok {
 		delete(sessionConn, conn)
-		log.Printf("has been deleted session from cache_Conn: %v\n", conn)
+		log.Printf("INFO: has been deleted session from cache_Conn: %v\n", conn)
 	}
 
-	log.Printf("DEBUG: session.length: id.%d, name.%d, conn.%d", len(sessionCacheByID), len(sessionCacheByUserName), len(sessionConn))
+	log.Printf("INFO: session.length: id.%d, name.%d, conn.%d", len(sessionCacheByID), len(sessionCacheByUserName), len(sessionConn))
+
+	if t := len(sessionCacheByID) + len(sessionCacheByUserName) - len(sessionConn); t != len(sessionCacheByID) && t != len(sessionCacheByUserName) && t != len(sessionConn) {
+		log.Printf("\033[1;33mWARNING: \033[0mSession cache conflict!!! id.%d, name.%d, conn.%d", len(sessionCacheByID), len(sessionCacheByUserName), len(sessionConn))
+	}
 }
 
 func ReleaseSessionCache(now int64) {
 	if now-lastReleaseTime < 1000 {
 		return
 	}
-
-	// log.Printf("Start finding invalid session. %d\n", len(sessionCacheByID))
 
 	type inte struct {
 		Sid guuid.UUID
@@ -120,7 +122,7 @@ func ReleaseSessionCache(now int64) {
 	if len(invalidKeys) > 0 {
 		lang, err := json.MarshalIndent(invalidKeys, "", "   ")
 		if err == nil {
-			log.Printf("invalid session keys: %v", string(lang))
+			log.Printf("INFO: invalid session keys: %v", string(lang))
 		}
 		for _, i := range invalidKeys {
 			DeleteSession(i.Sid, i.Sn, i.Sc)
@@ -141,7 +143,7 @@ func OnClientDisconnect(conn net.Conn) {
 		}
 		s.conn.Close()
 		s.SetDead()
-		log.Printf("Client disconnect after clear session[%s].", s.name)
+		log.Printf("INFO: Client disconnect after clear session[%s].", s.name)
 	}
 
 }

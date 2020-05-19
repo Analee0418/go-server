@@ -21,22 +21,22 @@ type HTTPConfig struct {
 func InitHTTPConfig() {
 	data, err := ioutil.ReadFile(utils.ExpandUser("~/config/http.json"))
 	if err != nil {
-		log.Print("WARNING: Not found HTTP config")
+		log.Print("\033[1;33mWARNING: \033[0mNot found HTTP config, used DEFAULT config 127.0.0.1:11001")
 		HTTPParams = HTTPConfig{IP: "http://127.0.0.1", Port: "11001"}
 		return
 	}
-	jst := HTTPConfig{}
-	log.Printf("HTTP config: %s", data)
-	err = json.Unmarshal([]byte(data), &jst)
+	httpJSON := HTTPConfig{}
+	log.Printf("INFO: HTTP config: %s", data)
+	err = json.Unmarshal([]byte(data), &httpJSON)
 	if err != nil {
-		log.Fatal("The HTTP config illegal")
+		log.Fatal("FATAL: The HTTP config illegal")
 		return
 	}
 
-	if jst.IP == "" || jst.Port == "" {
-		log.Fatal("Invalid HTTP config")
+	if httpJSON.IP == "" || httpJSON.Port == "" {
+		log.Fatal("FATAL: Invalid HTTP config")
 		return
 	}
 
-	HTTPParams = jst
+	HTTPParams = httpJSON
 }

@@ -20,21 +20,21 @@ type HosterConfig struct {
 func InitHosterConfig() {
 	data, err := ioutil.ReadFile(utils.ExpandUser("~/config/host.json"))
 	if err != nil {
-		log.Fatal("Not found hoster config")
+		log.Fatal("FATAL: Not found hoster config")
 		return
 	}
-	jst := HosterConfig{}
-	log.Printf("Hoster config: %s", data)
-	err = json.Unmarshal([]byte(data), &jst)
+	hostJSON := HosterConfig{}
+	log.Printf("INFO: Hoster config: %s", data)
+	err = json.Unmarshal([]byte(data), &hostJSON)
 	if err != nil {
-		log.Fatal("The hoster config illegal")
+		log.Fatal("FATAL: The hoster config illegal")
 		return
 	}
 
-	if jst.Username == "" || jst.Password == "" {
-		log.Fatal("Invalid hoster config")
+	if hostJSON.Username == "" || hostJSON.Password == "" {
+		log.Fatal("INFO: Invalid hoster config")
 		return
 	}
 
-	HosterParams = jst
+	HosterParams = hostJSON
 }

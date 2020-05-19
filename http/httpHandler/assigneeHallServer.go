@@ -27,17 +27,17 @@ func AssigneeHallserverStep1(c *gin.Context) {
 func AssigneeHallserverStep2(c *gin.Context) {
 	// simulate a long task with time.Sleep(). 5 seconds
 
-	log.Println(c.Request.Cookies())
+	log.Printf("INFO: %s", c.Request.Cookies())
 	ts, exists := c.GetQuery("t")
 	if !exists {
-		log.Println("ERROR: Not found jetztMal")
+		log.Println("\033[1;31mERROR: \033[0mNot found jetztMal")
 		c.String(403, "无效请求")
 		return
 	}
 
 	v, e := c.Cookie("shop_SID")
 	if e != nil {
-		log.Println("ERROR: Not found shop_SID to used verify")
+		log.Println("\033[1;31mERROR: \033[0mNot found shop_SID to used verify")
 		c.String(403, "无效请求")
 		return
 	}
@@ -45,7 +45,7 @@ func AssigneeHallserverStep2(c *gin.Context) {
 	hasher := md5.New()
 	hasher.Write([]byte(ts + "5d56179ecd32148eec0021178b9b2e83"))
 	if v != hex.EncodeToString(hasher.Sum(nil)) {
-		log.Printf("ERROR: invalid sid, remote: %s, local: %s", v, hex.EncodeToString(hasher.Sum(nil)))
+		log.Printf("\033[1;31mERROR: \033[0minvalid sid, remote: %s, local: %s", v, hex.EncodeToString(hasher.Sum(nil)))
 		c.String(403, "无效请求")
 		return
 	}
@@ -54,7 +54,7 @@ func AssigneeHallserverStep2(c *gin.Context) {
 
 	mobile, exists := c.GetQuery("m") // 用户/销售 手机号
 	if !exists {
-		log.Println("ERROR: Not found parameter mobile")
+		log.Println("\033[1;31mERROR: \033[0mNot found parameter mobile")
 		c.String(403, "无效请求")
 		return
 	}
@@ -68,7 +68,7 @@ func AssigneeHallserverStep2(c *gin.Context) {
 			}
 		}
 		if salesAdvisorID == "" {
-			log.Printf("ERROR: Can not found sales advisor config by idcard[%s] mobile[%s]", salesAdvisorID, mobile)
+			log.Printf("\033[1;31mERROR: \033[0mCan not found sales advisor config by idcard[%s] mobile[%s]", salesAdvisorID, mobile)
 			c.String(403, "销售ID或手机号错误.")
 			return
 		}
@@ -82,25 +82,25 @@ func AssigneeHallserverStep2(c *gin.Context) {
 			}
 		}
 		if salesAdvisorID == "" {
-			log.Printf("ERROR: Can not found customer config by idcard[%s] mobile[%s]", customerID, mobile)
+			log.Printf("\033[1;31mERROR: \033[0mCan not found customer config by idcard[%s] mobile[%s]", customerID, mobile)
 			c.String(403, "用户ID或手机号错误")
 			return
 		}
 	} else {
-		log.Println("ERROR: Not found customerID or salesAdvisorID")
+		log.Println("\033[1;31mERROR: \033[0mNot found customerID or salesAdvisorID")
 		c.String(403, "参数错误")
 		return
 	}
 
 	if config.DEBUG {
-		log.Printf("Final SalesAdvisroID: %s", salesAdvisorID)
+		log.Printf("INFO: Final SalesAdvisroID: %s", salesAdvisorID)
 	}
 
 	if _, ok := config.SalesAdvisorTemplate[salesAdvisorID]; !ok {
-		log.Println("ERROR: Invalid user params", c.Params)
+		log.Println("\033[1;31mERROR: \033[0mInvalid user params", c.Params)
 		lang, err := json.MarshalIndent(c.Params, "", "   ")
 		if err == nil {
-			log.Println(string(lang))
+			log.Println("INFO: ", string(lang))
 		}
 		c.String(403, "无效请求")
 		return

@@ -32,12 +32,14 @@ func (h *CustomerApplyJoinRoom) do(msg avro.Message) {
 		return
 	}
 	if h.session.CurrentUser() == nil {
-		log.Println("ERROR: currentUser is nil, please signin first.")
+		log.Printf("\033[1;31mERROR: \033[0mcurrentUser is nil, please signin first. session: %s", h.session)
 		h.session.Close("session.cutomerInfo is nil.")
 		return
 	}
 
-	log.Printf("DEBUG: session currentUser %s", h.session.CurrentUser())
+	if config.DEBUG {
+		log.Printf("DEBUG: session currentUser %s", h.session.CurrentUser())
+	}
 
 	if h.session.CurrentUser().SignedContract {
 		msg := *model.GenerateMessage(avro.ActionError_message)

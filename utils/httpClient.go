@@ -24,15 +24,15 @@ func ProwlNotify(msg string) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "https://api.prowlapp.com/publicapi/add", body)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value") //这个一定要加，不加form的值post不过去，被坑了两小时
-	log.Printf("%+v\n", req)                                                         //看下发送的结构
+	log.Printf("INFO: %+v\n", req)                                                   //看下发送的结构
 
 	resp, err := client.Do(req) //发送
 	if err != nil {
-		log.Printf("ERROR: Prowl notify error, %v", err)
+		log.Printf("\033[1;31mERROR: \033[0mProwl notify error, %v", err)
 	}
 	defer resp.Body.Close() //一定要关闭resp.Body
 	data, _ := ioutil.ReadAll(resp.Body)
-	log.Println(string(data), err)
+	log.Println("INFO: ", string(data), err)
 }
 
 // HTTPSession HTTP 服务器 session

@@ -23,7 +23,7 @@ func (h *SalesAdvisorConfirmedSignedContract) selected(s *model.Session) {
 
 func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 	if h.session.Room() == nil {
-		log.Println("ERROR: sales roomInfo is nil, please signin first.")
+		log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
 		h.session.Close("session.roomInfo is nil.")
 		return
 	}

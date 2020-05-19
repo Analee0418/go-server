@@ -32,51 +32,47 @@ func InitDBConfig() {
 	// DB Config
 	data, err := ioutil.ReadFile(utils.ExpandUser("~/config/db.json"))
 	if err != nil {
-		log.Fatal("Not found DB config")
+		log.Fatal("FATAL: Not found DB config")
 		return
 	}
-	jst := DBConfig{}
-	log.Printf("DB config: %s", data)
-	err = json.Unmarshal([]byte(data), &jst)
+	dbJSON := DBConfig{}
+	log.Printf("INFO: DB config: %s", data)
+	err = json.Unmarshal([]byte(data), &dbJSON)
 	if err != nil {
-		log.Fatal("The DB config illegal")
+		log.Fatal("FATAL: The DB config illegal")
 		return
 	}
 
-	log.Println(jst)
-
-	if jst.DBhost == "" || jst.DBport == "" {
-		log.Printf("WARNING: Invalid DB config, trying to used default params.")
-		jst.DBhost = "127.0.0.1"
-		jst.DBport = "27017"
+	if dbJSON.DBhost == "" || dbJSON.DBport == "" {
+		log.Printf("\033[1;33mWARNING: \033[0mInvalid DB config, trying to used default params.")
+		dbJSON.DBhost = "127.0.0.1"
+		dbJSON.DBport = "27017"
 	}
-	common.DBHOST = jst.DBhost
-	common.DBPORT = jst.DBport
-	common.DBUSER = jst.DBuser
-	common.DBPASS = jst.DBpass
+	common.DBHOST = dbJSON.DBhost
+	common.DBPORT = dbJSON.DBport
+	common.DBUSER = dbJSON.DBuser
+	common.DBPASS = dbJSON.DBpass
 
 	// Redis Config
 	data, err = ioutil.ReadFile(utils.ExpandUser("~/config/redis.json"))
 	if err != nil {
-		log.Fatal("Not found Redis config")
+		log.Fatal("FATAL: Not found Redis config")
 		return
 	}
-	jst2 := RedisConfig{}
-	log.Printf("Redis config: %s", data)
-	err = json.Unmarshal([]byte(data), &jst2)
+	redisJSON := RedisConfig{}
+	log.Printf("INFO: Redis config: %s", data)
+	err = json.Unmarshal([]byte(data), &redisJSON)
 	if err != nil {
-		log.Fatal("The Redis config illegal")
+		log.Fatal("FATAL: The Redis config illegal")
 		return
 	}
 
-	log.Println(jst2)
-
-	if jst2.RedisIP == "" || jst2.RedisPort == "" {
-		log.Printf("WARNING: Invalid Redis config, trying to used default params.")
-		jst2.RedisIP = "127.0.0.1"
-		jst2.RedisPort = "27017"
+	if redisJSON.RedisIP == "" || redisJSON.RedisPort == "" {
+		log.Printf("\033[1;33mWARNING: \033[0mInvalid Redis config, trying to used default params.")
+		redisJSON.RedisIP = "127.0.0.1"
+		redisJSON.RedisPort = "27017"
 	}
-	common.RedisIP = jst2.RedisIP
-	common.RedisPort = jst2.RedisPort
-	common.RedisPass = jst2.RedisPass
+	common.RedisIP = redisJSON.RedisIP
+	common.RedisPort = redisJSON.RedisPort
+	common.RedisPass = redisJSON.RedisPass
 }

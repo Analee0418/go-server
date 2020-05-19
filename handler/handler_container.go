@@ -40,7 +40,7 @@ type HandlerSelector struct {
 func (s *HandlerSelector) Selects(conn *net.Conn, msg avro.Message) {
 	defer func() {
 		if x := recover(); x != nil {
-			log.Println("ERROR: caught panic in handleConnection", x)
+			log.Println("\033[1;31mERROR: \033[0mcaught panic in handleConnection", x)
 			debug.PrintStack()
 		}
 	}()
@@ -65,10 +65,10 @@ func (s *HandlerSelector) Selects(conn *net.Conn, msg avro.Message) {
 			if exist && !cacheSession.Dead() {
 				s.session = cacheSession
 				handler.selected(cacheSession)
-				log.Printf("exist: %v, cacheSession: %v", exist, cacheSession)
+				log.Printf("INFO: exist: %v, cacheSession: %v", exist, cacheSession)
 				handler.do(msg)
 			} else {
-				log.Println("ERROR: login first pls")
+				log.Println("\033[1;31mERROR: \033[0mlogin first pls")
 				msg := model.GenerateMessage(avro.ActionError_message)
 				msg.Error_message = &avro.Error_messageUnion{
 					String:    "请先登录账户",
@@ -79,7 +79,7 @@ func (s *HandlerSelector) Selects(conn *net.Conn, msg avro.Message) {
 			}
 		}
 	} else {
-		log.Printf("ERROR: Action not found: %v", msg.Action)
+		log.Printf("\033[1;31mERROR: \033[0mAction not found: %v", msg.Action)
 	}
 }
 
@@ -97,8 +97,8 @@ func (h *heartBeat) selected(s *model.Session) {
 
 func (h *heartBeat) do(msg avro.Message) {
 	_conn := *h.conn
-	log.Printf("[%v] heartbeat message %v\n", _conn.RemoteAddr().String(), h.session)
+	log.Printf("INFO: [%v] heartbeat message %v\n", _conn.RemoteAddr().String(), h.session)
 	h.session.Heartbeat()
 	h.session.SendMessage(*model.GenerateMessage(avro.ActionHeartbeat))
-	log.Printf("%v", h.session)
+	log.Printf("INFO: %s", h.session)
 }

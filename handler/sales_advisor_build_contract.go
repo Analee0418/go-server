@@ -27,7 +27,7 @@ func (h *SalesAdvisorBuildContract) selected(s *model.Session) {
 
 func (h *SalesAdvisorBuildContract) do(msg avro.Message) {
 	if h.session.Room() == nil {
-		log.Println("ERROR: sales roomInfo is nil, please signin first.")
+		log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
 		h.session.Close("session.roomInfo is nil.")
 		return
 	}
@@ -62,7 +62,7 @@ func (h *SalesAdvisorBuildContract) do(msg avro.Message) {
 		r.CurrentCustomerID, ss[len(ss)-1])),
 		msg.Sales_advisor_build_contract.RequestSalesAdvisorBuildContract.Filebytes, 0644)
 	if err != nil {
-		log.Printf("ERROR: %v", err)
+		log.Printf("\033[1;31mERROR: \033[0m%v", err)
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
 			String:    "上传失败请稍后重试",

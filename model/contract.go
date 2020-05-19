@@ -1,6 +1,8 @@
 package model
 
-import "com.lueey.shop/utils"
+import (
+	"com.lueey.shop/utils"
+)
 
 type Contract struct {
 	CustomerID     string  // 身份证号
@@ -12,6 +14,14 @@ type Contract struct {
 	CarInterior    string  // 内饰
 	CarSeries      string  // 型号
 	Timestamp      int64   // 时间戳
+}
+
+func (c Contract) String() (str string) {
+	lang, err := json.Marshal(c)
+	if err == nil {
+		str = string(lang)
+	}
+	return str
 }
 
 func CreateContract(customerID string, salesID string, price float32, disprice float32, brand string, color string, interior string, series string) Contract {

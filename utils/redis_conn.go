@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -34,7 +35,7 @@ func InitRedisDB() {
 	}
 	rdb = redis.NewClient(rdbOpt)
 
-	log.Printf("Initialize redis connection ok. %s", rdb)
+	log.Printf("INFO: Initialize redis connection ok. %s", rdb)
 }
 
 // func ExampleNewClient() {
@@ -145,14 +146,16 @@ func InitRedisDB() {
 func HSetRedis(key string, values ...interface{}) {
 	err := rdb.HSet(key, values...).Err()
 	if err != nil {
-		log.Panic(err)
+		debug.PrintStack()
+		log.Panic("\033[1;31mERROR: \033[0m", err)
 	}
 }
 
 func HDelRedis(key string, field string) (r int64, e error) {
 	val, err := rdb.HDel(key, field).Result()
 	if err != nil {
-		log.Printf("ERROR: %v", err)
+		debug.PrintStack()
+		log.Printf("\033[1;31mERROR: \033[0m%v", err)
 		return 0, err
 	}
 	return val, nil
@@ -166,7 +169,8 @@ func HGetRedis(key string, field string) (res interface{}, e error) {
 		// log.Println(".................")
 		return nil, err
 	} else if err != nil {
-		log.Panic(err)
+		debug.PrintStack()
+		log.Panic("\033[1;31mERROR: \033[0m", err)
 	}
 
 	if err != nil {
@@ -180,7 +184,8 @@ func HGetAllRedis(key string) (m map[string]string, e error) {
 	// log.Printf("%v %v", reflect.TypeOf(rdb), rdb)
 	val, err := rdb.HGetAll(key).Result()
 	if err != nil {
-		log.Printf("ERROR: %v", err)
+		debug.PrintStack()
+		log.Printf("\033[1;31mERROR: \033[0m%v", err)
 		return nil, err
 	}
 	return val, nil
@@ -189,7 +194,8 @@ func HGetAllRedis(key string) (m map[string]string, e error) {
 func SetRedis(key string, value interface{}) {
 	err := rdb.Set(key, value, 0).Err()
 	if err != nil {
-		log.Panic(err)
+		debug.PrintStack()
+		log.Panic("\033[1;31mERROR: \033[0m", err)
 	}
 	fmt.Println(err)
 }
@@ -202,14 +208,15 @@ func GetRedis(key string) (res interface{}, e error) {
 		// log.Println(".................")
 		return nil, err
 	} else if err != nil {
-		log.Panic(err)
+		debug.PrintStack()
+		log.Panic("\033[1;31mERROR: \033[0m", err)
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("Redis.get ", reflect.TypeOf(val))
+	log.Println("INFO: Redis.get ", reflect.TypeOf(val))
 
 	return val, nil
 }

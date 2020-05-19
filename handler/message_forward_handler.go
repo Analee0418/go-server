@@ -28,7 +28,7 @@ func (h *MessageForwardHandler) do(msg avro.Message) {
 	switch msg.Action {
 	case avro.ActionMessage_forward_to_customer:
 		if h.session.Room() == nil {
-			log.Println("ERROR: sales roomInfo is nil, please signin first.")
+			log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
 			h.session.Close("session.roomInfo is nil.")
 			return
 		}
@@ -55,7 +55,7 @@ func (h *MessageForwardHandler) do(msg avro.Message) {
 		customerSession.SendMessage(msg)
 	case avro.ActionMessage_forward_to_sales_advisor:
 		if h.session.CurrentUser() == nil {
-			log.Println("ERROR: currentUser is nil, please signin first.")
+			log.Println("\033[1;31mERROR: \033[0mcurrentUser is nil, please signin first.")
 			h.session.Close("session.cutomerInfo is nil.")
 			return
 		}
@@ -100,7 +100,7 @@ func (h *MessageForwardHandler) do(msg avro.Message) {
 		if err == nil {
 			pubErr := utils.PublishMessage("global_broadcast", string(lang))
 			if pubErr != nil {
-				log.Printf("ERROR: publish broadcast message failed, because %v", pubErr)
+				log.Printf("\033[1;31mERROR: \033[0mpublish broadcast message failed, because %v", pubErr)
 			}
 			log.Printf("INFO: publish broadcast message to global %s", string(lang))
 		}

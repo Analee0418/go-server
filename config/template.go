@@ -25,18 +25,18 @@ var AuctionGoodsTemplate map[int32]map[string]interface{} = map[int32]map[string
 
 func Init() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Lmicroseconds)
-	log.Println("Start to load templated.")
+	log.Println("INFO: Start to load templated.")
 	files, _ := filepath.Glob(utils.ExpandUser("~/config/*.xlsx"))
 	lang, err := json.MarshalIndent(files, "", "   ")
 	if err == nil {
 		strs := string(lang)
-		log.Printf("==================== ALL CONFIG FILES %s", strs) // contains a list of all files in the current directory
+		log.Printf("INFO: ==================== ALL CONFIG FILES %s", strs) // contains a list of all files in the current directory
 
 		for _, filename := range files {
-			log.Printf("Parse config %v", filename)
+			log.Printf("INFO: Parse config %v", filename)
 			xlsx, err := excelize.OpenFile(filename)
 			if err != nil {
-				log.Panic(err)
+				log.Panic("PANIC: ", err)
 			}
 
 			// Example
@@ -51,7 +51,7 @@ func Init() {
 			rows := xlsx.GetRows("Sheet1")
 			// log.Println(rows[100:])
 			if DEBUG {
-				log.Println(strings.Join(rows[0], ",\t"))
+				log.Printf("INFO: %s", strings.Join(rows[0], ",\t"))
 			}
 			lastAdvisorName := ""
 			lastAdvisorMobile := ""
@@ -62,7 +62,7 @@ func Init() {
 			// 销售手机号	销售身份证号	经商销省份	经商销城市	经商销公司名称
 			for _, row := range rows[1:] {
 				if DEBUG {
-					log.Println(strings.Join(row, ",\t"))
+					log.Printf("INFO: %s", strings.Join(row, ",\t"))
 				}
 
 				if strings.Contains(filename, "销售") {
@@ -93,20 +93,20 @@ func Init() {
 					if val, err := utils.HGetRedis("mobileRegion", mobile); err == nil {
 
 						region = val.(string)
-						log.Printf("Mobile region from redis: %s", region)
+						log.Printf("INFO: Mobile region from redis: %s", region)
 
 					} else if common.ServerCategory == common.SERVER_CATEGORY_HALL {
 
 						resp, err := http.Get("https://www.ip.cn/db?num=%2B" + mobile)
 						if err != nil {
-							log.Printf("ERROR: crawl mobile region failed. %v", err)
+							log.Printf("\033[1;33mWARNING: \033[0mcrawl mobile region failed. %v", err)
 							continue
 						}
 
 						if resp.StatusCode == 200 {
 							body, err := ioutil.ReadAll(resp.Body)
 							if err != nil {
-								log.Printf("ERROR: read mobile region failed. %v", err)
+								log.Printf("\033[1;33mWARNING: \033[0mread mobile region failed. %v", err)
 								continue
 							}
 							bodystr := string(body)
@@ -149,22 +149,22 @@ func Init() {
 					// 竞拍的配置表
 					goodsID, err := strconv.ParseInt(row[0], 10, 32)
 					if err != nil {
-						log.Printf("ERROR: Invalid goodsID in \"%s\" %v", row, err)
+						log.Printf("\033[1;33mWARNING: \033[0mInvalid goodsID in \"%s\" %v", row, err)
 						continue
 					}
 					originalPrice, err := strconv.ParseFloat(row[2], 32)
 					if err != nil {
-						log.Printf("ERROR: Invalid originalPrice in \"%s\" %v", row, err)
+						log.Printf("\033[1;33mWARNING: \033[0mInvalid originalPrice in \"%s\" %v", row, err)
 						continue
 					}
 					limitPrice, err := strconv.ParseFloat(row[3], 32)
 					if err != nil {
-						log.Printf("ERROR: Invalid limitPrice in \"%s\" %v", row, err)
+						log.Printf("\033[1;33mWARNING: \033[0mInvalid limitPrice in \"%s\" %v", row, err)
 						continue
 					}
 					countdownSecond, err := strconv.ParseInt(row[4], 10, 32)
 					if err != nil {
-						log.Printf("ERROR: Invalid countdownSecond in \"%s\" %v", row, err)
+						log.Printf("\033[1;33mWARNING: \033[0mInvalid countdownSecond in \"%s\" %v", row, err)
 						continue
 					}
 					auctionGoodsTemplate := map[string]interface{}{
@@ -177,24 +177,24 @@ func Init() {
 				}
 			}
 
-			log.Printf("Parse config %v ok\n", filename)
+			log.Printf("INFO: Parse config %v ok\n", filename)
 		}
 	}
 
 	// time.Sleep(time.Second * 3)
 	lang, err = json.MarshalIndent(CustomerTemplate, "", "   ")
 	if err == nil {
-		log.Println(string(lang))
+		log.Println("INFO: ", string(lang))
 	}
 	lang, err = json.MarshalIndent(SalesAdvisorTemplate, "", "   ")
 	if err == nil {
-		log.Println(string(lang))
+		log.Println("INFO: ", string(lang))
 	}
-	lang, err = json.MarshalIndent(AuctionGoodsTemplate, "", "   ")
-	if err == nil {
-		log.Println(string(lang))
-	}
-	log.Printf("Load templated ok.\n\n")
+	// lang, err = json.MarshalIndent(AuctionGoodsTemplate, "", "   ")
+	// if err == nil {
+	// 	log.Println("INFO: ", string(lang))
+	// }
+	log.Printf("INFO: Load templated ok.\n\n")
 	// time.Sleep(time.Second * 3)
 
 }

@@ -25,7 +25,7 @@ func OnHosterSignin(c *gin.Context) {
 	if config.DEBUG {
 		log.Printf("DEBUG: host signin password: %s", password)
 	}
-	log.Println(strings.Compare(username, config.HosterParams.Username))
+
 	if 0 != strings.Compare(username, config.HosterParams.Username) ||
 		0 != strings.Compare(password, config.HosterParams.Password) {
 		c.String(http.StatusForbidden, "Invalid request.")

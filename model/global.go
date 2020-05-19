@@ -34,11 +34,11 @@ func initGlobalState() {
 		if err == redis.Nil {
 			GlobalState = avro.GlobalStateAwating_starting
 		} else {
-			log.Fatal("ERROR: global state is illegal.", err)
+			log.Fatal("\033[1;31mERROR: \033[0mglobal state is illegal.", err)
 		}
 	}
 
-	log.Printf("Start to load global data OK.\n\n")
+	log.Printf("INFO: Start to load global state[%s] OK.\n\n", GlobalState)
 }
 
 // TCPInitGlobal 初始化全局状态
@@ -61,7 +61,7 @@ func TCPGlobalOnCustomerSignin(customerID string) []*avro.Message {
 		if r, ok := RoomContainer[currentCustomer.SalesAdvisorID]; ok {
 			roominfo := r.BuildRoomMessage()
 			if roominfo == nil {
-				log.Printf("ERROR: BuildRoomMessage failed, room: %v", r)
+				log.Printf("\033[1;31mERROR: \033[0mBuildRoomMessage failed, room[%v] is not exists.", r)
 			} else {
 				msg := GenerateMessage(avro.ActionMessage_room_info)
 				msg.Message_room_info = &avro.Message_room_infoUnion{
@@ -72,7 +72,7 @@ func TCPGlobalOnCustomerSignin(customerID string) []*avro.Message {
 			}
 		}
 	case avro.GlobalStateAution: // 竞拍阶段
-		log.Println("Aucion step")
+		log.Println("INFO: Aucion step")
 	}
 
 	msg := GenerateMessage(avro.ActionMessage_customers_info)

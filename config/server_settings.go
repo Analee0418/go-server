@@ -23,19 +23,19 @@ type ServerConfig struct {
 func InitServerConfig() (jst *ServerConfig) {
 	data, err := ioutil.ReadFile(utils.ExpandUser("./server.json"))
 	if err != nil {
-		log.Fatal("Not found server config")
+		log.Fatal("FATAL: Not found server config")
 		return
 	}
 	jst = &ServerConfig{}
-	log.Printf("Server config: %s", data)
+	log.Printf("INFO: Server config: %s", data)
 	err = json.Unmarshal([]byte(data), jst)
 	if err != nil {
-		log.Fatal("The server config illegal")
+		log.Fatal("FATAL: The server config illegal")
 		return
 	}
 
 	if jst.ServerHost == "" || jst.ServerPort == 0 || jst.ServerID == "" {
-		log.Fatal("Invalid server config")
+		log.Fatal("FATAL: Invalid server config")
 		return
 	}
 

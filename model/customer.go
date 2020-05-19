@@ -90,7 +90,7 @@ func (c *Customer) ConfirmAuctionGoods(goodsID int32) {
 		lang, err := json.Marshal(c.AuctionGoodsIDs)
 		if err == nil {
 			utils.HSetRedis(GenerateCustomerKey(c.ID), "auctionGoodsIDs", string(lang))
-			log.Printf("Update customer auction goods list To %s by idcard %s", string(lang), c.ID)
+			log.Printf("INFO: Update customer auction goods list To %s by idcard %s", string(lang), c.ID)
 		}
 	}
 }
@@ -114,11 +114,8 @@ func (c *Customer) ConfirmedSignContract(salesID string, price float32, disprice
 	c.SignedContract = true
 	utils.HSetRedis(GenerateCustomerKey(c.ID), "signedContract", "1")
 	c.Contract = CreateContract(c.ID, salesID, price, disprice, brand, color, interior, series)
-	lang, err := json.Marshal(c.Contract)
-	if err == nil {
-		utils.HSetRedis(GenerateCustomerKey(c.ID), "dataContract", string(lang))
-	}
-	log.Printf("INFO: customer[%s] completed contract[%s].", c.ID, string(lang))
+	log.Printf("\033[1;36mSTATS: \033[0mcustomer[%s] completed contract[%s].", c.ID, c.Contract)
+	log.Printf("INFO: customer[%s] completed contract[%s].", c.ID, c.Contract)
 }
 
 func (r *Customer) String() string {
@@ -130,7 +127,7 @@ func (r *Customer) String() string {
 }
 
 func InitCustomer() {
-	log.Println("Start to load customer data.")
+	log.Println("INFO: Start to load customer data.")
 	for ID, template := range config.CustomerTemplate {
 		customerInstance := &Customer{
 			ID:             ID,
@@ -148,13 +145,13 @@ func InitCustomer() {
 
 			if val, err := utils.HGetRedis(cKey, "auctionGoodsIDs"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &customerInstance.AuctionGoodsIDs); err == nil {
-					log.Println(customerInstance.AuctionGoodsIDs)
+					log.Printf("INFO: %v", customerInstance.AuctionGoodsIDs)
 				}
 			}
 
 			if val, err := utils.HGetRedis(cKey, "recordList"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &customerInstance.AuctionRecords); err == nil {
-					log.Println(customerInstance.AuctionRecords)
+					log.Printf("INFO: %v", customerInstance.AuctionRecords)
 				}
 			}
 
@@ -172,7 +169,7 @@ func InitCustomer() {
 
 			if val, err := utils.HGetRedis(cKey, "dataContract"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &customerInstance.Contract); err == nil {
-					log.Println(customerInstance.Contract)
+					log.Printf("INFO: load contract: %s", customerInstance.Contract)
 				}
 			}
 
@@ -183,14 +180,15 @@ func InitCustomer() {
 			utils.HSetRedis(cKey, "mobile", customerInstance.Mobile)
 
 			AllCustomerContainer[customerInstance.ID] = customerInstance
-			log.Printf("Create new customer info %v with cKey: %s", customerInstance, cKey)
+			log.Printf("\033[1;36mSTATS: \033[0mCreate new customer info %v with cKey: %s, To Redis.", customerInstance, cKey)
+			log.Printf("INFO: Create new customer info %v with cKey: %s, To Redis.", customerInstance, cKey)
 		}
 	}
 
 	if config.DEBUG {
-		log.Printf("All customer entity: %v", AllCustomerContainer)
+		log.Printf("DEBUG: All customer entity: %v", AllCustomerContainer)
 	}
-	log.Printf("Load customer data OK.\n\n")
+	log.Printf("INFO: Load customer data OK.\n\n")
 	time.Sleep(time.Second * 1)
 
 }

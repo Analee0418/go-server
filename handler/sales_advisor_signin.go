@@ -55,8 +55,8 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 
 	// 允许登录
 	if r, ok := model.RoomContainer[advisorID]; ok {
-		log.Printf("find room %s", advisorID)
-		log.Printf("Sales advisor room: %v", r)
+		log.Printf("INFO: find room %s", advisorID)
+		log.Printf("INFO: Sales advisor room: %v", r)
 		h.session = new(model.Session)
 		h.session.InitAdvisor(*h.conn, r)
 

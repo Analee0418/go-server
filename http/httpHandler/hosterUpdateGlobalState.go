@@ -15,17 +15,16 @@ import (
 // OnHosterUpdateState 主持人更新会议进度
 func OnHosterUpdateState(c *gin.Context) {
 	session := utils.HTTPSession(c)
-	log.Printf("%s", session.Get("UserType"))
 	userType, converted := session.Get("UserType").(int)
 	if !converted {
-		log.Printf("ERROR: login first pls.")
+		log.Printf("\033[1;31mERROR: \033[0mlogin first pls.")
 		c.String(403, "Invalid request.")
 		return
 	}
 
 	userNname, converted := session.Get("UserID").(string)
 	if !converted {
-		log.Printf("ERROR: login first pls.")
+		log.Printf("\033[1;31mERROR: \033[0mlogin first pls.")
 		c.String(403, "Invalid request.")
 		return
 	}
@@ -36,7 +35,7 @@ func OnHosterUpdateState(c *gin.Context) {
 	}
 
 	if state, ok := c.GetPostForm("state"); ok {
-		log.Printf("##### Will update global state later. #####\n%s", debug.Stack())
+		log.Printf("INFO: ##### Will update global state later. #####\n%s", debug.Stack())
 
 		if stateCode, error := protocol.NewGlobalStateValue(state); stateCode == -1 {
 			c.String(http.StatusBadRequest, error.Error())
