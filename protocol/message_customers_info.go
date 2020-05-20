@@ -40,6 +40,21 @@ type MessageCustomersInfo struct {
 		Address *AddressUnion
 	
 
+	
+	
+		State CustomerState
+	
+
+	
+	
+		CurrentGameID *CurrentGameIDUnion
+	
+
+	
+	
+		CurrentGameConfig *CurrentGameConfigUnion
+	
+
 }
 
 func NewMessageCustomersInfo() (*MessageCustomersInfo) {
@@ -103,6 +118,21 @@ func writeMessageCustomersInfo(r *MessageCustomersInfo, w io.Writer) error {
 		return err			
 	}
 	
+	err = writeCustomerState( r.State, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeCurrentGameIDUnion( r.CurrentGameID, w)
+	if err != nil {
+		return err			
+	}
+	
+	err = writeCurrentGameConfigUnion( r.CurrentGameConfig, w)
+	if err != nil {
+		return err			
+	}
+	
 	return err
 }
 
@@ -111,7 +141,7 @@ func (r *MessageCustomersInfo) Serialize(w io.Writer) error {
 }
 
 func (r *MessageCustomersInfo) Schema() string {
-	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
+	return "{\"fields\":[{\"name\":\"mobile\",\"type\":[\"null\",\"string\"]},{\"name\":\"mobileRegion\",\"type\":[\"null\",\"string\"]},{\"name\":\"idcard\",\"type\":[\"null\",\"string\"]},{\"name\":\"username\",\"type\":[\"null\",\"string\"]},{\"name\":\"address\",\"type\":[\"null\",\"string\"]},{\"name\":\"state\",\"type\":{\"name\":\"enum.CustomerState\",\"symbols\":[\"idle\",\"during_chat\",\"game\",\"browse_product\",\"paying\"],\"type\":\"enum\"}},{\"name\":\"currentGameID\",\"type\":[\"null\",\"string\"]},{\"name\":\"currentGameConfig\",\"type\":[\"null\",\"string\"]}],\"name\":\"proto.MessageCustomersInfo\",\"type\":\"record\"}"
 }
 
 func (r *MessageCustomersInfo) SchemaName() string {
@@ -175,12 +205,42 @@ func (r *MessageCustomersInfo) Get(i int) types.Field {
 			return r.Address
 		
 	
+	case 5:
+		
+		
+			return (*types.Int)(&r.State)
+		
+	
+	case 6:
+		
+			r.CurrentGameID = NewCurrentGameIDUnion()
+	
+		
+		
+			return r.CurrentGameID
+		
+	
+	case 7:
+		
+			r.CurrentGameConfig = NewCurrentGameConfigUnion()
+	
+		
+		
+			return r.CurrentGameConfig
+		
+	
 	}
 	panic("Unknown field index")
 }
 
 func (r *MessageCustomersInfo) SetDefault(i int) {
 	switch (i) {
+	
+        
+	
+        
+	
+        
 	
         
 	

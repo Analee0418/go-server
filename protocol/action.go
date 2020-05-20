@@ -37,49 +37,59 @@ const (
 
 	ActionRequest_customer_build_signature Action = 9
 
-	ActionRequest_host_connect Action = 10
+	ActionRequest_customer_update_state Action = 10
 
-	ActionRequest_host_set_start_time Action = 11
+	ActionRequest_customer_start_game Action = 11
 
-	ActionRequest_host_switch_state Action = 12
+	ActionRequest_customer_upload_game_score Action = 12
 
-	ActionRequest_host_choice_auction_goods Action = 13
+	ActionRequest_host_connect Action = 13
 
-	ActionRequest_host_auction_goods Action = 14
+	ActionRequest_host_set_start_time Action = 14
 
-	ActionMessage_session Action = 15
+	ActionRequest_host_switch_state Action = 15
 
-	ActionMessage_room_info Action = 16
+	ActionRequest_host_choice_auction_goods Action = 16
 
-	ActionMessage_room_waiting_customers Action = 17
+	ActionRequest_host_auction_goods Action = 17
 
-	ActionMessage_room_chat_ends Action = 18
+	ActionMessage_session Action = 18
 
-	ActionMessage_customers_info Action = 19
+	ActionMessage_room_info Action = 19
 
-	ActionMessage_customers_auction_info Action = 20
+	ActionMessage_room_waiting_customers Action = 20
 
-	ActionMessage_cars_model Action = 21
+	ActionMessage_room_chat_ends Action = 21
 
-	ActionMessage_contract Action = 22
+	ActionMessage_customers_info Action = 22
 
-	ActionMessage_global_info_to_http Action = 23
+	ActionMessage_customers_auction_info Action = 23
 
-	ActionMessage_global_state Action = 24
+	ActionMessage_cars_model Action = 24
 
-	ActionMessage_auction_info Action = 25
+	ActionMessage_contract Action = 25
 
-	ActionMessage_just_been_invited_into_room Action = 26
+	ActionMessage_global_info_to_http Action = 26
 
-	ActionMessage_forward_to_customer Action = 27
+	ActionMessage_global_state Action = 27
 
-	ActionMessage_forward_to_sales_advisor Action = 28
+	ActionMessage_auction_info Action = 28
 
-	ActionMessage_broadcast Action = 29
+	ActionMessage_just_been_invited_into_room Action = 29
 
-	ActionTips Action = 30
+	ActionMessage_game_config Action = 30
 
-	ActionError_message Action = 31
+	ActionMessage_game_result Action = 31
+
+	ActionMessage_forward_to_customer Action = 32
+
+	ActionMessage_forward_to_sales_advisor Action = 33
+
+	ActionMessage_broadcast Action = 34
+
+	ActionTips Action = 35
+
+	ActionError_message Action = 36
 
 )
 
@@ -115,6 +125,15 @@ func (e Action) String() string {
 
 	case ActionRequest_customer_build_signature:
 		return "request_customer_build_signature"
+
+	case ActionRequest_customer_update_state:
+		return "request_customer_update_state"
+
+	case ActionRequest_customer_start_game:
+		return "request_customer_start_game"
+
+	case ActionRequest_customer_upload_game_score:
+		return "request_customer_upload_game_score"
 
 	case ActionRequest_host_connect:
 		return "request_host_connect"
@@ -166,6 +185,12 @@ func (e Action) String() string {
 
 	case ActionMessage_just_been_invited_into_room:
 		return "message_just_been_invited_into_room"
+
+	case ActionMessage_game_config:
+		return "message_game_config"
+
+	case ActionMessage_game_result:
+		return "message_game_result"
 
 	case ActionMessage_forward_to_customer:
 		return "message_forward_to_customer"
@@ -223,6 +248,15 @@ func NewActionValue(raw string) (r Action, err error) {
 	case "request_customer_build_signature":
 		return ActionRequest_customer_build_signature, nil
 
+	case "request_customer_update_state":
+		return ActionRequest_customer_update_state, nil
+
+	case "request_customer_start_game":
+		return ActionRequest_customer_start_game, nil
+
+	case "request_customer_upload_game_score":
+		return ActionRequest_customer_upload_game_score, nil
+
 	case "request_host_connect":
 		return ActionRequest_host_connect, nil
 
@@ -273,6 +307,12 @@ func NewActionValue(raw string) (r Action, err error) {
 
 	case "message_just_been_invited_into_room":
 		return ActionMessage_just_been_invited_into_room, nil
+
+	case "message_game_config":
+		return ActionMessage_game_config, nil
+
+	case "message_game_result":
+		return ActionMessage_game_result, nil
 
 	case "message_forward_to_customer":
 		return ActionMessage_forward_to_customer, nil

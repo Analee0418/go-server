@@ -27,29 +27,33 @@ const (
 
 	 TopLevelUnionTypeEnumMessageCustomersInfo TopLevelUnionTypeEnum = 4
 
-	 TopLevelUnionTypeEnumMessageRoomWaitingCustomers TopLevelUnionTypeEnum = 5
+	 TopLevelUnionTypeEnumMessageGameConfig TopLevelUnionTypeEnum = 5
 
-	 TopLevelUnionTypeEnumMessageCustomersAuctionInfo TopLevelUnionTypeEnum = 6
+	 TopLevelUnionTypeEnumMessageGameResult TopLevelUnionTypeEnum = 6
 
-	 TopLevelUnionTypeEnumMessageCarsModel TopLevelUnionTypeEnum = 7
+	 TopLevelUnionTypeEnumMessageRoomWaitingCustomers TopLevelUnionTypeEnum = 7
 
-	 TopLevelUnionTypeEnumMessageRoomInfo TopLevelUnionTypeEnum = 8
+	 TopLevelUnionTypeEnumMessageCustomersAuctionInfo TopLevelUnionTypeEnum = 8
 
-	 TopLevelUnionTypeEnumMessageContract TopLevelUnionTypeEnum = 9
+	 TopLevelUnionTypeEnumMessageCarsModel TopLevelUnionTypeEnum = 9
 
-	 TopLevelUnionTypeEnumMessageAuctionRecord TopLevelUnionTypeEnum = 10
+	 TopLevelUnionTypeEnumMessageRoomInfo TopLevelUnionTypeEnum = 10
 
-	 TopLevelUnionTypeEnumMessageAuctionGoods TopLevelUnionTypeEnum = 11
+	 TopLevelUnionTypeEnumMessageContract TopLevelUnionTypeEnum = 11
 
-	 TopLevelUnionTypeEnumMessageAuctionInfo TopLevelUnionTypeEnum = 12
+	 TopLevelUnionTypeEnumMessageAuctionRecord TopLevelUnionTypeEnum = 12
 
-	 TopLevelUnionTypeEnumMessageGlobalInfo TopLevelUnionTypeEnum = 13
+	 TopLevelUnionTypeEnumMessageAuctionGoods TopLevelUnionTypeEnum = 13
 
-	 TopLevelUnionTypeEnumMessageGlobalState TopLevelUnionTypeEnum = 14
+	 TopLevelUnionTypeEnumMessageAuctionInfo TopLevelUnionTypeEnum = 14
 
-	 TopLevelUnionTypeEnumMessageForward TopLevelUnionTypeEnum = 15
+	 TopLevelUnionTypeEnumMessageGlobalInfo TopLevelUnionTypeEnum = 15
 
-	 TopLevelUnionTypeEnumMessage TopLevelUnionTypeEnum = 16
+	 TopLevelUnionTypeEnumMessageGlobalState TopLevelUnionTypeEnum = 16
+
+	 TopLevelUnionTypeEnumMessageForward TopLevelUnionTypeEnum = 17
+
+	 TopLevelUnionTypeEnumMessage TopLevelUnionTypeEnum = 18
 
 )
 
@@ -64,6 +68,10 @@ type TopLevelUnion struct {
 	MessageSession *MessageSession
 
 	MessageCustomersInfo *MessageCustomersInfo
+
+	MessageGameConfig *MessageGameConfig
+
+	MessageGameResult *MessageGameResult
 
 	MessageRoomWaitingCustomers *MessageRoomWaitingCustomers
 
@@ -113,6 +121,12 @@ func writeTopLevelUnion(r *TopLevelUnion, w io.Writer) error {
         
 	case TopLevelUnionTypeEnumMessageCustomersInfo:
 		return writeMessageCustomersInfo(r.MessageCustomersInfo, w)
+        
+	case TopLevelUnionTypeEnumMessageGameConfig:
+		return writeMessageGameConfig(r.MessageGameConfig, w)
+        
+	case TopLevelUnionTypeEnumMessageGameResult:
+		return writeMessageGameResult(r.MessageGameResult, w)
         
 	case TopLevelUnionTypeEnumMessageRoomWaitingCustomers:
 		return writeMessageRoomWaitingCustomers(r.MessageRoomWaitingCustomers, w)
@@ -206,13 +220,29 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 	
 	case 5:
 		
+		r.MessageGameConfig = NewMessageGameConfig()
+		
+		
+		return r.MessageGameConfig
+		
+	
+	case 6:
+		
+		r.MessageGameResult = NewMessageGameResult()
+		
+		
+		return r.MessageGameResult
+		
+	
+	case 7:
+		
 		r.MessageRoomWaitingCustomers = NewMessageRoomWaitingCustomers()
 		
 		
 		return r.MessageRoomWaitingCustomers
 		
 	
-	case 6:
+	case 8:
 		
 		r.MessageCustomersAuctionInfo = NewMessageCustomersAuctionInfo()
 		
@@ -220,7 +250,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageCustomersAuctionInfo
 		
 	
-	case 7:
+	case 9:
 		
 		r.MessageCarsModel = NewMessageCarsModel()
 		
@@ -228,7 +258,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageCarsModel
 		
 	
-	case 8:
+	case 10:
 		
 		r.MessageRoomInfo = NewMessageRoomInfo()
 		
@@ -236,7 +266,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageRoomInfo
 		
 	
-	case 9:
+	case 11:
 		
 		r.MessageContract = NewMessageContract()
 		
@@ -244,7 +274,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageContract
 		
 	
-	case 10:
+	case 12:
 		
 		r.MessageAuctionRecord = NewMessageAuctionRecord()
 		
@@ -252,7 +282,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageAuctionRecord
 		
 	
-	case 11:
+	case 13:
 		
 		r.MessageAuctionGoods = NewMessageAuctionGoods()
 		
@@ -260,7 +290,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageAuctionGoods
 		
 	
-	case 12:
+	case 14:
 		
 		r.MessageAuctionInfo = NewMessageAuctionInfo()
 		
@@ -268,7 +298,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageAuctionInfo
 		
 	
-	case 13:
+	case 15:
 		
 		r.MessageGlobalInfo = NewMessageGlobalInfo()
 		
@@ -276,7 +306,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageGlobalInfo
 		
 	
-	case 14:
+	case 16:
 		
 		r.MessageGlobalState = NewMessageGlobalState()
 		
@@ -284,7 +314,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageGlobalState
 		
 	
-	case 15:
+	case 17:
 		
 		r.MessageForward = NewMessageForward()
 		
@@ -292,7 +322,7 @@ func (r *TopLevelUnion) Get(i int) types.Field {
 		return r.MessageForward
 		
 	
-	case 16:
+	case 18:
 		
 		r.Message = NewMessage()
 		
