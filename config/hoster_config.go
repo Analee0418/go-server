@@ -24,7 +24,7 @@ func InitHosterConfig() {
 		return
 	}
 	hostJSON := HosterConfig{}
-	log.Printf("INFO: Hoster config: %s", data)
+	log.Printf("[INFO] Hoster config: %s", data)
 	err = json.Unmarshal([]byte(data), &hostJSON)
 	if err != nil {
 		log.Fatal("FATAL: The hoster config illegal")
@@ -32,7 +32,7 @@ func InitHosterConfig() {
 	}
 
 	if hostJSON.Username == "" || hostJSON.Password == "" {
-		log.Fatal("INFO: Invalid hoster config")
+		log.Fatal("[INFO] Invalid hoster config")
 		return
 	}
 

@@ -59,7 +59,7 @@ func (r *Room) BuildRoomMessage() *avro.MessageRoomInfo {
 	if currentCustomer, ok := AllCustomerContainer[r.CurrentCustomerID]; ok {
 		if customrMsg := currentCustomer.BuildCustomerMessage(); customrMsg != nil {
 			if config.DEBUG {
-				log.Println("DEBUG: customrMsg: ", customrMsg)
+				log.Println("[DEBUG] customrMsg: ", customrMsg)
 			}
 			msg.Customer_info = customrMsg
 		}
@@ -121,7 +121,7 @@ func (r *Room) BuildRoomMessage() *avro.MessageRoomInfo {
 func (r *Room) UpdateRoomID() {
 	r.UUID = int32(guuid.New().ID())
 	utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "roomID", r.UUID)
-	log.Printf("INFO: Rebuild roomID by roomkey[%d] for %s", r.UUID, r.SalesAdvisorID)
+	log.Printf("[INFO] Rebuild roomID by roomkey[%d] for %s", r.UUID, r.SalesAdvisorID)
 }
 
 func (r *Room) UpdateOrderCount(orderCount int32) {
@@ -130,14 +130,14 @@ func (r *Room) UpdateOrderCount(orderCount int32) {
 	r.OrderCount = orderCount
 	utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "orderCount", r.OrderCount)
 	log.Printf("\033[1;36mSTATS: \033[0mUpdate order count To %d by roomID: %d, salesAdvisorID: %v", orderCount, r.UUID, r.SalesAdvisorID)
-	log.Printf("INFO: Update order count To %d by roomkey %v", orderCount, r.SalesAdvisorID)
+	log.Printf("[INFO] Update order count To %d by roomkey %v", orderCount, r.SalesAdvisorID)
 }
 
 func (r *Room) UpdateCustomer(idcard string) {
 	r.CurrentCustomerID = idcard
 	utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "currentCustomerID", r.CurrentCustomerID)
 	log.Printf("\033[1;36mSTATS: \033[0mUpdate customer_info To %s by roomkey %v", r.CurrentCustomerID, r.SalesAdvisorID)
-	log.Printf("INFO: Update customer_info To %v by roomkey %v", r.CurrentCustomerID, r.SalesAdvisorID)
+	log.Printf("[INFO] Update customer_info To %v by roomkey %v", r.CurrentCustomerID, r.SalesAdvisorID)
 }
 
 func (r *Room) NewCustomerJoinWaitingList(customerID string) {
@@ -148,7 +148,7 @@ func (r *Room) NewCustomerJoinWaitingList(customerID string) {
 	if err == nil {
 		utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "customerWaitingList", string(lang))
 		log.Printf("\033[1;36mSTATS: \033[0mNew member %v join waiting_list %v by roomkey %v", customerID, string(lang), r.SalesAdvisorID)
-		log.Printf("INFO: New member join waiting_list %v by roomkey %v", string(lang), r.SalesAdvisorID)
+		log.Printf("[INFO] New member join waiting_list %v by roomkey %v", string(lang), r.SalesAdvisorID)
 	}
 }
 
@@ -167,7 +167,7 @@ func (r *Room) DeleteWaiting(customerID string) {
 	lang, err := json.Marshal(r.WaitingList)
 	if err == nil {
 		utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "customerWaitingList", string(lang))
-		log.Printf("INFO: Move member to room from waiting_list %v by roomkey %v", string(lang), r.SalesAdvisorID)
+		log.Printf("[INFO] Move member to room from waiting_list %v by roomkey %v", string(lang), r.SalesAdvisorID)
 	}
 }
 
@@ -195,7 +195,7 @@ func (r *Room) UpdateCarModel(model *avro.MessageCarsModel) {
 	lang, err := json.Marshal(r.CarModel)
 	if err == nil {
 		utils.HSetRedis(GenerateRoomKey(r.SalesAdvisorID), "carModel", string(lang))
-		log.Printf("INFO: Update carModel To %v by roomkey %v", string(lang), r.SalesAdvisorID)
+		log.Printf("[INFO] Update carModel To %v by roomkey %v", string(lang), r.SalesAdvisorID)
 	}
 }
 
@@ -250,7 +250,7 @@ func InitRoom() {
 		roomKey := GenerateRoomKey(advisorID)
 		if val, err := utils.HGetRedis(roomKey, "roomID"); err == nil {
 			valInt, err := strconv.ParseInt(val.(string), 10, 32)
-			log.Println("INFO: roomID", err, reflect.TypeOf(val), val)
+			log.Println("[INFO] roomID", err, reflect.TypeOf(val), val)
 			roomInstance.UUID = int32(valInt)
 
 			if val, err := utils.HGetRedis(roomKey, "orderCount"); err == nil {
@@ -268,13 +268,13 @@ func InitRoom() {
 
 			if val, err := utils.HGetRedis(roomKey, "customerWaitingList"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &roomInstance.WaitingList); err == nil {
-					log.Println("INFO: ", roomInstance.WaitingList)
+					log.Println("[INFO] ", roomInstance.WaitingList)
 				}
 			}
 
 			if val, err := utils.HGetRedis(roomKey, "carModel"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &roomInstance.CarModel); err == nil {
-					log.Println("INFO: ", roomInstance.CarModel)
+					log.Println("[INFO] ", roomInstance.CarModel)
 				}
 			}
 
@@ -283,12 +283,12 @@ func InitRoom() {
 			roomInstance.UpdateRoomID()
 			RoomContainer[roomInstance.SalesAdvisorID] = roomInstance
 			log.Printf("\033[1;36mSTATS: \033[0mCreate new room info with roomKey: %s\n%s\n", roomKey, roomInstance)
-			log.Printf("INFO: Create new room info with roomKey: %s", roomKey)
+			log.Printf("[INFO] Create new room info with roomKey: %s", roomKey)
 		}
 	}
 
-	log.Printf("INFO: All room entity: %v", RoomContainer)
-	log.Printf("INFO: Load room entity data OK.\n\n")
+	log.Printf("[INFO] All room entity: %v", RoomContainer)
+	log.Printf("[INFO] Load room entity data OK.\n\n")
 
 }
 

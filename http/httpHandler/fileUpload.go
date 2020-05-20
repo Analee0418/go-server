@@ -17,10 +17,10 @@ import (
 // OnUploadFile 上传文件处理器
 func OnUploadFile(c *gin.Context) {
 	session := utils.HTTPSession(c)
-	log.Printf("INFO: %s", session.Get("user"))
+	log.Printf("[INFO] %s", session.Get("user"))
 	user, converted := session.Get("user").(model.HTTPUser)
 	if !converted {
-		log.Printf("\033[1;31mERROR: \033[0mlogin first pls.")
+		log.Printf("\033[1;31m[ERROR] \033[0mlogin first pls.")
 		c.String(403, "Invalid request.")
 		return
 	}
@@ -34,7 +34,7 @@ func OnUploadFile(c *gin.Context) {
 	// single file
 	file, _ := c.FormFile("file")
 	fileName := file.Filename
-	log.Printf("INFO: Upload file, filename: %s", fileName)
+	log.Printf("[INFO] Upload file, filename: %s", fileName)
 
 	extname := strings.ToLower(path.Ext(fileName))
 	switch extname {

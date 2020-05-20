@@ -116,7 +116,7 @@ func (g *AuctionGoods) ConfirmFinalOnEndOfAuction(r AuctionRecord) {
 	lang, err := json.Marshal(g.FinalRecord)
 	if err == nil {
 		utils.HSetRedis(GenerateAuctionGoodsKey(g.GoodsID), "finalRecord", string(lang))
-		log.Printf("INFO: Confirmed final bid info %s by goodsID %d", string(lang), g.GoodsID)
+		log.Printf("[INFO] Confirmed final bid info %s by goodsID %d", string(lang), g.GoodsID)
 	}
 }
 
@@ -131,7 +131,7 @@ func (g *AuctionGoods) CustomerBidding(customerID string, r avro.MessageAuctionR
 	lang, err := json.Marshal(g.Records)
 	if err == nil {
 		utils.HSetRedis(GenerateAuctionGoodsKey(g.GoodsID), "recordList", string(lang))
-		log.Printf("INFO: Add new user bid info %s to goodsID %d", string(lang), g.GoodsID)
+		log.Printf("[INFO] Add new user bid info %s to goodsID %d", string(lang), g.GoodsID)
 	}
 
 	if c, ok := AllCustomerContainer[customerID]; ok {
@@ -148,7 +148,7 @@ func (g *AuctionGoods) String() string {
 }
 
 func InitAuctionGoods() {
-	log.Println("INFO: Start to load auction goods data.")
+	log.Println("[INFO] Start to load auction goods data.")
 	for goodsID, template := range config.AuctionGoodsTemplate {
 		goodsInstance := &AuctionGoods{
 			GoodsID:         goodsID,
@@ -162,7 +162,7 @@ func InitAuctionGoods() {
 		if val, err := utils.HGetRedis(gKey, "goodsID"); err == nil {
 			gid, err := strconv.ParseInt(val.(string), 10, 32)
 			if err != nil {
-				log.Printf("\033[1;31mERROR: \033[0mcan not read goodsID %v", val)
+				log.Printf("\033[1;31m[ERROR] \033[0mcan not read goodsID %v", val)
 				continue
 			}
 			goodsInstance.GoodsID = int32(gid)
@@ -170,7 +170,7 @@ func InitAuctionGoods() {
 			if val, err := utils.HGetRedis(gKey, "finalPrice"); err == nil { // 最终价格
 				finalPrice, err := strconv.ParseFloat(val.(string), 32)
 				if err != nil {
-					log.Printf("\033[1;31mERROR: \033[0mcan not read finalPrice %v by goodsID %d", val, goodsID)
+					log.Printf("\033[1;31m[ERROR] \033[0mcan not read finalPrice %v by goodsID %d", val, goodsID)
 					continue
 				}
 				goodsInstance.FinalPrice = float32(finalPrice)
@@ -178,7 +178,7 @@ func InitAuctionGoods() {
 
 			if val, err := utils.HGetRedis(gKey, "finalRecord"); err == nil {
 				if err := json.Unmarshal([]byte(val.(string)), &goodsInstance.FinalRecord); err == nil {
-					log.Printf("INFO: %v", goodsInstance.FinalRecord)
+					log.Printf("[INFO] %v", goodsInstance.FinalRecord)
 				}
 			}
 
@@ -194,14 +194,14 @@ func InitAuctionGoods() {
 		} else {
 			utils.HSetRedis(gKey, "goodsID", goodsID)
 			AllAuctionGoodsContainer[goodsID] = goodsInstance
-			log.Printf("INFO: Create new auction goods instance with gKey: %s", gKey)
+			log.Printf("[INFO] Create new auction goods instance with gKey: %s", gKey)
 		}
 	}
 
 	if config.DEBUG {
-		log.Printf("INFO: All auction goods: %v", AllAuctionGoodsContainer)
+		log.Printf("[INFO] All auction goods: %v", AllAuctionGoodsContainer)
 	}
-	log.Printf("INFO: Load auction goods data OK.\n\n")
+	log.Printf("[INFO] Load auction goods data OK.\n\n")
 	time.Sleep(time.Second * 1)
 }
 

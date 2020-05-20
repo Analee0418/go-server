@@ -38,13 +38,13 @@ func (h *CustomerBuildSignature) do(msg avro.Message) {
 		return
 	}
 	if h.session.CurrentUser() == nil {
-		log.Printf("\033[1;31mERROR: \033[0mcurrentUser is nil, please signin first. session: %s", h.session)
+		log.Printf("\033[1;31m[ERROR] \033[0mcurrentUser is nil, please signin first. session: %s", h.session)
 		h.session.Close("session.cutomerInfo is nil.")
 		return
 	}
 
 	if config.DEBUG {
-		log.Printf("DEBUG: session currentUser %s", h.session.CurrentUser())
+		log.Printf("[DEBUG] session currentUser %s", h.session.CurrentUser())
 	}
 
 	if h.session.CurrentUser().SignedContract {
@@ -97,7 +97,7 @@ func (h *CustomerBuildSignature) do(msg avro.Message) {
 		msg.Request_customer_build_signature.RequestCustomerBuildSignature.Filebytes, 0644)
 	if err != nil {
 		debug.PrintStack()
-		log.Printf("\033[1;31mERROR: \033[0m%s", err)
+		log.Printf("\033[1;31m[ERROR] \033[0m%s", err)
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
 			String:    "上传失败请稍后重试",

@@ -28,17 +28,17 @@ var GlobalGame map[string]string = map[string]string{}
 var GlobalVisitor map[string]string = map[string]string{}
 
 func initGlobalState() {
-	log.Println("INFO: Start to load global state.")
+	log.Println("[INFO] Start to load global state.")
 	if val, err := utils.HGetRedis("global", "state"); err == nil {
 		GlobalState, err = avro.NewGlobalStateValue(val.(string))
 		if err == redis.Nil {
 			GlobalState = avro.GlobalStateAwating_starting
 		} else {
-			log.Fatal("\033[1;31mERROR: \033[0mglobal state is illegal.", err)
+			log.Fatal("\033[1;31m[ERROR] \033[0mglobal state is illegal.", err)
 		}
 	}
 
-	log.Printf("INFO: Start to load global state[%s] OK.\n\n", GlobalState)
+	log.Printf("[INFO] Start to load global state[%s] OK.\n\n", GlobalState)
 }
 
 // TCPInitGlobal 初始化全局状态
@@ -61,7 +61,7 @@ func TCPGlobalOnCustomerSignin(customerID string) []*avro.Message {
 		if r, ok := RoomContainer[currentCustomer.SalesAdvisorID]; ok {
 			roominfo := r.BuildRoomMessage()
 			if roominfo == nil {
-				log.Printf("\033[1;31mERROR: \033[0mBuildRoomMessage failed, room[%v] is not exists.", r)
+				log.Printf("\033[1;31m[ERROR] \033[0mBuildRoomMessage failed, room[%v] is not exists.", r)
 			} else {
 				msg := GenerateMessage(avro.ActionMessage_room_info)
 				msg.Message_room_info = &avro.Message_room_infoUnion{
@@ -72,7 +72,7 @@ func TCPGlobalOnCustomerSignin(customerID string) []*avro.Message {
 			}
 		}
 	case avro.GlobalStateAution: // 竞拍阶段
-		log.Println("INFO: Aucion step")
+		log.Println("[INFO] Aucion step")
 	}
 
 	msg := GenerateMessage(avro.ActionMessage_customers_info)
@@ -101,7 +101,7 @@ func TCPGlobalReceiveGlobalState() {
 					GlobalState: r,
 				},
 			}
-			log.Printf("INFO: global state changed To %s.", r)
+			log.Printf("[INFO] global state changed To %s.", r)
 			BroadcastMessage(*msg)
 		}
 	}

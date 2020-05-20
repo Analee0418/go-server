@@ -25,7 +25,7 @@ func (h *SalesAdvisorInvite) selected(s *model.Session) {
 
 func (h *SalesAdvisorInvite) do(msg avro.Message) {
 	if h.session.Room() == nil {
-		log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
+		log.Println("\033[1;31m[ERROR] \033[0msales roomInfo is nil, please signin first.")
 		h.session.Close("session.roomInfo is nil.")
 		return
 	}
@@ -130,7 +130,7 @@ func (h *SalesAdvisorKick) selected(s *model.Session) {
 
 func (h *SalesAdvisorKick) do(msg avro.Message) {
 	if h.session.Room() == nil {
-		log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
+		log.Println("\033[1;31m[ERROR] \033[0msales roomInfo is nil, please signin first.")
 		h.session.Close("session.roomInfo is nil.")
 		return
 	}

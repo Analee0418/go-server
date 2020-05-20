@@ -23,7 +23,7 @@ func (h *SalesAdvisorConfirmedSignedContract) selected(s *model.Session) {
 
 func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 	if h.session.Room() == nil {
-		log.Println("\033[1;31mERROR: \033[0msales roomInfo is nil, please signin first.")
+		log.Println("\033[1;31m[ERROR] \033[0msales roomInfo is nil, please signin first.")
 		h.session.Close("session.roomInfo is nil.")
 		return
 	}
@@ -51,7 +51,8 @@ func (h *SalesAdvisorConfirmedSignedContract) do(msg avro.Message) {
 	if c, ok := model.AllCustomerContainer[r.CurrentCustomerID]; ok {
 		// 标记签约成功
 		c.ConfirmedSignContract(c.SalesAdvisorID, price, disprice, brand, color, interior, series)
-		log.Printf("WARN: Customer[%s] signed conract ok, and confirmed payment info. The contract: price: %f, disprice: %f, brand: %s, color: %s, interior: %s, series: %s", r.CurrentCustomerID, price, disprice, brand, color, interior, series)
+		log.Printf("\033[1;36mSTATS: \033[0mCustomer[%s] signed conract ok, and confirmed payment info. The contract: price: %f, disprice: %f, brand: %s, color: %s, interior: %s, series: %s", r.CurrentCustomerID, price, disprice, brand, color, interior, series)
+		log.Printf("\033[1;33m[WARNING] \033[0mCustomer[%s] signed conract ok, and confirmed payment info. The contract: price: %f, disprice: %f, brand: %s, color: %s, interior: %s, series: %s", r.CurrentCustomerID, price, disprice, brand, color, interior, series)
 
 		// 从房间请出
 		r.UpdateCustomer("")

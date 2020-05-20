@@ -34,7 +34,7 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 	advisorID := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Sales_advisor_id.String
 	mobile := msg.Sales_advisor_signin.RequestSalesAdvisorSignin.Mobile.String
 
-	log.Printf("INFO: sales advisor signin with %s, %s", advisorID, mobile)
+	log.Printf("[INFO] sales advisor signin with %s, %s", advisorID, mobile)
 
 	for _, r := range model.RoomContainer {
 		if l := len(r.SalesAdvisorID); r.SalesAdvisorID[l-6:l] == advisorID && r.SalesAdvisorMobile == mobile {
@@ -55,8 +55,8 @@ func (h *SalesAdvisorSignin) do(msg avro.Message) {
 
 	// 允许登录
 	if r, ok := model.RoomContainer[advisorID]; ok {
-		log.Printf("INFO: find room %s", advisorID)
-		log.Printf("INFO: Sales advisor room: %v", r)
+		log.Printf("[INFO] find room %s", advisorID)
+		log.Printf("[INFO] Sales advisor room: %v", r)
 		h.session = new(model.Session)
 		h.session.InitAdvisor(*h.conn, r)
 

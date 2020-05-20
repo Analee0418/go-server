@@ -35,7 +35,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 	idcard := msg.Customer_signin.RequestCustomerSignin.Idcard.String
 	mobile := msg.Customer_signin.RequestCustomerSignin.Mobile.String
 
-	log.Printf("INFO: customer signin with %s, %s", idcard, mobile)
+	log.Printf("[INFO] customer signin with %s, %s", idcard, mobile)
 
 	var ok = false
 	var customer *model.Customer = nil
@@ -95,7 +95,7 @@ func (h *CustomerSignin) do(msg avro.Message) {
 			UnionType: avro.Message_sessionUnionTypeEnumMessageSession,
 		}
 		if config.DEBUG {
-			log.Println("DEBUG: On user login successed!", smsg.Message_session.MessageSession.Sid.String)
+			log.Println("[DEBUG] On user login successed!", smsg.Message_session.MessageSession.Sid.String)
 		}
 		h.session.SendMessage(*smsg)
 

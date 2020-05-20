@@ -83,17 +83,17 @@ func main() {
 		for s := range c {
 			switch s {
 			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM:
-				log.Println("\033[1;33mWARNING: \033[0mServer program exit:", s)
+				log.Println("\033[1;33m[WARNING] \033[0mServer program exit:", s)
 				model.TCPServerInstance.TCPServerUpdateStatus(model.ServerDeactivate, false)
 				utils.HDelRedis("hallserver##startup", model.TCPServerInstance.ID)
-				log.Println("INFO: Notify HTTPServer")
+				log.Println("[INFO] Notify HTTPServer")
 				os.Exit(0)
 			case syscall.SIGUSR1:
-				log.Println("INFO: usr1", s)
+				log.Println("[INFO] usr1", s)
 			case syscall.SIGUSR2:
-				log.Println("INFO: usr2", s)
+				log.Println("[INFO] usr2", s)
 			default:
-				log.Println("INFO: Other", s)
+				log.Println("[INFO] Other", s)
 			}
 		}
 	}()
@@ -111,7 +111,7 @@ func handleConnection(conn net.Conn) {
 	defer func() {
 		if x := recover(); x != nil {
 			debug.PrintStack()
-			log.Println("\033[1;31mERROR: \033[0mcaught panic in handleConnection", x)
+			log.Println("\033[1;31m[ERROR] \033[0mcaught panic in handleConnection", x)
 		}
 		time.Sleep(10 * time.Microsecond)
 	}()
@@ -122,17 +122,17 @@ func handleConnection(conn net.Conn) {
 	n, e := conn.Read(_ret)
 	if e != nil {
 		if e == io.EOF { // 客户端主动断开
-			log.Println("\033[1;33mWARNING: \033[0m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! discover client disconnect.", ip)
+			log.Println("\033[1;33m[WARNING] \033[0m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! discover client disconnect.", ip)
 			model.OnClientDisconnect(conn)
 			return
 		}
 	}
 	dataLen := int(binary.LittleEndian.Uint32(_ret))
 	if config.DEBUG {
-		log.Println("INFO: ->->->->->->->->->->->-> length", dataLen, n, ip, e)
+		log.Println("[INFO] ->->->->->->->->->->->-> length", dataLen, n, ip, e)
 	}
 	if dataLen >= 2097152 {
-		log.Println("\033[1;31mERROR: \033[0mToo large data packets! ->->->->->->->->->->->-> ", ip)
+		log.Println("\033[1;31m[ERROR] \033[0mToo large data packets! ->->->->->->->->->->->-> ", ip)
 		conn.Close()
 		return
 	}
@@ -150,7 +150,7 @@ func handleConnection(conn net.Conn) {
 		pkg := make([]byte, l)
 		n, _ := conn.Read(pkg)
 		if config.DEBUG {
-			log.Printf("DEBUG: len: %d, read len: %d, remain: %d\n", l, n, remain)
+			log.Printf("[DEBUG] len: %d, read len: %d, remain: %d\n", l, n, remain)
 		}
 		if n == 0 {
 			break
@@ -164,20 +164,20 @@ func handleConnection(conn net.Conn) {
 	}
 
 	if config.DEBUG {
-		log.Printf("DEBUG: ->->->->->->->->->->->-> read all length: %d", ulimitBuffer.Len())
+		log.Printf("[DEBUG] ->->->->->->->->->->->-> read all length: %d", ulimitBuffer.Len())
 	}
 
 	message := avro.Message{}
 	deser, err := compiler.CompileSchemaBytes([]byte(message.Schema()), []byte(message.Schema()))
 	if err != nil {
-		log.Printf("\033[1;31mERROR: \033[0mcannot found schema compiler. IP: %s, Err: %v\n\n", ip, err)
+		log.Printf("\033[1;31m[ERROR] \033[0mcannot found schema compiler. IP: %s, Err: %v\n\n", ip, err)
 		return
 	}
 	buffer := bytes.NewBuffer(ulimitBuffer.Bytes())
 	var reader = flate.NewReader(buffer)
 	errs := vm.Eval(reader, deser, &message)
 	if errs != nil {
-		log.Printf("\033[1;31mERROR: \033[0mcannot Decompress/ Decode data. IP: %s, Err: %v\n\n", ip, errs)
+		log.Printf("\033[1;31m[ERROR] \033[0mcannot Decompress/ Decode data. IP: %s, Err: %v\n\n", ip, errs)
 		return
 	}
 
@@ -186,7 +186,7 @@ func handleConnection(conn net.Conn) {
 	if err == nil {
 		body = string(lang)
 	}
-	log.Printf("INFO: ACTION=%s, DATALEN=%d, REMOTE_IP=%s, BODY=%s\n", message.Action, ulimitBuffer.Len(), ip, body)
+	log.Printf("[INFO] ACTION=%s, DATALEN=%d, REMOTE_IP=%s, BODY=%s\n", message.Action, ulimitBuffer.Len(), ip, body)
 
 	selector := handler.HandlerSelector{}
 	go selector.Selects(&conn, message)
@@ -198,14 +198,14 @@ func handleConnection(conn net.Conn) {
 func startTCPServer() {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", model.TCPServerInstance.PORT))
 	checkError(err)
-	log.Printf("INFO: start listening on %d", model.TCPServerInstance.PORT)
+	log.Printf("[INFO] start listening on %d", model.TCPServerInstance.PORT)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Println("\033[1;33mWARNING: \033[0maccept failed", err)
+			log.Println("\033[1;33m[WARNING] \033[0maccept failed", err)
 			continue
 		}
-		log.Println("INFO: conn# ", reflect.TypeOf(conn), conn)
+		log.Println("[INFO] conn# ", reflect.TypeOf(conn), conn)
 		go handleConnection(conn)
 	}
 }

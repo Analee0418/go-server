@@ -27,7 +27,7 @@ func InitServerConfig() (jst *ServerConfig) {
 		return
 	}
 	jst = &ServerConfig{}
-	log.Printf("INFO: Server config: %s", data)
+	log.Printf("[INFO] Server config: %s", data)
 	err = json.Unmarshal([]byte(data), jst)
 	if err != nil {
 		log.Fatal("FATAL: The server config illegal")

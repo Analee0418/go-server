@@ -36,7 +36,7 @@ func InitDBConfig() {
 		return
 	}
 	dbJSON := DBConfig{}
-	log.Printf("INFO: DB config: %s", data)
+	log.Printf("[INFO] DB config: %s", data)
 	err = json.Unmarshal([]byte(data), &dbJSON)
 	if err != nil {
 		log.Fatal("FATAL: The DB config illegal")
@@ -44,7 +44,7 @@ func InitDBConfig() {
 	}
 
 	if dbJSON.DBhost == "" || dbJSON.DBport == "" {
-		log.Printf("\033[1;33mWARNING: \033[0mInvalid DB config, trying to used default params.")
+		log.Printf("\033[1;33m[WARNING] \033[0mInvalid DB config, trying to used default params.")
 		dbJSON.DBhost = "127.0.0.1"
 		dbJSON.DBport = "27017"
 	}
@@ -60,7 +60,7 @@ func InitDBConfig() {
 		return
 	}
 	redisJSON := RedisConfig{}
-	log.Printf("INFO: Redis config: %s", data)
+	log.Printf("[INFO] Redis config: %s", data)
 	err = json.Unmarshal([]byte(data), &redisJSON)
 	if err != nil {
 		log.Fatal("FATAL: The Redis config illegal")
@@ -68,7 +68,7 @@ func InitDBConfig() {
 	}
 
 	if redisJSON.RedisIP == "" || redisJSON.RedisPort == "" {
-		log.Printf("\033[1;33mWARNING: \033[0mInvalid Redis config, trying to used default params.")
+		log.Printf("\033[1;33m[WARNING] \033[0mInvalid Redis config, trying to used default params.")
 		redisJSON.RedisIP = "127.0.0.1"
 		redisJSON.RedisPort = "27017"
 	}

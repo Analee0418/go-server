@@ -15,7 +15,7 @@ import (
 func OnHosterSignin(c *gin.Context) {
 	username, ok := c.GetPostForm("username")
 	if config.DEBUG {
-		log.Printf("DEBUG: host signin username: %s", username)
+		log.Printf("[DEBUG] host signin username: %s", username)
 	}
 	if !ok {
 		c.String(http.StatusForbidden, "Invalid request.")
@@ -23,7 +23,7 @@ func OnHosterSignin(c *gin.Context) {
 	}
 	password, ok := c.GetPostForm("password")
 	if config.DEBUG {
-		log.Printf("DEBUG: host signin password: %s", password)
+		log.Printf("[DEBUG] host signin password: %s", password)
 	}
 
 	if 0 != strings.Compare(username, config.HosterParams.Username) ||

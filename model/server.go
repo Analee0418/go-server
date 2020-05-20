@@ -65,7 +65,7 @@ func TCPServerInit() {
 	}
 
 	if v, err := utils.HGetRedis(GenerateServerKey(TCPServerInstance.ID), "status"); err == nil && v == strconv.FormatInt(int64(ServerActive), 10) {
-		log.Fatalf("\033[1;31mERROR: \033[0mThe server [%s] has been started.", TCPServerInstance.ID)
+		log.Fatalf("\033[1;31m[ERROR] \033[0mThe server [%s] has been started.", TCPServerInstance.ID)
 	}
 
 	utils.HSetRedis(GenerateServerKey(TCPServerInstance.ID), "id", TCPServerInstance.ID)
@@ -87,12 +87,12 @@ func TCPServerInit() {
 	if err == nil {
 		pubErr := utils.PublishMessage("hallserver##startup", string(lang))
 		if pubErr != nil {
-			log.Printf("\033[1;31mERROR: \033[0mpublish server startup message failed, because %v", pubErr)
+			log.Printf("\033[1;31m[ERROR] \033[0mpublish server startup message failed, because %v", pubErr)
 		}
 		utils.HSetRedis("hallserver##startup", TCPServerInstance.ID, string(lang))
-		log.Printf("INFO: New hall server startup and success regist to HTTPServer.\n%s\npublishErr: %v", lang, pubErr)
+		log.Printf("[INFO] New hall server startup and success regist to HTTPServer.\n%s\npublishErr: %v", lang, pubErr)
 	} else {
-		log.Printf("\033[1;31mERROR: \033[0mNew hall server startup But failed regist to HTTPServer. \n%s\nerr: %v", lang, err)
+		log.Printf("\033[1;31m[ERROR] \033[0mNew hall server startup But failed regist to HTTPServer. \n%s\nerr: %v", lang, err)
 	}
 }
 
@@ -102,7 +102,7 @@ func (s *Server) TCPServerUpdateStatus(status int32, isInit bool) {
 	utils.HSetRedis(GenerateServerKey(TCPServerInstance.ID), "status", s.status)
 	s.updatedAt = utils.NowMilliseconds()
 	utils.HSetRedis(GenerateServerKey(TCPServerInstance.ID), "updatedAt", s.updatedAt)
-	log.Printf("INFO: Notify HTTPServer status %d by serverKey %v", s.status, s.ID)
+	log.Printf("[INFO] Notify HTTPServer status %d by serverKey %v", s.status, s.ID)
 
 	if !isInit {
 		utils.PublishMessage(fmt.Sprintf("%s##status", GenerateServerKey(s.ID)), strconv.FormatInt(int64(s.status), 10))
@@ -122,7 +122,7 @@ func (s *Server) TCPServerOnUpdateOnlines(onlines int32, isInit bool) {
 	utils.HSetRedis(GenerateServerKey(s.ID), "online", s.online)
 	s.updatedAt = utils.NowMilliseconds()
 	utils.HSetRedis(GenerateServerKey(TCPServerInstance.ID), "updatedAt", s.updatedAt)
-	log.Printf("INFO: Notify HTTPServer onlines %d by serverKey %v", s.online, s.ID)
+	log.Printf("[INFO] Notify HTTPServer onlines %d by serverKey %v", s.online, s.ID)
 	if !isInit {
 		utils.PublishMessage(fmt.Sprintf("%s##onlines", GenerateServerKey(s.ID)), strconv.FormatInt(int64(s.online), 10))
 	}
@@ -139,7 +139,7 @@ func (s *Server) TCPServerRefresh(now int64) {
 
 // HTTPServerInit 依据redis数据初始化大厅服务列表
 func HTTPServerInit() {
-	log.Println("INFO: Start initialize hall server list from redis data.")
+	log.Println("[INFO] Start initialize hall server list from redis data.")
 	if m, err := utils.HGetAllRedis("hallserver##startup"); err == nil {
 		for hallServerID := range m {
 			if _, ok := HTTPServerAllHallServerContainer[hallServerID]; !ok {
@@ -147,43 +147,43 @@ func HTTPServerInit() {
 				if id, err := utils.HGetRedis(GenerateServerKey(hallServerID), "id"); err == nil {
 					swapMap["id"] = id.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'ID'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'ID'")
 					continue
 				}
 				if host, err := utils.HGetRedis(GenerateServerKey(hallServerID), "host"); err == nil {
 					swapMap["host"] = host.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'HOST'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'HOST'")
 					continue
 				}
 				if port, err := utils.HGetRedis(GenerateServerKey(hallServerID), "port"); err == nil {
 					swapMap["port"] = port.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'PORT'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'PORT'")
 					continue
 				}
 				if limitOnline, err := utils.HGetRedis(GenerateServerKey(hallServerID), "limitOnline"); err == nil {
 					swapMap["limitOnline"] = limitOnline.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'limitOnline'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'limitOnline'")
 					continue
 				}
 				if status, err := utils.HGetRedis(GenerateServerKey(hallServerID), "status"); err == nil {
 					swapMap["status"] = status.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'status'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'status'")
 					continue
 				}
 				if online, err := utils.HGetRedis(GenerateServerKey(hallServerID), "online"); err == nil {
 					swapMap["online"] = online.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'online'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'online'")
 					continue
 				}
 				if updatedAt, err := utils.HGetRedis(GenerateServerKey(hallServerID), "updatedAt"); err == nil {
 					swapMap["updatedAt"] = updatedAt.(string)
 				} else {
-					log.Printf("\033[1;33mWARNING: \033[0mCan not parse server obj from redis data, because has not field 'updatedAt'")
+					log.Printf("\033[1;33m[WARNING] \033[0mCan not parse server obj from redis data, because has not field 'updatedAt'")
 					continue
 				}
 
@@ -204,73 +204,73 @@ func HTTPServerAssignedInit() {
 }
 
 func parseServerFromMap(a map[string]string) *Server {
-	log.Printf("INFO: Will be create new hall server by %v.", a)
+	log.Printf("[INFO] Will be create new hall server by %v.", a)
 	s := Server{}
 	if id, ok := a["id"]; ok {
 		s.ID = id
 	} else {
-		log.Println("\033[1;31mERROR: \033[0mBut the hall server has no ID!")
+		log.Println("\033[1;31m[ERROR] \033[0mBut the hall server has no ID!")
 		return nil
 	}
 	if status, ok := a["status"]; ok {
 		if statusInt, err := strconv.ParseInt(status, 10, 32); err == nil {
 			s.status = int32(statusInt)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0mBut the hall server status illegal.", status)
+			log.Println("\033[1;31m[ERROR] \033[0mBut the hall server status illegal.", status)
 			return nil
 		}
 	} else {
-		log.Printf("\033[1;31mERROR: \033[0mBut the hall server has no status!")
+		log.Printf("\033[1;31m[ERROR] \033[0mBut the hall server has no status!")
 		return nil
 	}
 	if host, ok := a["host"]; ok {
 		s.HOST = host
 	} else {
-		log.Println("\033[1;31mERROR: \033[0mBut the hall server has no host!")
+		log.Println("\033[1;31m[ERROR] \033[0mBut the hall server has no host!")
 		return nil
 	}
 	if port, ok := a["port"]; ok {
 		if portInt, err := strconv.ParseInt(port, 10, 32); err == nil {
 			s.PORT = int32(portInt)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0mBut the hall server port illegal.", port)
+			log.Println("\033[1;31m[ERROR] \033[0mBut the hall server port illegal.", port)
 			return nil
 		}
 	} else {
-		log.Println("\033[1;31mERROR: \033[0mBut the hall server has no port!")
+		log.Println("\033[1;31m[ERROR] \033[0mBut the hall server has no port!")
 		return nil
 	}
 	if online, ok := a["online"]; ok {
 		if onlineInt, err := strconv.ParseInt(online, 10, 32); err == nil {
 			s.online = int32(onlineInt)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0mBut the hall server online illegal.", online)
+			log.Println("\033[1;31m[ERROR] \033[0mBut the hall server online illegal.", online)
 			return nil
 		}
 	} else {
-		log.Printf("\033[1;31mERROR: \033[0mBut the hall server has no online!")
+		log.Printf("\033[1;31m[ERROR] \033[0mBut the hall server has no online!")
 		return nil
 	}
 	if limitOnline, ok := a["limitOnline"]; ok {
 		if limitOnlineInt, err := strconv.ParseInt(limitOnline, 10, 32); err == nil {
 			s.limitOnline = int32(limitOnlineInt)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0mBut the hall server limitOnline illegal.", limitOnline)
+			log.Println("\033[1;31m[ERROR] \033[0mBut the hall server limitOnline illegal.", limitOnline)
 			return nil
 		}
 	} else {
-		log.Printf("\033[1;31mERROR: \033[0mBut the hall server has no limitOnline!")
+		log.Printf("\033[1;31m[ERROR] \033[0mBut the hall server has no limitOnline!")
 		return nil
 	}
 	if updatedAt, ok := a["updatedAt"]; ok {
 		if updatedAtLong, err := strconv.ParseInt(updatedAt, 10, 64); err == nil {
 			s.updatedAt = updatedAtLong
 		} else {
-			log.Println("\033[1;31mERROR: \033[0mBut the hall server updatedAt illegal.", updatedAt)
+			log.Println("\033[1;31m[ERROR] \033[0mBut the hall server updatedAt illegal.", updatedAt)
 			return nil
 		}
 	} else {
-		log.Printf("\033[1;31mERROR: \033[0mBut the hall server has no updatedAt!")
+		log.Printf("\033[1;31m[ERROR] \033[0mBut the hall server has no updatedAt!")
 		return nil
 	}
 	return &s
@@ -284,7 +284,7 @@ func HTTPServerOnServerStartup() {
 	ch := pubsub.ChannelSize(1)
 	for {
 		res := <-ch
-		log.Printf("INFO: recived hallserver OnStartup message: %s", res.Payload)
+		log.Printf("[INFO] recived hallserver OnStartup message: %s", res.Payload)
 		a := map[string]string{}
 		if err := json.Unmarshal([]byte(res.Payload), &a); err == nil {
 			s := parseServerFromMap(a)
@@ -292,12 +292,12 @@ func HTTPServerOnServerStartup() {
 				continue
 			}
 			if s.status != ServerActive {
-				log.Printf("\033[1;31mERROR: \033[0mdiscovered new hall server, But status is not 'Active'. %v", s)
+				log.Printf("\033[1;31m[ERROR] \033[0mdiscovered new hall server, But status is not 'Active'. %v", s)
 				continue
 			}
 			HTTPServerAllHallServerContainer[s.ID] = s
 		} else {
-			log.Printf("\033[1;31mERROR: \033[0mHTTPSERVER discovered new hall server, But the hall server data illegal. %v. %v", a, err)
+			log.Printf("\033[1;31m[ERROR] \033[0mHTTPSERVER discovered new hall server, But the hall server data illegal. %v. %v", a, err)
 		}
 	}
 }
@@ -314,12 +314,12 @@ func HTTPServerOnServerUpdateOnlines(sid string) {
 		if !ok {
 			continue
 		}
-		log.Printf("INFO: recived hallserver UpdateOnlines message: %s", res.Payload)
+		log.Printf("[INFO] recived hallserver UpdateOnlines message: %s", res.Payload)
 		if v, err := strconv.ParseInt(res.Payload, 10, 32); err == nil {
 			s.online = int32(v)
-			log.Printf("INFO: Server[%s] update onlines to %d.", GenerateServerKey(s.ID), s.online)
+			log.Printf("[INFO] Server[%s] update onlines to %d.", GenerateServerKey(s.ID), s.online)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0m", err)
+			log.Println("\033[1;31m[ERROR] \033[0m", err)
 		}
 	}
 }
@@ -336,12 +336,12 @@ func HTTPServerOnServerUpdateStatus(sid string) {
 		if !ok {
 			continue
 		}
-		log.Printf("INFO: recived hallserver UpdatesStatus message: %s", res.Payload)
+		log.Printf("[INFO] recived hallserver UpdatesStatus message: %s", res.Payload)
 		if v, err := strconv.ParseInt(res.Payload, 10, 32); err == nil {
 			s.status = int32(v)
-			log.Printf("INFO: Server[%s] update status to %d.", GenerateServerKey(s.ID), s.status)
+			log.Printf("[INFO] Server[%s] update status to %d.", GenerateServerKey(s.ID), s.status)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0m", err)
+			log.Println("\033[1;31m[ERROR] \033[0m", err)
 		}
 	}
 }
@@ -365,12 +365,12 @@ func HTTPServerDiscovery(now int64) {
 						continue
 					}
 					if s.status == ServerDeactivate {
-						log.Printf("\033[1;31mERROR: \033[0mscan new hall server, But status is Deactive. %v", s)
+						log.Printf("\033[1;31m[ERROR] \033[0mscan new hall server, But status is Deactive. %v", s)
 						continue
 					}
 					HTTPServerAllHallServerContainer[s.ID] = s
 				} else {
-					log.Printf("\033[1;31mERROR: \033[0mHTTPSERVER discovered new hall server, But the hall server data illegal. %v. %v", a, err)
+					log.Printf("\033[1;31m[ERROR] \033[0mHTTPSERVER discovered new hall server, But the hall server data illegal. %v. %v", a, err)
 				}
 			}
 		}
@@ -392,21 +392,21 @@ func HTTPServerRefresh(now int64, sid string) {
 		if z, err := strconv.ParseInt(v.(string), 10, 64); err == nil {
 			lastHeartbeat = z
 		} else {
-			log.Println("\033[1;31mERROR: \033[0m", err)
+			log.Println("\033[1;31m[ERROR] \033[0m", err)
 		}
 	} else {
-		log.Println("\033[1;31mERROR: \033[0m", err)
+		log.Println("\033[1;31m[ERROR] \033[0m", err)
 	}
 
 	if lastHeartbeat == 0 {
-		log.Printf("\033[1;31mERROR: \033[0mInvalid server updatedAt value, close server entry.")
+		log.Printf("\033[1;31m[ERROR] \033[0mInvalid server updatedAt value, close server entry.")
 		s.status = ServerDeactivate
 		return
 	}
 
 	if now-lastHeartbeat >= 5000 { // 5秒内未更新则认为服务器已宕机
 		s.status = ServerDeactivate
-		log.Printf("\033[1;31mERROR: \033[0mServer[%s] without vital signs. No heartbeat detected.", s.ID)
+		log.Printf("\033[1;31m[ERROR] \033[0mServer[%s] without vital signs. No heartbeat detected.", s.ID)
 		return
 	}
 	if s.status == ServerDeactivate {
@@ -418,7 +418,7 @@ func HTTPServerRefresh(now int64, sid string) {
 		if z, err := strconv.ParseInt(v.(string), 10, 32); err == nil {
 			s.limitOnline = int32(z)
 		} else {
-			log.Println("\033[1;31mERROR: \033[0m", err)
+			log.Println("\033[1;31m[ERROR] \033[0m", err)
 		}
 	}
 	s.updatedAt = lastHeartbeat
@@ -440,11 +440,11 @@ func SelectHallServer(salesAdvisorID string, prowlNotify bool) string {
 	if assigned { // 是否需要重新分配
 		s, ok := HTTPServerAllHallServerContainer[assignedHallServerID.(string)]
 		if !ok {
-			log.Printf("\033[1;31mERROR: \033[0mhall serverID is invalid and cannot used assigned server instance! %v", s)
+			log.Printf("\033[1;31m[ERROR] \033[0mhall serverID is invalid and cannot used assigned server instance! %v", s)
 			return ""
 			// assigned = false
 			// } else if s.status == ServerDeactivate {
-			// 	log.Printf("\033[1;31mERROR: \033[0mThe sales roome server has been shut down And needs to be reassigned. %v", s.ID)
+			// 	log.Printf("\033[1;31m[ERROR] \033[0mThe sales roome server has been shut down And needs to be reassigned. %v", s.ID)
 			// 	assigned = false
 		}
 	}
@@ -459,7 +459,7 @@ func SelectHallServer(salesAdvisorID string, prowlNotify bool) string {
 		}
 		if maxOnlinesServer == nil {
 			errorMsg := fmt.Sprintf("Can not found available hall server assigned to sales advisor. salesID[%s]", salesAdvisorID)
-			log.Println("\033[1;31mERROR: \033[0m", errorMsg)
+			log.Println("\033[1;31m[ERROR] \033[0m", errorMsg)
 			if prowlNotify {
 				utils.ProwlNotify(errorMsg)
 			}

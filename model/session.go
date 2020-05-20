@@ -83,7 +83,7 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 
 	compressedWriter, err := flate.NewWriter(blockBuffer, flate.DefaultCompression)
 	if err != nil {
-		log.Println("\033[1;31mERROR: \033[0m", err)
+		log.Println("\033[1;31m[ERROR] \033[0m", err)
 	}
 	msg.Serialize(compressedWriter)
 	compressedWriter.Flush()
@@ -97,7 +97,7 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 	lenBytes := make([]byte, 4)
 	binary.LittleEndian.PutUint32(lenBytes, uint32(blockBuffer.Len()))
 	if config.DEBUG {
-		log.Printf("DEBUG: will write to %d, %v byte", blockBuffer.Len(), lenBytes)
+		log.Printf("[DEBUG] will write to %d, %v byte", blockBuffer.Len(), lenBytes)
 	}
 
 	finalByteArray := make([]byte, 0)
@@ -121,17 +121,17 @@ func SendMessage(conn net.Conn, msg avro.Message) {
 	if config.DEBUG {
 		lang, err := json.MarshalIndent(msg, "", "   ")
 		if err == nil {
-			log.Printf("DEBUG: send msg to %s,\n%s", ip, string(lang))
+			log.Printf("[DEBUG] send msg to %s,\n%s", ip, string(lang))
 		}
 	}
 	if err != nil {
-		log.Printf("\033[1;31mERROR: \033[0m%s, IP: %s", err, ip)
+		log.Printf("\033[1;31m[ERROR] \033[0m%s, IP: %s", err, ip)
 	}
 }
 
 func (s *Session) SendMessage(message avro.Message) {
 	if s.dead {
-		log.Printf("\033[1;33mWARNING: \033[0mthe sesison[%v, %s] has closed\n", s.id, s.name)
+		log.Printf("\033[1;33m[WARNING] \033[0mthe sesison[%v, %s] has closed\n", s.id, s.name)
 		return
 	}
 	SendMessage(s.conn, message)
@@ -149,7 +149,7 @@ func (s *Session) Close(reason string) (guuid.UUID, string) {
 	msg := GenerateMessage(avro.ActionError_message)
 	msg.Error_message = &avro.Error_messageUnion{String: reason, UnionType: avro.Error_messageUnionTypeEnumString}
 
-	log.Printf("\033[1;33mWARNING: \033[0msession[%v, %s, %s] Disconnected. Reason: %s", s.id, s.name, s.customerInfo, reason)
+	log.Printf("\033[1;33m[WARNING] \033[0msession[%v, %s, %s] Disconnected. Reason: %s", s.id, s.name, s.customerInfo, reason)
 
 	s.SendMessage(*msg)
 
