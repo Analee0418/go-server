@@ -69,8 +69,8 @@ func (h *CustomerUpdateStateHanlder) do(msg avro.Message) {
 	// 刷新前端
 	msg = *model.GenerateMessage(avro.ActionMessage_customers_info)
 	msg.Message_customer_info = &avro.Message_customer_infoUnion{
-		UnionType:            avro.Message_customer_infoUnionTypeEnumMessageCustomersInfo,
 		MessageCustomersInfo: h.session.CurrentUser().BuildCustomerMessage(),
+		UnionType:            avro.Message_customer_infoUnionTypeEnumMessageCustomersInfo,
 	}
 	h.session.SendMessage(msg)
 }

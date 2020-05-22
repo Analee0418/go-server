@@ -146,8 +146,8 @@ func (c *Customer) ConfirmedSignContract(salesID string, price float32, disprice
 }
 
 func (c *Customer) ChangeState(s avro.CustomerState) {
-	c.State = string(s)
-	utils.HSetRedis(GenerateCustomerKey(c.ID), "state", string(s))
+	c.State = s.String()
+	utils.HSetRedis(GenerateCustomerKey(c.ID), "state", c.State)
 	log.Printf("\033[1;36mSTATS: \033[0mcustomer[%s] update current state To [%s].", c.ID, c.State)
 	log.Printf("[INFO] customer[%s] update current state To [%s].", c.ID, c.State)
 }

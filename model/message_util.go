@@ -26,6 +26,12 @@ func GenerateMessage(action avro.Action) *avro.Message {
 
 		Request_customer_build_signature: avro.NewRequest_customer_build_signatureUnion(),
 
+		Customer_start_game: avro.NewCustomer_start_gameUnion(),
+
+		Customer_upload_game_score: avro.NewCustomer_upload_game_scoreUnion(),
+
+		Customer_update_state: avro.NewCustomer_update_stateUnion(),
+
 		// 推送消息
 
 		Message_session: avro.NewMessage_sessionUnion(),
@@ -47,6 +53,10 @@ func GenerateMessage(action avro.Action) *avro.Message {
 		Message_broadcast: avro.NewMessage_broadcastUnion(),
 
 		Message_global_state: avro.NewMessage_global_stateUnion(),
+
+		Message_game_config: avro.NewMessage_game_configUnion(),
+
+		Message_game_result: avro.NewMessage_game_resultUnion(),
 
 		// 提示消息
 

@@ -74,6 +74,8 @@ func (h *CustomerStartGameHanlder) do(msg avro.Message) {
 
 	configStr := strings.Join(config, ",")
 
+	gameID := msg.Customer_start_game.RequestCustomerStartGame.GameID
+
 	// 返回金币游戏配置信息
 	msg = *model.GenerateMessage(avro.ActionMessage_game_config)
 	msg.Message_game_config = &avro.Message_game_configUnion{
@@ -81,7 +83,7 @@ func (h *CustomerStartGameHanlder) do(msg avro.Message) {
 		MessageGameConfig: &avro.MessageGameConfig{
 			GameID: &avro.GameIDUnion{
 				UnionType: avro.GameIDUnionTypeEnumString,
-				String:    msg.Customer_start_game.RequestCustomerStartGame.GameID,
+				String:    gameID,
 			},
 			Config: &avro.ConfigUnion{
 				UnionType: avro.ConfigUnionTypeEnumString,
@@ -92,7 +94,7 @@ func (h *CustomerStartGameHanlder) do(msg avro.Message) {
 	h.session.SendMessage(msg)
 
 	// 开始游戏
-	h.session.CurrentUser().StartGame(msg.Customer_start_game.RequestCustomerStartGame.GameID, configStr)
+	h.session.CurrentUser().StartGame(gameID, configStr)
 	// 刷新用户信息到前端
 	msg = *model.GenerateMessage(avro.ActionMessage_customers_info)
 	msg.Message_customer_info = &avro.Message_customer_infoUnion{
@@ -147,7 +149,9 @@ func (h *CustomerUploadGameScoreHanlder) do(msg avro.Message) {
 		return
 	}
 
-	if h.session.CurrentUser().CurrentGameID != msg.Customer_start_game.RequestCustomerStartGame.GameID || h.session.CurrentUser().CurrentGameID == "" {
+	gameID := msg.Customer_upload_game_score.RequestCustomerUploadGameScore.GameID
+
+	if h.session.CurrentUser().CurrentGameID != gameID || h.session.CurrentUser().CurrentGameID == "" {
 		msg := *model.GenerateMessage(avro.ActionError_message)
 		msg.Error_message = &avro.Error_messageUnion{
 			String:    "游戏ID错误，无法找到您当前正在进行的游戏内容",
@@ -171,7 +175,7 @@ func (h *CustomerUploadGameScoreHanlder) do(msg avro.Message) {
 		MessageGameResult: &avro.MessageGameResult{
 			GameID: &avro.GameIDUnion{
 				UnionType: avro.GameIDUnionTypeEnumString,
-				String:    msg.Customer_start_game.RequestCustomerStartGame.GameID,
+				String:    gameID,
 			},
 			Score: int32(score),
 		},
