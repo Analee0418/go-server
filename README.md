@@ -1,3 +1,5 @@
-http://www.aichengxu.com/tag/%E6%9C%BA%E8%AF%BB%E5%8D%A1%E8%AF%86%E5%88%AB/
+Golang 实现的一个简易后端
 
-http://www.aichengxu.com/python/24656796.htm
+* Go
+* avro
+* 自定义的封包拆包
